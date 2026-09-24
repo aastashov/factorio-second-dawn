@@ -13,17 +13,19 @@ MACHINES = {
     "hand": 1.0, "campfire": 0.5, "kiln": 1.0, "workbench": 0.5, "alembic": 1.0, "fermentation-vat": 1.0,
     "garden": 1.0, "chamber": 1.0,
     "millstone": 0.5, "bloomery": 1.0, "glassworks": 1.0,
+    "blast-furnace": 2.0, "electric-chamber": 1.0, "assembler-2": 0.75,
 }
 CATEGORY_MACHINE = {
     "firing": "kiln", "crafting": "workbench", "distillation": "alembic", "fermenting": "fermentation-vat",
     "growing": "garden", "awakening": "chamber", "hand": "hand",
     "grinding": "millstone", "smelting": "bloomery", "glassmaking": "glassworks",
+    "blast": "blast-furnace", "awakening-electric": "electric-chamber",
 }
 # mined items: mining time; miners: digger 0.25 (soft only), pick digger 0.2, bronze drill 0.4 (soft + hard)
-RAW = {"wood", "stone", "clay", "shells", "saltpeter", "fruit", "copper-ore", "tin-ore", "coal",
+RAW = {"wood", "stone", "clay", "shells", "saltpeter", "fruit", "copper-ore", "tin-ore", "coal", "iron-ore",
        "meat", "hide", "bones"}  # animals: hunting from the start
-MINERS = {"digger": 0.25, "pick-digger": 0.2, "bronze-drill": 0.4}
-MINING_TIME = {"stone": 1, "clay": 1, "shells": 1, "saltpeter": 1.5, "copper-ore": 1, "tin-ore": 1, "coal": 1}
+MINERS = {"digger": 0.25, "pick-digger": 0.2, "bronze-drill": 0.4, "electric-drill": 0.5}
+MINING_TIME = {"stone": 1, "clay": 1, "shells": 1, "saltpeter": 1.5, "copper-ore": 1, "tin-ore": 1, "coal": 1, "iron-ore": 1}
 
 # name: (epoch, category, seconds, {inputs}, {outputs}, unlocked_by or None)
 RECIPES = {
@@ -66,6 +68,29 @@ RECIPES = {
     "rectified":     (2, "distillation", 10, {"spirit-jug": 2, "bottle": 1}, {"rectified-bottle": 1, "jug": 2}, "rectification"),
     "conc-acid":     (2, "distillation", 12, {"acid-jug": 2, "bottle": 1}, {"conc-acid-bottle": 1, "jug": 2}, "rectification"),
     # coal 45 = chamber fuel (200 kW x 900 s = 180 MJ / 4 MJ)
+    # epoch 3 (release 0.5)
+    "bloomery-iron": (3, "smelting", 6.4, {"iron-ore": 2, "coal": 1}, {"iron": 1}, "wrought-iron"),
+    "iron-gear":     (3, "crafting", 0.5, {"iron": 2}, {"gear": 1}, "ironworking"),
+    "pipe":          (3, "crafting", 0.5, {"iron": 1}, {"pipe": 1}, "fluid-handling"),
+    "offshore-pump": (3, "crafting", 1, {"pipe": 2, "gear": 1, "bronze": 2}, {"offshore-pump": 1}, "fluid-handling"),
+    "boiler":        (3, "crafting", 1, {"pipe": 4, "brick": 10}, {"boiler": 1}, "steam-power"),
+    "steam-engine":  (3, "crafting", 2, {"gear": 8, "pipe": 5, "iron": 10}, {"steam-engine": 1}, "steam-power"),
+    "copper-cable":  (3, "crafting", 0.5, {"copper": 1}, {"cable": 2}, "electricity"),
+    "small-pole":    (3, "crafting", 0.5, {"wood": 1, "cable": 2}, {"small-pole": 2}, "electricity"),
+    "blast-furnace": (3, "crafting", 3, {"brick": 20, "iron": 10}, {"blast-furnace": 1}, "blast-furnace"),
+    "iron-plate":    (3, "blast", 3.2, {"iron-ore": 1}, {"iron": 1}, "blast-furnace"),
+    "steel":         (3, "blast", 16, {"iron": 5}, {"steel": 1}, "blast-furnace"),
+    "electric-drill": (3, "crafting", 2, {"gear": 5, "cable": 6, "iron": 10}, {"electric-drill": 1}, "electromechanics"),
+    "inserter":      (3, "crafting", 0.5, {"gear": 1, "cable": 2, "iron": 1}, {"inserter": 1}, "electromechanics"),
+    "assembler-1":   (3, "crafting", 0.5, {"gear": 5, "cable": 6, "iron": 9}, {"assembler-1": 1}, "electromechanics"),
+    "lab":           (3, "crafting", 2, {"gear": 10, "cable": 10, "glass": 10}, {"lab": 1}, "electromechanics"),
+    "mechanism":     (3, "crafting", 8, {"gear": 2, "cable": 2, "steel": 1}, {"mechanism": 1}, "mechanism"),
+    "feed":          (3, "grinding", 4, {"fruit": 4, "fiber": 4}, {"feed": 4}, "domestication"),
+    "net":           (3, "crafting", 2, {"rope": 10, "leather": 2, "bronze": 2}, {"net": 1}, "domestication"),
+    "electrode":     (3, "crafting", 3, {"copper": 2, "glass": 1}, {"electrode": 1}, "third-awakening"),
+    # 2 MW x 1200 s is electric, not modelled
+    "charge-3":      (3, "awakening-electric", 1200, {"rectified-bottle": 15, "conc-acid-bottle": 15, "electrode": 5},
+                      {"charge-3": 1, "bottle": 30}, "third-awakening"),
     "charge-2":      (2, "awakening", 900, {"rectified-bottle": 10, "conc-acid-bottle": 10, "coal": 45},
                       {"charge-2": 1, "bottle": 20}, "second-awakening"),
 }
@@ -76,7 +101,7 @@ PRODUCER = {out: name for name, r in RECIPES.items() for out in r[4]
 RAW |= {"fiber"}  # also from trees
 
 # name: (epoch, count, seconds per unit, packs, prerequisites)
-T, F = ("tablet",), ("tablet", "flask")
+T, F, M = ("tablet",), ("tablet", "flask"), ("tablet", "flask", "mechanism")
 TECHS = {
     "pottery":          (1, 10, 10, T, []),
     "workbench":        (1, 15, 10, T, ["pottery"]),
@@ -102,13 +127,27 @@ TECHS = {
     "bow":              (2, 60, 20, T, ["bronze"]),
     "crossbow":         (2, 75, 25, F, ["bow", "glass-flask", "tanning"]),
     "bone-meal":        (2, 40, 15, T, ["millstone"]),
+    "wrought-iron":     (3, 75, 25, F, ["bronze-tools"]),
+    "ironworking":      (3, 75, 25, F, ["wrought-iron"]),
+    "fluid-handling":   (3, 100, 25, F, ["ironworking"]),
+    "steam-power":      (3, 100, 30, F, ["fluid-handling"]),
+    "electricity":      (3, 100, 30, F, ["steam-power"]),
+    "blast-furnace":    (3, 120, 30, F, ["ironworking"]),
+    "electromechanics": (3, 150, 30, F, ["electricity", "blast-furnace"]),
+    "mechanism":        (3, 150, 30, F, ["electromechanics"]),
+    "logistics-3":      (3, 150, 30, M, ["mechanism"]),
+    "automation-2":     (3, 150, 30, M, ["mechanism"]),
+    "domestication":    (3, 150, 30, M, ["mechanism", "tanning"]),
+    "electric-chamber": (3, 200, 40, M, ["mechanism"]),
+    "third-awakening":  (3, 250, 45, M, ["electric-chamber", "rectification"]),
 }
-PACK_ITEM = {"tablet": "tablet", "flask": "flask"}
+PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism"}
 
 # per-epoch tables: (item, per minute, label)
 TARGETS = {
     1: [("tablet", 6, "табличка 6/мин"), ("charge-1", 1 / 30, "заряд I за 30 мин")],
     2: [("flask", 4, "колба 4/мин"), ("bronze", 6, "бронза 6/мин"), ("charge-2", 1 / 45, "заряд II за 45 мин")],
+    3: [("mechanism", 6, "механизм 6/мин"), ("steel", 3, "сталь 3/мин"), ("charge-3", 1 / 60, "заряд III за час")],
 }
 
 
@@ -183,7 +222,7 @@ def table(item, per_min):
     acc = {}
     rates(item, per_min, acc)
     credit(acc, "jug", ["spirit", "charge-1", "rectified", "conc-acid"])
-    credit(acc, "bottle", ["charge-2"])
+    credit(acc, "bottle", ["charge-2", "charge-3"])
     rows = []
     for (kind, name), v in acc.items():
         if v < 1e-6:
