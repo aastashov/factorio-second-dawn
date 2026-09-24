@@ -31,6 +31,16 @@ local function text(player, tick)
   return {"sd-gui.next-wave", w.count + 1, hms(w.next_tick - tick), charge}
 end
 
+local function air_text(player)
+  local crew = storage.moon and storage.moon.crew
+  if not crew then return nil end
+  local character = player.character or (storage.statues[player.index] and storage.statues[player.index].character)
+  local member = character and character.valid and crew[character.unit_number]
+  if not member then return nil end
+  local tanks = character.get_main_inventory() and character.get_main_inventory().get_item_count("sd-oxygen-tank") or 0
+  return {"sd-gui.air", hms(member.air * 60), tanks}
+end
+
 local function climate_text(player)
   local st = storage.climate and storage.climate.player_state and storage.climate.player_state[player.index]
   if not st then return nil end
@@ -39,7 +49,7 @@ end
 
 function gui.update(tick)
   for _, player in pairs(game.connected_players) do
-    local c = climate_text(player)
+    local c = air_text(player) or climate_text(player)
     local cl = player.gui.top.sd_climate
     if not c then
       if cl then cl.destroy() end

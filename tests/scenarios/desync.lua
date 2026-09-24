@@ -92,5 +92,26 @@ script.on_event(defines.events.on_tick, function(e)
     storage.t.tug = tug
   elseif t == 3900 then
     L("ship at the pier: " .. tostring(storage.t.tug.train.station and storage.t.tug.train.station.backer_name))
+    -- the finale: a rocket, a suited character, the Moon, the emitter
+    local s = game.surfaces.nauvis
+    s.request_to_generate_chunks({-300, 300}, 2); s.force_generate_chunk_requests()
+    for _, en in pairs(s.find_entities_filtered{area = {{-330, 270}, {-270, 330}}}) do en.destroy() end
+    local p = s.create_entity{name = "electric-energy-interface", position = {-310, 300}, force = "player"}
+    p.power_production = 1e8; p.electric_buffer_size = 1e9
+    s.create_entity{name = "substation", position = {-306, 300}, force = "player"}
+    storage.t.silo = s.create_entity{name = "rocket-silo", position = {-295, 300}, force = "player"}
+    storage.t.silo.rocket_parts = 30
+    local c = s.create_entity{name = "character", position = {-290, 308}, force = "player"}
+    c.get_inventory(defines.inventory.character_armor).insert{name = "sd-spacesuit"}
+    storage.t.astronaut = c
+    remote.call("second-dawn", "no_victory_screen")
+  elseif t > 3900 and storage.t.silo and not storage.t.launched and storage.t.silo.rocket_silo_status == defines.rocket_silo_status.rocket_ready then
+    storage.t.launched = storage.t.silo.launch_rocket()
+    L("rocket launched: " .. tostring(storage.t.launched))
+  elseif storage.t.astronaut and storage.t.astronaut.valid and storage.t.astronaut.surface.name == "sd-moon" and not storage.t.mined then
+    storage.t.mined = true
+    local emitter = storage.t.astronaut.surface.find_entities_filtered{name = "sd-emitter"}[1]
+    storage.t.astronaut.mine_entity(emitter, true)
+    L("emitter dismantled on the Moon; won: " .. tostring(remote.call("second-dawn", "moon").won))
   end
 end)

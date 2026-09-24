@@ -19,7 +19,7 @@ local SOURCES = {
 }
 local SOURCE_NAMES = {"sd-brazier", "sd-radiator", "sd-cooler"}
 local MAX_RADIUS = 10
-local CLOTHING = {["sd-fur-coat"] = "cold", ["sd-light-cloak"] = "hot"}
+local CLOTHING = {["sd-fur-coat"] = "cold", ["sd-light-cloak"] = "hot", ["sd-spacesuit"] = "any"}
 local EXPOSURE = 2 -- HP per second
 local HEAT_CYCLE = 300
 
@@ -161,11 +161,12 @@ end
 
 -- Exposure of one character for one second. Returns the belt and whether it is protected.
 function climate.expose(character)
+  if character.surface.name ~= "nauvis" then return nil, true end
   local belt = climate.belt(character.position)
   if not belt then return nil, true end
   local armor = character.get_inventory(defines.inventory.character_armor)
   local worn = armor and not armor.is_empty() and armor[1].name
-  local protected = CLOTHING[worn] == belt
+  local protected = CLOTHING[worn] == belt or CLOTHING[worn] == "any"
   if not protected then character.damage(EXPOSURE, "neutral", "sd-exposure") end
   return belt, protected
 end

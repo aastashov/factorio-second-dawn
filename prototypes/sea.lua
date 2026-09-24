@@ -12,7 +12,7 @@ data:extend{{
   -- Inside continents the vanilla relief (lakes, hills) takes over, raised with distance from the coast
   -- so that far inland the big vanilla lakes shrink, and never deeper than shallow water: lakes are
   -- shallow, and a lake that touches the coast does not cut the shelf.
-  expression = "min(max(elevation_nauvis + 2 + max(0, coast) * 0.012, -1.9), coast * shelf_slope)",
+  expression = "min(max(elevation_nauvis + 2 + max(0, coast) * 0.02, -1.9), coast * shelf_slope)",
   local_expressions = {
     wobble = "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = 71, input_scale = 1/350, output_scale = 90}"
           .. " + basis_noise{x = x, y = y, seed0 = map_seed, seed1 = 72, input_scale = 1/90, output_scale = 25}",

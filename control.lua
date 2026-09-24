@@ -8,6 +8,7 @@ local diary = require("scripts.diary")
 local wildlife = require("scripts.wildlife")
 local capture = require("scripts.capture")
 local climate = require("scripts.climate")
+local moon = require("scripts.moon")
 
 local INTRO_STATUE = 4 * 60      -- the first players wake from stone a few seconds into the game
 local NEWCOMER_STATUE = 3 * 60 * 60
@@ -17,6 +18,7 @@ local function init()
   statues.init()
   waves.init()
   wildlife.init()
+  moon.init()
   local new_climate = not storage.climate
   climate.init()
   if new_climate and game.tick > 0 then climate.scan() end
@@ -34,7 +36,8 @@ end)
 
 script.on_configuration_changed(function()
   -- Saves from earlier versions get what a new game would have: starting ruins (0.2), tin (0.3),
-  -- the waves of the new version.
+  -- the waves of the new version, no vanilla victory on rocket launch (0.10).
+  if remote.interfaces["silo_script"] then remote.call("silo_script", "set_no_victory", true) end
   if init() then notes.place_start_ruins(game.surfaces.nauvis) end
   start.ensure_starting_area(game.surfaces.nauvis)
   waves.on_version_changed()
@@ -131,6 +134,9 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(e)
 end)
 
 script.on_event(defines.events.on_script_trigger_effect, capture.on_trigger)
+script.on_event(defines.events.on_rocket_launch_ordered, function(e) moon.on_launch_ordered(e.rocket_silo) end)
+script.on_event(defines.events.on_rocket_launched, function(e) moon.on_launched(e.rocket_silo) end)
+script.on_event(defines.events.on_object_destroyed, function(e) moon.on_destroyed(e, waves.wake_everyone) end)
 
 script.on_event(defines.events.on_force_created, function() wildlife.apply_mode() end)
 
@@ -147,6 +153,7 @@ script.on_nth_tick(30, function(e)
     climate.players(statues.is_petrified)
   end
   if e.tick % 300 == 0 then climate.heat_cycle() end
+  if e.tick % 60 == 0 then moon.update(e.tick) end
   statues.update(e.tick, waves.force_petrified)
   if e.tick % 60 == 0 then gui.update(e.tick) end
 end)
@@ -169,6 +176,17 @@ remote.add_interface("second-dawn", {
   chamber = function(force) return chamber.get(game.forces[force]) end,
   starting_area = function() return start.ensure_starting_area(game.surfaces.nauvis) end,
   wildlife = function() return storage.wildlife end,
+  moon = function()
+    local m = storage.moon
+    local crew = {}
+    for n, member in pairs(m.crew) do crew[#crew + 1] = {unit = n, air = member.air, surface = member.character.valid and member.character.surface.name} end
+    return {won = m.won, crew = crew, emitter = m.emitter and m.emitter.valid and m.emitter.position, pulses = m.pulses, hits = m.hits,
+      lost = storage.waves.lost, finished = storage.waves.finished}
+  end,
+  set_air = function(unit, seconds) if storage.moon.crew[unit] then storage.moon.crew[unit].air = seconds end end,
+  moon_pulse_now = function() storage.moon.pulse_tick = game.tick end,
+  no_victory_screen = function() storage.moon.no_victory_screen = true end,
+  hit_wave = function() waves.hit() end,
   expose = function(position)
     local c = game.surfaces.nauvis.find_entities_filtered{type = "character", position = position, radius = 1}[1]
     if not c then return nil end

@@ -11,14 +11,14 @@ local HOUR = 60 * MINUTE
 local FIRST_WAVE = 2 * HOUR
 local FIRST_INTERVAL = 4 * HOUR
 local SHRINK = 0.92
-local LAST_WAVE = 14            -- release 0.9 ends after wave 14; the last epoch extends this
+-- Waves go on until the emitter on the Moon is dismantled (scripts/moon.lua).
 local CHAMBER_WAKE_DELAY = 180  -- a charged chamber still leaves the team stone for 3 s
 local WARNINGS = {10 * MINUTE, 1 * MINUTE}
 
 local FACTORS = {relaxed = 1.5, normal = 1, hard = 0.7}
 
 -- Wave from which each charge tier is required (docs/DESIGN.md §4.2).
-local TIERS = {{wave = 1, tier = 1}, {wave = 4, tier = 2}, {wave = 7, tier = 3}, {wave = 11, tier = 4}}
+local TIERS = {{wave = 1, tier = 1}, {wave = 4, tier = 2}, {wave = 7, tier = 3}, {wave = 11, tier = 4}, {wave = 15, tier = 5}}
 
 function waves.required_tier(n)
   local tier = 1
@@ -66,7 +66,7 @@ end
 -- A new version with more waves continues a game that ended at the previous version's last wave.
 function waves.on_version_changed()
   local w = storage.waves
-  if w.finished and w.count < LAST_WAVE then
+  if w.finished and not w.won and not w.lost then
     w.finished = false
     waves.schedule()
   end
@@ -106,6 +106,18 @@ local function petrify_players(force)
   end
 end
 
+-- The whole world wakes (victory).
+function waves.wake_everyone()
+  for index in pairs(storage.forces) do
+    local force = game.forces[index]
+    storage.forces[index] = nil
+    if force then
+      for _, player in pairs(force.players) do statues.revive(player) end
+    end
+  end
+  storage.waves.won = true
+end
+
 local function wake(force, message)
   storage.forces[force.index] = nil
   for _, player in pairs(force.players) do
@@ -120,6 +132,13 @@ function waves.hit()
   local n = w.count
   local required = waves.required_tier(n)
   for _, force in pairs(affected_forces()) do
+    -- still stone from the previous wave: there is no way back
+    if storage.forces[force.index] then
+      w.lost, w.finished, w.next_tick = true, true, nil
+      game.print({"sd-message.defeat", n})
+      game.set_game_state{game_finished = true, player_won = false, can_continue = false}
+      return
+    end
     local state = {wave = n, required = required}
     local tier = chamber.charge_tier(force)
     if tier and tier >= required then
@@ -136,10 +155,6 @@ function waves.hit()
     end
     storage.forces[force.index] = state
     petrify_players(force)
-  end
-  if n >= LAST_WAVE then
-    w.finished = true
-    game.print({"sd-message.to-be-continued"})
   end
   waves.schedule()
 end

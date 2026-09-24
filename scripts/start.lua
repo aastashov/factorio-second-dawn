@@ -8,6 +8,8 @@ local FRUIT_TREES = {"tree-02-red", "tree-08-red", "tree-09-red"}
 local RADIUS = 150
 
 function start.configure_freeplay()
+  -- a rocket launch is not the end here: the game is won on the Moon (scripts/moon.lua)
+  if remote.interfaces["silo_script"] then remote.call("silo_script", "set_no_victory", true) end
   local fp = remote.interfaces["freeplay"]
   if not fp then return end
   if fp.set_disable_crashsite then remote.call("freeplay", "set_disable_crashsite", true) end

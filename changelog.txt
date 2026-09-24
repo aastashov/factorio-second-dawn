@@ -1,4 +1,20 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.10.0
+Date: 2026-09-24
+  Major Features:
+    - Epoch 5 "Rocket": plastic, electronic circuits, radar; sixth science: instrument board; rocket fuel,
+      low density structures, control units; a rocket silo that builds a rocket from 30 parts.
+    - Revival charge V (with control units) is needed from wave 15 on. Waves now go on until the end.
+    - The finale: players in spacesuits standing by the silo when the rocket starts fly to the Moon. Air lasts
+      5 minutes, each oxygen tank adds 2. The emitter, 250-350 tiles from the landing site, turns everyone
+      within 100 tiles to stone for 8 seconds every 45 seconds. Dismantling it wins the game: no more waves,
+      the crew comes home, and you can play on.
+    - Defeat: a wave that finds the team still stone from the previous one ends the game.
+  Changes:
+    - The spacesuit protects in the cold and in the hot belt.
+    - Launching a rocket no longer wins the game by itself.
+    - Far continents have fewer big lakes near their coasts.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.0
 Date: 2026-09-24
   Major Features:

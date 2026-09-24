@@ -21,6 +21,8 @@ climate 20300
 sea 5
 ships 9100
 chain4 90400
+chain5 111000
+defeat 110
 LIST
-tests/run-heavy.sh desync 320 | grep -E "heavy mode ran|desync" || status=1
+tests/run-heavy.sh desync 480 | grep -E "heavy mode ran|desync" || status=1
 exit $status
