@@ -6,4 +6,4 @@ cd "$(dirname "$0")/.."
 for f in *.lua prototypes/*.lua prototypes/*/*.lua scripts/*.lua tests/scenarios/*.lua; do luac -p "$f"; done
 echo "lua syntax ok"
 python3 tests/check_locales.py >/dev/null && echo "locales ok"
-python3 tools/balance_e1.py | head -1
+python3 tools/balance.py | head -1

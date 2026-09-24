@@ -1,4 +1,4 @@
--- Epoch 1 recipes. Numbers mirror docs/DESIGN.md §5.3 and tools/balance_e1.py; tests/scenarios/tree.lua
+-- Epoch 1 recipes. Numbers mirror docs/DESIGN.md §5.3 and tools/balance.py; tests/scenarios/tree.lua
 -- checks the tree against these prototypes.
 local function items(list)
   local out = {}
