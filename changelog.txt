@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.10.1
+Date: 2026-09-24
+  Graphics:
+    - Ships have their own sprites and icons: the steam tug, the barge with crates, the tank barge and the
+      screw steamer, in 64 directions with shadows (rendered by tools/render_ships.py).
+---------------------------------------------------------------------------------------------------
 Version: 0.10.0
 Date: 2026-09-24
   Major Features:

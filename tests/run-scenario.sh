@@ -14,7 +14,7 @@ printf '[path]\nread-data=__PATH__system-read-data__\nwrite-data=%s\n' "$dir/dat
 # A copy, not a symlink: the game must never see files change under it.
 rm -rf "$dir/data/mods/second-dawn"
 mkdir -p "$dir/data/mods/second-dawn"
-cp -R info.json data.lua data-final-fixes.lua settings.lua control.lua prototypes scripts locale "$dir/data/mods/second-dawn/"
+cp -R info.json data.lua data-final-fixes.lua settings.lua control.lua prototypes scripts locale graphics "$dir/data/mods/second-dawn/"
 cat > "$dir/data/mods/mod-list.json" <<JSON
 {"mods":[{"name":"base","enabled":true},{"name":"elevated-rails","enabled":false},{"name":"quality","enabled":false},{"name":"space-age","enabled":false},{"name":"second-dawn","enabled":true},{"name":"sd-test","enabled":true}]}
 JSON

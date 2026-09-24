@@ -1,5 +1,6 @@
 -- Ships (docs/DESIGN.md §19): trains on waterway rails that can only be laid on water. The tug is a
--- locomotive, barges are wagons, a pier is a train stop, buoys are signals. Graphics are placeholders.
+-- locomotive, barges are wagons, a pier is a train stop, buoys are signals. Ship sprites come from
+-- tools/render_ships.py; piers and buoys are still recoloured vanilla.
 local lib = require("prototypes.lib")
 local icons = "__base__/graphics/icons/"
 local WATER_TINT = {0.35, 0.6, 0.95, 0.45}
@@ -45,11 +46,14 @@ planner.order = "a"
 local function vehicle(type, base, name, order, extra)
   local e = table.deepcopy(data.raw[type][base])
   e.name = "sd-" .. name
-  e.icons = lib.icon(icons .. base .. ".png", HULL)
+  e.icons = lib.ship_icon(name)
   e.icon = nil
   e.minable = {mining_time = 0.5, result = "sd-" .. name}
   strip(e)
-  lib.recolor_fields(e, {"pictures", "wheels"}, HULL)
+  e.pictures = lib.ship_pictures(name)
+  e.wheels = nil
+  e.horizontal_doors = nil
+  e.vertical_doors = nil
   for k, v in pairs(extra) do e[k] = v end
   local item = {type = "item-with-entity-data", name = "sd-" .. name, icons = e.icons, subgroup = "sd-shipping", order = order,
     stack_size = 5, place_result = "sd-" .. name}

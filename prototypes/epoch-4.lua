@@ -65,11 +65,11 @@ lib.recolor_fields(plantation, {"graphics_set"}, {0.5, 0.8, 0.4})
 -- Screw steamer: a faster tug.
 local steamer = table.deepcopy(data.raw.locomotive["sd-tug"])
 steamer.name = "sd-screw-steamer"
-steamer.icons = lib.icon(icons .. "locomotive.png", {0.45, 0.5, 0.6})
+steamer.icons = lib.ship_icon("screw-steamer")
 steamer.minable = {mining_time = 0.5, result = "sd-screw-steamer"}
 steamer.max_speed = 0.45
 steamer.max_power = "1MW"
-lib.recolor_fields(steamer, {"pictures", "wheels"}, {0.45, 0.5, 0.6})
+steamer.pictures = lib.ship_pictures("screw-steamer")
 
 data:extend{
   plantation, steamer,

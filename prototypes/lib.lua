@@ -88,4 +88,18 @@ function lib.burner(fuel, pollution)
   }
 end
 
+-- Ship sprites rendered by tools/render_ships.py: 64 directions, 8 x 8 frames of 256 px, plus a shadow sheet.
+function lib.ship_pictures(name)
+  local path = "__second-dawn__/graphics/entity/" .. name .. "/" .. name
+  local function sheet(file, shadow)
+    return {filenames = {file}, width = 256, height = 256, direction_count = 64, line_length = 8, lines_per_file = 8,
+      scale = 1, draw_as_shadow = shadow or nil}
+  end
+  return {rotated = {layers = {sheet(path .. ".png"), sheet(path .. "-shadow.png", true)}}}
+end
+
+function lib.ship_icon(name)
+  return {{icon = "__second-dawn__/graphics/icons/" .. name .. ".png", icon_size = 64}}
+end
+
 return lib
