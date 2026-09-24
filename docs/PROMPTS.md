@@ -11,22 +11,24 @@
    `Match the style, camera angle and lighting of the attached images exactly.`
 3. **Фон — пурпурный (#FF00FF).** Прозрачный фон Gemini рисует плохо, а пурпур я сам вырежу. Если в
    картинке фон вышел не ровный или объект сам стал пурпурным — перегенерировать.
-4. **Размер и тени не важны:** подгоню скриптом. Важно, чтобы объект был целиком, не обрезан, и ракурс
+4. **Проверено на первых картинках:** пурпур любого оттенка вырезается чисто. Если Gemini всё равно
+   рисует здание углом к зрителю (ромбом), дописать: `The front wall is a straight horizontal line.`
+5. **Размер и тени не важны:** подгоню скриптом. Важно, чтобы объект был целиком, не обрезан, и ракурс
    был как у эталона.
-5. **Складывать** в папку `art/incoming/` в репозитории, имя файла — из скобок у элемента (например,
+6. **Складывать** в папку `art/incoming/` в репозитории, имя файла — из скобок у элемента (например,
    `sd-campfire.png`). Несколько вариантов: `sd-campfire-2.png`.
-6. **Звери и корабли** — отдельный путь, см. раздел «3D».
+7. **Звери и корабли** — отдельный путь, см. раздел «3D».
 
 ## Блоки стиля
 
 **Для зданий и объектов на карте (A):**
 ```
-Game asset for a top-down factory-building game in the style of Factorio. Orthographic 3/4 top-down view: the camera looks down from the south at about 45 degrees, no perspective distortion, the object's south face is visible below its top. Light comes from the top-left. Realistic, slightly painterly rendering with fine detail, muted natural colors (stone, clay, wood, leather, charcoal). Primitive stone-age craftsmanship. One single object, centered, fully visible, nothing cropped. Do not draw any ground, grass, soil or cast shadow under it. Plain solid flat magenta background, exact color #FF00FF, uniform, no gradient. No text, no frame, no border, no watermark. Do not use magenta or pink colors on the object itself.
+Game asset for a top-down factory-building game in the style of Factorio. Front-facing orthographic top-down view, NOT isometric: the building stands square to the image, its front edge is perfectly horizontal and faces the viewer, the camera looks down from the south at about 45 degrees, so we see the top and the front (south) side, never a corner pointing at the viewer. No perspective distortion. Light comes from the top-left. Realistic painterly rendering like Factorio, no black ink outlines, no cartoon style, fine detail, muted natural colors (stone, clay, wood, leather, charcoal). Primitive stone-age craftsmanship. One single object, centered, fully visible, nothing cropped. Do not draw any ground, grass, soil or cast shadow under it. Plain solid flat magenta background, exact color #FF00FF, uniform, no gradient. No text, no frame, no border, no watermark. Do not use magenta or pink colors on the object itself.
 ```
 
 **Для иконок предметов (B):**
 ```
-Inventory icon for a Factorio-style game. One single item, centered, filling about 85% of a square 1:1 image, viewed slightly from above, strong clear silhouette that stays readable when shrunk to 32 pixels. Realistic, slightly painterly rendering, muted natural colors, soft light from the top-left. Plain solid flat magenta background, exact color #FF00FF, uniform, no gradient, no cast shadow. No text, no frame, no border, no watermark. Do not use magenta or pink colors on the item itself.
+Inventory icon for a Factorio-style game, realistic painterly style like Factorio icons, no black ink outlines, no cartoon style. One single item, centered, filling about 85% of a square 1:1 image, viewed slightly from above, strong clear silhouette that stays readable when shrunk to 32 pixels. Realistic, slightly painterly rendering, muted natural colors, soft light from the top-left. Plain solid flat magenta background, exact color #FF00FF, uniform, no gradient, no cast shadow. No text, no frame, no border, no watermark. Do not use magenta or pink colors on the item itself.
 ```
 
 **Для россыпей ресурса на земле (C):**
