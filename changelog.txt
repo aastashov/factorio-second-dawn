@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2026-09-24
+  Major Features:
+    - Epoch 1 "Stone": clay, shells, saltpeter, fruit and fiber; campfire, kiln, workbench, scholar's desk,
+      digger, lever arm, wooden chute, garden plot, fermentation vat, alembic. Research with clay tablets.
+    - Petrification waves: the first comes after 2 hours, then every 4 hours and a bit sooner each time.
+      A wave turns every player into a statue; the factory keeps working.
+    - Revival chamber: one per team, makes a revival charge in 10 minutes into a sealed tank. A charge in
+      the chamber wakes the whole team at once; without one, statues thaw after 5–15 minutes or as soon
+      as the chamber makes a charge.
+  Features:
+    - The vanilla tech tree, starting kit, crash site and biters are gone. Metal ores are visible but need
+      later tools. Kilns, alembics and the chamber burn charcoal only.
+    - Every epoch 1 resource and fruit trees are guaranteed near the spawn.
+    - Settings: wave difficulty (relaxed / normal / hard / off), new players start as statues.
+    - This version ends after wave 3.
+  Locale:
+    - English and Russian.

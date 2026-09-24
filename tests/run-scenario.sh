@@ -26,7 +26,8 @@ rm -f "$dir/data/saves/$name.zip"
 if [ ! -f "$dir/data/saves/$name.zip" ]; then
   grep -E "Error|error" -A12 "$dir/create.log" | head -40; exit 1
 fi
-"$bin" --config "$dir/config.ini" --benchmark "$dir/data/saves/$name.zip" --benchmark-ticks "$ticks" --benchmark-runs 1 > "$dir/bench.log" 2>&1 || true
+verbose=(); [ -n "${SD_BENCH_VERBOSE:-}" ] && verbose=(--benchmark-verbose all)
+"$bin" --config "$dir/config.ini" --benchmark "$dir/data/saves/$name.zip" --benchmark-ticks "$ticks" --benchmark-runs 1 ${verbose[@]+"${verbose[@]}"} > "$dir/bench.log" 2>&1 || true
 grep -h "SD-TEST" "$dir/data/factorio-current.log" | sed "s/.*SD-TEST /  /" || true
 grep -E "Error while running|non-recoverable" -A6 "$dir/bench.log" | head -20 || true
 grep -E "avg:" "$dir/bench.log" || true
