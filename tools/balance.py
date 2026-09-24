@@ -14,16 +14,20 @@ MACHINES = {
     "garden": 1.0, "chamber": 1.0,
     "millstone": 0.5, "bloomery": 1.0, "glassworks": 1.0,
     "blast-furnace": 2.0, "electric-chamber": 1.0, "assembler-2": 0.75,
+    "chemical-plant": 1.0, "refinery": 1.0, "electric-furnace": 2.0, "plantation": 1.0,
 }
 CATEGORY_MACHINE = {
     "firing": "kiln", "crafting": "workbench", "distillation": "alembic", "fermenting": "fermentation-vat",
     "growing": "garden", "awakening": "chamber", "hand": "hand",
     "grinding": "millstone", "smelting": "bloomery", "glassmaking": "glassworks",
     "blast": "blast-furnace", "awakening-electric": "electric-chamber",
+    "chemistry": "chemical-plant", "oil-processing": "refinery", "electric-smelting": "electric-furnace",
+    "plantation": "plantation",
 }
 # mined items: mining time; miners: digger 0.25 (soft only), pick digger 0.2, bronze drill 0.4 (soft + hard)
 RAW = {"wood", "stone", "clay", "shells", "saltpeter", "fruit", "copper-ore", "tin-ore", "coal", "iron-ore",
-       "meat", "hide", "bones"}  # animals: hunting from the start
+       "meat", "hide", "bones",
+       "sulfur", "tungsten-ore", "crude-oil", "water"}  # epoch 4: sulfur and oil in the south, tungsten in the north  # animals: hunting from the start
 MINERS = {"digger": 0.25, "pick-digger": 0.2, "bronze-drill": 0.4, "electric-drill": 0.5}
 MINING_TIME = {"stone": 1, "clay": 1, "shells": 1, "saltpeter": 1.5, "copper-ore": 1, "tin-ore": 1, "coal": 1, "iron-ore": 1}
 
@@ -107,17 +111,35 @@ RECIPES = {
     # 2 MW x 1200 s is electric, not modelled
     "charge-3":      (3, "awakening-electric", 1200, {"rectified-bottle": 15, "conc-acid-bottle": 15, "electrode": 5},
                       {"charge-3": 1, "bottle": 30}, "third-awakening"),
+    # epoch 4 (release 0.9); fluids in units
+    "sulfuric-acid": (4, "chemistry", 1, {"sulfur": 5, "iron": 1, "water": 100}, {"sulfuric-acid": 50}, "sulfur-processing"),
+    "oil-processing": (4, "oil-processing", 5, {"crude-oil": 100, "water": 50}, {"heavy-oil": 30, "light-oil": 45, "petroleum": 55}, "oil-processing"),
+    "latex":         (4, "plantation", 60, {"water": 100}, {"latex": 6}, "rubber"),
+    "rubber":        (4, "chemistry", 5, {"latex": 4, "sulfur": 1}, {"rubber": 2}, "rubber"),
+    "reactive":      (4, "chemistry", 10, {"bottle": 1, "sulfuric-acid": 20, "rubber": 1}, {"reactive": 2}, "reactive"),
+    "tungsten":      (4, "electric-smelting", 6.4, {"tungsten-ore": 2}, {"tungsten": 1}, "tungsten"),
+    "navigation":    (4, "crafting", 10, {"tungsten": 1, "glass": 2, "mechanism": 1}, {"navigation": 1}, "navigation"),
+    "heavy-cracking": (4, "chemistry", 2, {"heavy-oil": 40, "water": 30}, {"light-oil": 30}, "cracking"),
+    "light-cracking": (4, "chemistry", 2, {"light-oil": 30, "water": 30}, {"petroleum": 20}, "cracking"),
+    "fuel-oil":      (4, "chemistry", 2, {"light-oil": 10}, {"fuel-oil": 1}, "fuel-oil"),
+    "ether":         (4, "chemistry", 5, {"spirit-jug": 2, "sulfuric-acid": 10, "bottle": 1}, {"ether-bottle": 1, "jug": 2}, "ether"),
+    "tungsten-electrode": (4, "crafting", 3, {"tungsten": 1, "glass": 1}, {"tungsten-electrode": 1}, "tungsten-electrodes"),
+    "charge-4":      (4, "awakening-electric", 1500, {"rectified-bottle": 20, "conc-acid-bottle": 20, "ether-bottle": 10,
+                      "tungsten-electrode": 5}, {"charge-4": 1, "bottle": 50}, "fourth-awakening"),
     "charge-2":      (2, "awakening", 900, {"rectified-bottle": 10, "conc-acid-bottle": 10, "coal": 45},
                       {"charge-2": 1, "bottle": 20}, "second-awakening"),
 }
 # item -> recipe that makes it (byproducts are credited separately)
 PRODUCER = {out: name for name, r in RECIPES.items() for out in r[4]
             if not (out == "jug" and name != "jug") and not (out == "bottle" and name != "bottle")
-            and not (out == "fruit" and name in ("grow-fruit", "fertilized-fruit"))}
+            and not (out == "fruit" and name in ("grow-fruit", "fertilized-fruit"))
+            and not (out == "light-oil" and name == "heavy-cracking") and not (out == "petroleum" and name == "light-cracking")
+            and not (out in ("heavy-oil", "petroleum") and name == "oil-processing" and False)}
 RAW |= {"fiber"}  # also from trees
 
 # name: (epoch, count, seconds per unit, packs, prerequisites)
 T, F, M = ("tablet",), ("tablet", "flask"), ("tablet", "flask", "mechanism")
+R, N = M + ("reactive",), M + ("reactive", "navigation")
 TECHS = {
     "pottery":          (1, 10, 10, T, []),
     "workbench":        (1, 15, 10, T, ["pottery"]),
@@ -168,14 +190,28 @@ TECHS = {
     "buoys":            (3, 100, 30, M, ["shipbuilding"]),
     "fluid-barges":     (3, 150, 30, M, ["shipbuilding", "fluid-handling"]),
     "briquettes":       (3, 100, 30, M, ["shipbuilding"]),
+    "sulfur-processing": (4, 200, 30, M, ["mechanism", "fluid-handling"]),
+    "oil-extraction":   (4, 200, 30, M, ["electromechanics", "fluid-barges"]),
+    "oil-processing":   (4, 250, 30, M, ["oil-extraction"]),
+    "rubber":           (4, 200, 30, M, ["sulfur-processing"]),
+    "reactive":         (4, 250, 30, M, ["rubber"]),
+    "tungsten":         (4, 200, 30, M, ["mechanism"]),
+    "navigation":       (4, 250, 30, R, ["tungsten", "reactive"]),
+    "cracking":         (4, 250, 30, R, ["oil-processing", "reactive"]),
+    "fuel-oil":         (4, 200, 30, R, ["oil-processing", "reactive"]),
+    "screw-steamer":    (4, 300, 45, N, ["shipbuilding", "rubber", "navigation"]),
+    "ether":            (4, 250, 30, R, ["reactive", "rectification"]),
+    "tungsten-electrodes": (4, 250, 30, N, ["navigation", "third-awakening"]),
+    "fourth-awakening": (4, 400, 60, N, ["ether", "tungsten-electrodes"]),
 }
-PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism"}
+PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism", "reactive": "reactive", "navigation": "navigation"}
 
 # per-epoch tables: (item, per minute, label)
 TARGETS = {
     1: [("tablet", 6, "табличка 6/мин"), ("charge-1", 1 / 30, "заряд I за 30 мин")],
     2: [("flask", 4, "колба 4/мин"), ("bronze", 6, "бронза 6/мин"), ("charge-2", 1 / 45, "заряд II за 45 мин")],
     3: [("mechanism", 6, "механизм 6/мин"), ("steel", 3, "сталь 3/мин"), ("charge-3", 1 / 60, "заряд III за час")],
+    4: [("reactive", 4, "реактив 4/мин"), ("navigation", 2, "морская карта 2/мин"), ("charge-4", 1 / 60, "заряд IV за час")],
 }
 
 
@@ -250,7 +286,7 @@ def table(item, per_min):
     acc = {}
     rates(item, per_min, acc)
     credit(acc, "jug", ["spirit", "charge-1", "rectified", "conc-acid"])
-    credit(acc, "bottle", ["charge-2", "charge-3"])
+    credit(acc, "bottle", ["charge-2", "charge-3", "charge-4"])
     rows = []
     for (kind, name), v in acc.items():
         if v < 1e-6:
