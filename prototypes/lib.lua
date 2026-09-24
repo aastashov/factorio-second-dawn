@@ -65,11 +65,17 @@ end
 local barrel = "__base__/graphics/icons/fluid/barreling/"
 
 function lib.jug_icon(fill)
-  if not fill then -- A sprite imported by tools/import_art.py: graphics/entity/<dir>/<name>.png at 128 px per tile (dir is
--- the building's name, name one of its states, e.g. "sd-campfire-unlit").
-function lib.art_sprite(name, width, height, shift, dir)
-  return {filename = "__second-dawn__/graphics/entity/" .. (dir or name) .. "/" .. name .. ".png", width = width,
-    height = height, scale = 0.25, shift = shift}
+  if not fill then -- A sprite imported by tools/import_art.py: graphics/entity/<building>/<name>.png at 64 px per tile, drawn
+-- like vanilla's high-resolution sprites. `name` is the building or one of its layers ("sd-campfire-unlit",
+-- "sd-campfire-shadow"); pixel sizes come from prototypes/art-sizes.lua.
+local art_sizes = require("prototypes.art-sizes")
+function lib.art_sprite(building, layer, shift, extra)
+  local name = layer and (building .. "-" .. layer) or building
+  local size = art_sizes[name]
+  local sprite = {filename = "__second-dawn__/graphics/entity/" .. building .. "/" .. name .. ".png",
+    width = size[1], height = size[2], scale = 0.5, shift = shift}
+  for k, v in pairs(extra or {}) do sprite[k] = v end
+  return sprite
 end
 
 return lib.icon(barrel .. "barrel-empty.png", lib.colors.clay) end
@@ -109,11 +115,17 @@ function lib.ship_icon(name)
   return {{icon = "__second-dawn__/graphics/icons/" .. name .. ".png", icon_size = 64}}
 end
 
--- A sprite imported by tools/import_art.py: graphics/entity/<dir>/<name>.png at 128 px per tile (dir is
--- the building's name, name one of its states, e.g. "sd-campfire-unlit").
-function lib.art_sprite(name, width, height, shift, dir)
-  return {filename = "__second-dawn__/graphics/entity/" .. (dir or name) .. "/" .. name .. ".png", width = width,
-    height = height, scale = 0.25, shift = shift}
+-- A sprite imported by tools/import_art.py: graphics/entity/<building>/<name>.png at 64 px per tile, drawn
+-- like vanilla's high-resolution sprites. `name` is the building or one of its layers ("sd-campfire-unlit",
+-- "sd-campfire-shadow"); pixel sizes come from prototypes/art-sizes.lua.
+local art_sizes = require("prototypes.art-sizes")
+function lib.art_sprite(building, layer, shift, extra)
+  local name = layer and (building .. "-" .. layer) or building
+  local size = art_sizes[name]
+  local sprite = {filename = "__second-dawn__/graphics/entity/" .. building .. "/" .. name .. ".png",
+    width = size[1], height = size[2], scale = 0.5, shift = shift}
+  for k, v in pairs(extra or {}) do sprite[k] = v end
+  return sprite
 end
 
 return lib

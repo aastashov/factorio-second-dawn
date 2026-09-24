@@ -54,16 +54,21 @@ campfire.energy_source = lib.burner("wood", 3)
 campfire.energy_usage = "50kW"
 campfire.module_slots = 0
 lib.size(campfire, 1)
--- Drawn art (art/incoming/sd-campfire*.png). Idle: cold logs and ash. Working: the lit picture with
--- vanilla's animated fire on top, a flickering light and smoke (from the burner).
+-- Drawn art (art/incoming/sd-campfire*.png, tools/import_art.py). Idle: cold logs and ash on scorched
+-- earth. Working: the lit picture with vanilla's animated fire on top, a flickering light and smoke.
 local flame = table.deepcopy(data.raw.fire["fire-flame"].pictures[1])
-flame.scale = 0.28
-flame.shift = {0.02, -0.42}
+flame.scale = 0.22
+flame.shift = {0.02, -0.3}
 flame.draw_as_glow = true
+local at = {0.08, -0.05}
 campfire.graphics_set = {
-  animation = lib.art_sprite("sd-campfire-unlit", 173, 146, {0.08, -0.05}, "sd-campfire"),
+  animation = {layers = {
+    lib.art_sprite("sd-campfire", "ground", at),
+    lib.art_sprite("sd-campfire", "shadow", at, {draw_as_shadow = true}),
+    lib.art_sprite("sd-campfire", "unlit", at),
+  }},
   working_visualisations = {
-    {animation = lib.art_sprite("sd-campfire", 173, 146, {0.08, -0.05})},
+    {animation = lib.art_sprite("sd-campfire", nil, at)},
     {animation = flame},
     {effect = "flicker", light = {intensity = 0.8, size = 12, color = {1, 0.65, 0.35}}},
   },

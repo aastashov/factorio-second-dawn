@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.11.2
+Date: 2026-09-25
+  Graphics:
+    - The campfire fits the world better: a soft shadow, a patch of scorched earth under it, warmer and
+      softer colours like the rest of the game, a smaller flame.
+---------------------------------------------------------------------------------------------------
 Version: 0.11.1
 Date: 2026-09-25
   Graphics:
