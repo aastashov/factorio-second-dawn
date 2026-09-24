@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Imports a generated picture (art/incoming/<name>.png, object on a flat magenta background) into the mod:
+"""Imports a generated picture (art/incoming/<name>.png, object on a flat magenta background, or already
+transparent) into the mod:
 cuts the background out (soft edge without a magenta fringe; a darker magenta cast shadow becomes a soft
 black shadow),
 crops to the object and writes the entity sprite and the 64 px icon.
@@ -26,6 +27,16 @@ PX_PER_TILE = 64
 
 def key(path):
     w, h, px = png_io.read(path)
+    edge = [px[y][x][3] for y in (0, h - 1) for x in range(0, w, 7)] + [px[y][x][3] for x in (0, w - 1) for y in range(0, h, 7)]
+    if sum(1 for a in edge if a < 16) > 0.9 * len(edge):  # already transparent (ChatGPT): keep its alpha
+        box = [w, h, 0, 0]
+        for y in range(h):
+            for x in range(w):
+                if px[y][x][3] > 128:
+                    box = [min(box[0], x), min(box[1], y), max(box[2], x), max(box[3], y)]
+        return [[p if p[3] else (0, 0, 0, 0) for p in row] for row in px], box
+    if all(max(p[:3]) - min(p[:3]) < 12 and min(p[:3]) > 200 for p in (px[2][2], px[2][w - 3], px[h - 3][2], px[h - 3][w - 3])):
+        return flood(w, h, px)
     border = [px[y][x] for y in (0, h - 1) for x in range(0, w, 7)] + [px[y][x] for x in (0, w - 1) for y in range(0, h, 7)]
     bg = tuple(statistics.median(p[i] for p in border) for i in range(3))
     # Unmixing by chroma: `s` is how much of a pixel is the magenta background. The rest is the object.
@@ -48,6 +59,54 @@ def key(path):
                 box = [min(box[0], x), min(box[1], y), max(box[2], x), max(box[3], y)]
         out.append(row)
     return out, box
+
+
+def flood(w, h, px):
+    """A white or drawn checkerboard "transparent" background (ChatGPT): everything light and grey that is
+    connected to the border is background; the pixels next to it get half alpha for a soft edge."""
+    def is_bg(p):
+        return max(p[:3]) - min(p[:3]) < 14 and min(p[:3]) > 195
+    bg = [[False] * w for _ in range(h)]
+    stack = [(x, y) for x in range(w) for y in (0, h - 1)] + [(x, y) for y in range(h) for x in (0, w - 1)]
+    while stack:
+        x, y = stack.pop()
+        if 0 <= x < w and 0 <= y < h and not bg[y][x] and is_bg(px[y][x]):
+            bg[y][x] = True
+            stack += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+    out, box = [], [w, h, 0, 0]
+    for y in range(h):
+        row = []
+        for x in range(w):
+            if bg[y][x]:
+                row.append((0, 0, 0, 0))
+                continue
+            edge = any(0 <= x + dx < w and 0 <= y + dy < h and bg[y + dy][x + dx] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+            row.append(px[y][x][:3] + (128 if edge else 255,))
+            box = [min(box[0], x), min(box[1], y), max(box[2], x), max(box[3], y)]
+        out.append(row)
+    return out, box
+
+
+def fire_sheet(path, cols, rows, width_tiles):
+    """A generated grid of flame frames -> an animation sheet: every cell scaled so the flame is
+    `width_tiles` wide, the faint haze around the flames dropped. Returns frame size and the sheet."""
+    w, h, px = png_io.read(path)
+    cw, ch = w // cols, h // rows
+    cells = [[r[c * cw:(c + 1) * cw] for r in px[k * ch:(k + 1) * ch]] for k in range(rows) for c in range(cols)]
+    widths = []
+    for cell in cells:
+        xs = [x for row in cell for x, p in enumerate(row) if p[3] > 128]
+        widths.append(max(xs) - min(xs) if xs else cw)
+    flame_w = sorted(widths)[len(widths) // 2]
+    fw = round(cw * width_tiles * PX_PER_TILE / flame_w)
+    fh = round(ch * fw / cw)
+    frames = []
+    for cell in cells:
+        clean = [[(r, g, b, 0 if a <= 40 or (a < 230 and (max(r, g, b) - min(r, g, b)) < 0.35 * max(r, g, b, 1)) else a)
+                  for r, g, b, a in row] for row in cell]  # no pale haze: only the coloured flame
+        frames.append(resized(cw, ch, clean, fw, fh)[2])
+    sheet = [[p for f in frames[k * cols:(k + 1) * cols] for p in f[y]] for k in range(rows) for y in range(fh)]
+    return fw, fh, sheet
 
 
 def crop(out, box):
@@ -168,6 +227,8 @@ states = [sys.argv[i + 1] for i, a in enumerate(sys.argv) if a == "--state"]
 incoming = os.path.join(ROOT, "art", "incoming")
 main, box = key(os.path.join(incoming, name + ".png"))
 keyed = {"": main}
+fire = "fire" in states
+states = [st for st in states if st != "fire"]
 for st in states:
     keyed["-" + st], other = key(os.path.join(incoming, name + "-" + st + ".png"))
     box = [min(box[0], other[0]), min(box[1], other[1]), max(box[2], other[2]), max(box[3], other[3])]
@@ -200,4 +261,10 @@ if "--ground" in sys.argv:
     png_io.write(os.path.join(out_dir, name + "-ground.png"), gw, gh, ground(gw, gh, gw * cx))
     sizes[name + "-ground"] = (gw, gh)
     print(f"{name}-ground: {gw}x{gh}")
+if fire:  # art/incoming/<name>-fire.png: a 4x4 grid of flame frames
+    flame_tiles = float(sys.argv[sys.argv.index("--fire") + 1]) if "--fire" in sys.argv else 0.5
+    fw, fh, sheet = fire_sheet(os.path.join(incoming, name + "-fire.png"), 4, 4, flame_tiles)
+    png_io.write(os.path.join(out_dir, name + "-fire.png"), fw * 4, fh * 4, sheet)
+    sizes[name + "-fire"] = (fw, fh)
+    print(f"{name}-fire: 16 frames of {fw}x{fh}")
 record_sizes(sizes)

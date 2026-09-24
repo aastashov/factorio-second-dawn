@@ -30,8 +30,24 @@ m = re.search(r'\["%s"\] = \{shift = \{([-\d.]+), ([-\d.]+)\}' % re.escape(name)
 if m:
     shift = (float(m.group(1)) * T, float(m.group(2)) * T)
 
+fire = load(os.path.join(d, f"{name}-fire.png"))
+fire_shift = (0, -0.5 * T)
+m = re.search(r'\["%s"\] = \{.*?fire_shift = \{([-\d.]+), ([-\d.]+)\}' % re.escape(name), open(os.path.join(ROOT, "prototypes", "art.lua")).read(), re.S)
+if m:
+    fire_shift = (float(m.group(1)) * T, float(m.group(2)) * T)
+
+
+def fire_frame(k):
+    fw, fh = len(fire[0]) // 4, len(fire) // 4
+    x0, y0 = (k % 4) * fw, (k // 4) * fh
+    return [r[x0:x0 + fw] for r in fire[y0:y0 + fh]]
+
+
 panels = [("lab", None)] + ([("idle", idle)] if idle else []) + [("working", main)]
-P = 5 * T
+if fire:
+    panels = [p for p in panels if p[0] != "lab"] + [("working", main, 6), ("working", main, 12)]
+    panels[len(panels) - 3] = ("working", main, 0)
+P = (5 if not fire else 2) * T
 W, H = P * len(panels), P
 img = [[grass[y % T][x % T][:3] for x in range(W)] for y in range(H)]
 
@@ -51,7 +67,7 @@ def paste(px, cx, cy):
                 img[Y][X] = tuple(int(c * A + oc * (1 - A)) for c, oc in zip((r, g, b), o))
 
 
-for k, (kind, px) in enumerate(panels):
+for k, (kind, px, *frame) in enumerate(panels):
     cx, cy = k * P + P / 2, P / 2
     if kind == "lab":
         paste(lab, cx, cy)
@@ -61,6 +77,8 @@ for k, (kind, px) in enumerate(panels):
         paste(idle or main, cx + shift[0], cy + shift[1])
         if kind == "working" and idle:
             paste(main, cx + shift[0], cy + shift[1])
+        if kind == "working" and fire:
+            paste(fire_frame(frame[0]), cx + fire_shift[0], cy + fire_shift[1])
     for y in range(H):
         img[y][k * P] = (25, 25, 25)
 os.makedirs(os.path.join(ROOT, "art", "preview"), exist_ok=True)

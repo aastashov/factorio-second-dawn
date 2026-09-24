@@ -1,14 +1,15 @@
 -- Buildings drawn from imported art (docs/PROMPTS.md, tools/art.sh): runs in data-final-fixes and replaces
 -- the recoloured vanilla graphics of every building that has pictures in prototypes/art-sizes.lua.
 -- Layers: <name>-ground (optional), <name>-shadow, the idle state (<name>-idle or -unlit, else <name>);
--- while working, <name> itself is drawn on top, plus the extras below.
+-- while working, <name> itself is drawn on top, then the flames (<name>-fire, 16 frames, or vanilla's),
+-- plus the extras below.
 local lib = require("prototypes.lib")
 local sizes = require("prototypes.art-sizes")
 
 -- Per building: where the picture sits on the tile grid, and effects while working.
 local EXTRAS = {
-  ["sd-campfire"] = {shift = {0.08, -0.05}, light = {intensity = 0.8, size = 12, color = {1, 0.65, 0.35}},
-    flame = {scale = 0.22, shift = {0.02, -0.3}}},
+  ["sd-campfire"] = {shift = {0, -0.05}, light = {intensity = 0.8, size = 12, color = {1, 0.65, 0.35}},
+    flame = {scale = 0.22, shift = {0.02, -0.3}}, fire_shift = {0, -0.35}},
   ["sd-scholar-desk"] = {shift = {0, -0.1}, light = {intensity = 0.5, size = 6, color = {1, 0.8, 0.5}}},
 }
 
@@ -31,7 +32,12 @@ for name in pairs(sizes) do
     base[#base + 1] = lib.art_sprite(name, idle_state, at)
     local working = {}
     if idle_state then working[#working + 1] = lib.art_sprite(name, nil, at) end
-    if x.flame then
+    if sizes[name .. "-fire"] then -- drawn flames: 16 frames, 4 per line
+      local size = sizes[name .. "-fire"]
+      working[#working + 1] = {filename = "__second-dawn__/graphics/entity/" .. name .. "/" .. name .. "-fire.png",
+        width = size[1], height = size[2], frame_count = 16, line_length = 4, animation_speed = 0.4, scale = 0.5,
+        shift = x.fire_shift or {0, -0.5}, draw_as_glow = true}
+    elseif x.flame then -- vanilla's flames
       local flame = table.deepcopy(data.raw.fire["fire-flame"].pictures[1])
       flame.scale, flame.shift, flame.draw_as_glow = x.flame.scale, x.flame.shift, true
       working[#working + 1] = flame

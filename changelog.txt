@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.11.4
+Date: 2026-09-25
+  Graphics:
+    - Campfire redrawn: cold ashes when idle, glowing logs and its own animated flames when burning.
+---------------------------------------------------------------------------------------------------
 Version: 0.11.3
 Date: 2026-09-25
   Graphics:
