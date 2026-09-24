@@ -26,7 +26,7 @@ kill -INT "$server"; wait "$server" || true
 exec 3>&-
 grep -h "SD-TEST" "$dir/data/factorio-current.log" | sed "s/.*SD-TEST /  /" || true
 echo "  heavy mode ran to $(grep -o 'Heavy mode - tick [0-9]*' "$dir/server.log" | tail -1)"
-problems=$(grep -vE "Heavy mode - tick [0-9]+ finished|\.zip" "$dir/server.log" | grep -iE "heavy|desync|Error while running" || true)
+problems=$(grep -vE "Heavy mode - tick [0-9]+ finished|\.zip" "$dir/server.log" | grep -E "Heavy mode|[Dd]esync|Error while running" || true)
 [ -n "$problems" ] && echo "$problems" | head -20
 if ls -d "$dir/data/desync-report"* >/dev/null 2>&1 || [ -n "$problems" ]; then echo "FAIL: desync"; exit 1; fi
 echo "no desync"

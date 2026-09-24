@@ -102,6 +102,36 @@ local function tree_check()
   end
   check("tree: every technology researchable", #stuck == 0, #stuck > 0 and ("stuck: " .. table.concat(stuck, ", ")) or ("order: " .. table.concat(order, " → ")))
   check("tree: every unlocked recipe makeable", #problems == 0, table.concat(problems, "; "))
+  -- Strict: each technology's science packs must be makeable with only what its prerequisites (and
+  -- their prerequisites) unlock. Researching in any order would hide a missing prerequisite.
+  local function prereq_closure(name, acc)
+    acc = acc or {}
+    for pre in pairs(prototypes.technology[name].prerequisites) do
+      if not acc[pre] then acc[pre] = true; prereq_closure(pre, acc) end
+    end
+    return acc
+  end
+  local strict = {}
+  for name, t in pairs(prototypes.technology) do
+    if t.enabled then
+      local saved_have, saved_enabled = have, enabled
+      have, enabled = {}, {}
+      for _, n in pairs(RAW) do have[n] = true end
+      mine_with(prototypes.entity.character.resource_categories)
+      for rname, r in pairs(prototypes.recipe) do if r.enabled then enabled[rname] = true end end
+      for pre in pairs(prereq_closure(name)) do
+        for _, eff in pairs(prototypes.technology[pre].effects) do
+          if eff.type == "unlock-recipe" then enabled[eff.recipe] = true end
+        end
+      end
+      saturate()
+      for _, ing in pairs(t.research_unit_ingredients) do
+        if not have[ing.name] then strict[#strict + 1] = name .. " needs " .. ing.name end
+      end
+      have, enabled = saved_have, saved_enabled
+    end
+  end
+  check("tree: prerequisites provide every science pack", #strict == 0, table.concat(strict, "; "))
   check("tree: revival charge I reachable", have["sd-revival-charge-1"] == true)
   check("tree: revival charge II reachable", have["sd-revival-charge-2"] == true)
   check("tree: revival charge III reachable", have["sd-revival-charge-3"] == true)

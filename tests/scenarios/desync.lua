@@ -76,5 +76,21 @@ script.on_event(defines.events.on_tick, function(e)
     storage.t.kiln = kiln
   elseif t == 3500 then
     L("cold kiln with a burning brazier disabled: " .. tostring(storage.t.kiln.disabled_by_script))
+    -- a ship sailing to a pier
+    local s, Y = game.surfaces.nauvis, -1100
+    s.request_to_generate_chunks({0, Y}, 2); s.force_generate_chunk_requests()
+    local tiles = {}
+    for x = -60, 60 do for y = -3, 1 do tiles[#tiles + 1] = {name = "deepwater", position = {x, Y + y}} end end
+    s.set_tiles(tiles)
+    for x = -51, 51, 2 do s.create_entity{name = "sd-waterway-straight-rail", position = {x, Y + 1}, direction = defines.direction.east, force = "player"} end
+    local pier = s.create_entity{name = "sd-pier", position = {45, Y + 3}, direction = defines.direction.east, force = "player"}
+    pier.backer_name = "Pier"
+    local tug = s.create_entity{name = "sd-tug", position = {-40, Y + 1}, direction = defines.direction.east, force = "player"}
+    tug.get_fuel_inventory().insert{name = "coal", count = 10}
+    tug.train.schedule = {current = 1, records = {{station = "Pier", wait_conditions = {{type = "time", ticks = 60}}}}}
+    tug.train.manual_mode = false
+    storage.t.tug = tug
+  elseif t == 3900 then
+    L("ship at the pier: " .. tostring(storage.t.tug.train.station and storage.t.tug.train.station.backer_name))
   end
 end)

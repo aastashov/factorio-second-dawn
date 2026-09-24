@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.8.0
+Date: 2026-09-24
+  Major Features:
+    - Ships: waterways are laid like rails, but on water only. A steam tug pulls barges and tank barges;
+      piers are stops, buoys are signals. Schedules, signals and inserters work as with trains. You can
+      ride the tug to the far continents (about 45 s across the ocean).
+    - Pitch from dry distillation of wood (charcoal left over) caulks every hull.
+    - Faster ships: fuel briquettes (+15% top speed, +20% acceleration), ship brakes I and II.
+  Info:
+    - Ships look like recoloured trains for now; their own graphics come later.
+---------------------------------------------------------------------------------------------------
 Version: 0.7.0
 Date: 2026-09-24
   Major Features:

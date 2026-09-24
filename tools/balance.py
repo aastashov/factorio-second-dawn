@@ -93,6 +93,14 @@ RECIPES = {
     "cooler":        (3, "crafting", 2, {"pipe": 10, "gear": 5, "cable": 10, "iron": 10}, {"cooler": 1}, "cooling"),
     "landfill":      (3, "crafting", 1, {"stone": 20}, {"landfill": 1}, "land-reclamation"),
     "deep-landfill": (3, "crafting", 1, {"stone": 150, "steel": 5, "mortar": 10}, {"deep-landfill": 1}, "deep-landfill"),
+    "pitch":         (3, "distillation", 15, {"wood": 10}, {"pitch": 2, "charcoal": 3}, "pitch"),
+    "waterway":      (3, "crafting", 1, {"wood": 2, "rope": 1, "iron": 1}, {"waterway": 2}, "shipbuilding"),
+    "tug":           (3, "crafting", 10, {"steel": 20, "gear": 20, "pipe": 10, "wood": 50, "pitch": 20}, {"tug": 1}, "shipbuilding"),
+    "barge":         (3, "crafting", 5, {"wood": 60, "steel": 10, "pitch": 20}, {"barge": 1}, "shipbuilding"),
+    "pier":          (3, "crafting", 2, {"wood": 20, "steel": 5, "cable": 5}, {"pier": 1}, "shipbuilding"),
+    "buoy":          (3, "crafting", 1, {"wood": 5, "cable": 2, "glass": 1}, {"buoy": 1}, "buoys"),
+    "fluid-barge":   (3, "crafting", 5, {"steel": 30, "pipe": 20, "pitch": 20}, {"fluid-barge": 1}, "fluid-barges"),
+    "briquettes":    (3, "crafting", 2, {"coal": 5, "pitch": 1}, {"briquettes": 4}, "briquettes"),
     "feed":          (3, "grinding", 4, {"fruit": 4, "fiber": 4}, {"feed": 4}, "domestication"),
     "net":           (3, "crafting", 2, {"rope": 10, "leather": 2, "bronze": 2}, {"net": 1}, "domestication"),
     "electrode":     (3, "crafting", 3, {"copper": 2, "glass": 1}, {"electrode": 1}, "third-awakening"),
@@ -155,6 +163,11 @@ TECHS = {
     "cooling":          (3, 100, 30, F, ["fluid-handling", "electricity"]),
     "land-reclamation": (3, 100, 30, F, ["fluid-handling"]),
     "deep-landfill":    (3, 150, 30, M, ["mechanism", "land-reclamation"]),
+    "pitch":            (3, 75, 20, F, ["distillation", "glass-flask"]),
+    "shipbuilding":     (3, 200, 40, M, ["mechanism", "steam-power", "pitch"]),
+    "buoys":            (3, 100, 30, M, ["shipbuilding"]),
+    "fluid-barges":     (3, 150, 30, M, ["shipbuilding", "fluid-handling"]),
+    "briquettes":       (3, 100, 30, M, ["shipbuilding"]),
 }
 PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism"}
 
