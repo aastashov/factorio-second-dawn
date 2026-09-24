@@ -8,8 +8,9 @@ local function check(name, ok, detail)
   L(string.format("%-4s %s %s", ok and "ok" or "FAIL", name, detail or ""))
 end
 
--- Things the world gives without recipes: mined resources and trees, rocks.
-local RAW = {"wood", "stone", "sd-clay", "sd-shells", "sd-saltpeter", "sd-fruit", "sd-fiber", "coal"}
+-- Things the world gives without machines: trees and rocks. Resources come from whatever can mine them:
+-- the character from the start, drills once they can be built.
+local RAW = {"wood", "sd-fruit", "sd-fiber", "stone", "coal"}
 
 local function tree_check()
   local have, enabled, researched = {}, {}, {}
@@ -23,6 +24,14 @@ local function tree_check()
     end
   end
   local problems = {}
+  local function mine_with(categories)
+    for _, r in pairs(prototypes.get_entity_filtered{{filter = "type", type = "resource"}}) do
+      if categories[r.resource_category] and r.mineable_properties.products then
+        for _, p in pairs(r.mineable_properties.products) do have[p.name] = true end
+      end
+    end
+  end
+  mine_with(prototypes.entity.character.resource_categories)
   local function can_craft(recipe)
     if character_categories[recipe.category] then return true end
     for _, m in pairs(machines[recipe.category] or {}) do
@@ -41,7 +50,12 @@ local function tree_check()
         for _, ing in pairs(r.ingredients) do ok = ok and have[ing.name] end
         if ok then
           for _, p in pairs(r.products) do
-            if not have[p.name] then have[p.name] = true; changed = true end
+            if not have[p.name] then
+              have[p.name] = true
+              changed = true
+              local e = prototypes.entity[p.name]
+              if e and e.type == "mining-drill" then mine_with(e.resource_categories) end
+            end
           end
         end
       end
@@ -87,7 +101,8 @@ local function tree_check()
   end
   check("tree: every technology researchable", #stuck == 0, #stuck > 0 and ("stuck: " .. table.concat(stuck, ", ")) or ("order: " .. table.concat(order, " → ")))
   check("tree: every unlocked recipe makeable", #problems == 0, table.concat(problems, "; "))
-  check("tree: revival charge reachable", have["sd-revival-charge-1"] == true)
+  check("tree: revival charge I reachable", have["sd-revival-charge-1"] == true)
+  check("tree: revival charge II reachable", have["sd-revival-charge-2"] == true)
 end
 
 script.on_event(defines.events.on_tick, function(e)
@@ -108,10 +123,13 @@ script.on_event(defines.events.on_tick, function(e)
   local spawners = s.count_entities_filtered{type = {"unit-spawner", "turret"}, force = "enemy"}
   check("no biters", spawners == 0, spawners .. " enemy structures")
 
-  for _, name in pairs{"sd-clay", "sd-shells", "sd-saltpeter", "stone"} do
+  for _, name in pairs{"sd-clay", "sd-shells", "sd-saltpeter", "stone", "copper-ore", "coal"} do
     local n = s.count_entities_filtered{name = name, position = {0, 0}, radius = 150}
     check("starting area has " .. name, n > 0, n .. " tiles")
   end
+  local tin_near = s.count_entities_filtered{name = "sd-tin-ore", position = {0, 0}, radius = 140}
+  local tin_far = s.count_entities_filtered{name = "sd-tin-ore", position = {0, 0}, radius = 260}
+  check("tin: none at the camp, some within 250", tin_near == 0 and tin_far > 0, tin_near .. " near, " .. tin_far .. " within 260")
   local fruit = s.count_entities_filtered{name = {"tree-02-red", "tree-08-red", "tree-09-red"}, position = {0, 0}, radius = 120}
   check("fruit trees near spawn", fruit >= 10, fruit .. " trees")
 

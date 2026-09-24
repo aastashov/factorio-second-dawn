@@ -12,10 +12,16 @@ local RUIN_CHANCE = 0.1         -- per generated chunk
 local START_RUINS = {60, 150}   -- guaranteed ruins near spawn, distance range
 local CACHE_DISTANCE = {100, 300}
 
--- Loot by epoch; a cache holds 3 of these, a ruin chest 1.
+-- Loot by epoch; a cache holds 3 of these, a ruin chest 1. Caches use the reading force's epoch.
 local LOOT = {
   {{"sd-jug", 10}, {"sd-brick", 20}, {"sd-rope", 20}, {"sd-saltpeter", 20}, {"sd-fruit", 20}, {"sd-charcoal", 30}, {"sd-mortar", 10}},
+  {{"copper-plate", 30}, {"sd-tin", 15}, {"sd-bronze", 20}, {"sd-glass", 20}, {"sd-bottle", 10}, {"coal", 50}, {"sd-potash", 10}},
 }
+
+local function epoch_of(force)
+  if force and force.technologies["sd-smelting"].researched then return 2 end
+  return 1
+end
 
 function notes.init()
   if storage.notes then return end
@@ -71,8 +77,8 @@ local function pick_note()
   return free[rand(1, #free)]
 end
 
-local function fill(chest, count)
-  local pool = LOOT[1]
+local function fill(chest, count, epoch)
+  local pool = LOOT[epoch or 1]
   for _ = 1, count do
     local it = pool[rand(1, #pool)]
     chest.insert{name = it[1], count = it[2]}
@@ -121,7 +127,7 @@ local function add_cache(force, surface, near)
   local p = land_spot(surface, near, CACHE_DISTANCE[1], CACHE_DISTANCE[2], 1)
   if not p then return nil end
   local chest = surface.create_entity{name = "wooden-chest", position = p, force = "neutral"}
-  fill(chest, 3)
+  fill(chest, 3, epoch_of(force))
   force.add_chart_tag(surface, {position = p, icon = {type = "item", name = "wooden-chest"}})
   storage.notes.caches = storage.notes.caches + 1
   return p

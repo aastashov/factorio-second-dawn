@@ -2,7 +2,8 @@
 -- epoch 1 resource and fruit trees (the garden needs fruit to start, so missing fruit would be a dead end).
 local start = {}
 
-local RESOURCES = {"sd-clay", "sd-shells", "sd-saltpeter", "stone"}
+local RESOURCES = {"sd-clay", "sd-shells", "sd-saltpeter", "stone", "copper-ore", "coal"}
+local TIN = {"sd-tin-ore", 150, 250} -- the first expedition: tin is never in the starting area
 local FRUIT_TREES = {"tree-02-red", "tree-08-red", "tree-09-red"}
 local RADIUS = 150
 
@@ -30,8 +31,8 @@ local function land_spot(surface, rng, name, min_d, max_d, half)
   end
 end
 
-local function place_patch(surface, rng, name)
-  local cx, cy = land_spot(surface, rng, name, 40, 110, 3)
+local function place_patch(surface, rng, name, min_d, max_d)
+  local cx, cy = land_spot(surface, rng, name, min_d or 40, max_d or 110, 3)
   if not cx then return false end
   for x = -3, 3 do
     for y = -3, 3 do
@@ -55,7 +56,7 @@ end
 
 -- Returns what had to be added, for tests and the log.
 function start.ensure_starting_area(surface)
-  surface.request_to_generate_chunks({0, 0}, math.ceil(RADIUS / 32))
+  surface.request_to_generate_chunks({0, 0}, math.ceil(TIN[3] / 32))
   surface.force_generate_chunk_requests()
   local rng = game.create_random_generator(surface.map_gen_settings.seed)
   local added = {}
@@ -63,6 +64,9 @@ function start.ensure_starting_area(surface)
     if surface.count_entities_filtered{name = name, position = {0, 0}, radius = RADIUS, limit = 1} == 0 then
       if place_patch(surface, rng, name) then added[#added + 1] = name end
     end
+  end
+  if surface.count_entities_filtered{name = TIN[1], position = {0, 0}, radius = TIN[3], limit = 1} == 0 then
+    if place_patch(surface, rng, TIN[1], TIN[2], TIN[3]) then added[#added + 1] = TIN[1] end
   end
   if surface.count_entities_filtered{name = FRUIT_TREES, position = {0, 0}, radius = 120} < 10 then
     plant_trees(surface, rng)

@@ -143,7 +143,7 @@ local steps = {
     local st = state()
     check("chamber's next charge wakes the force", forces_state() == nil and remote.call("second-dawn", "charge_tier", force) == nil,
       "tank " .. tank())
-    check("release 0.1 stops after wave 3", st.waves.finished and st.waves.next_tick == nil, serpent.line(st.waves))
+    check("wave 4 scheduled after wave 3", st.waves.count == 3 and not st.waves.finished and st.waves.next_tick ~= nil, serpent.line(st.waves))
     L("failures: " .. failures)
   end,
 }

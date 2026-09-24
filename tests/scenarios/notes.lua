@@ -44,7 +44,9 @@ script.on_event(defines.events.on_tick, function(e)
   for _ in pairs(n.placed) do placed = placed + 1 end
   check("ruins spread over new chunks", n.ruins >= 20, n.ruins .. " ruins")
   check("each unique note placed once", unique == placed, unique .. " unique note entities, " .. placed .. " placed ids")
-  check("caches after unique notes run out", placed < 11 or caches > 0, caches .. " cache notes")
+  local total = 0
+  for _, k in pairs(KIND) do if k.kind ~= "journal" and k.kind ~= "cache" then total = total + 1 end end
+  check("caches after unique notes run out", placed < total or caches > 0, caches .. " cache notes, " .. total .. " unique notes")
 
   local unit, id = find("recipe")
   local recipe = KIND[id].recipe

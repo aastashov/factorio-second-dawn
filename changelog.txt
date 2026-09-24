@@ -1,4 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2026-09-24
+  Major Features:
+    - Epoch 2 "Craft": copper, tin, bronze, sand, ash and potash, glass and bottles. Pick digger, millstone,
+      bloomery, glassworks, bronze drill, bronze arm, roller chutes (15/s) with underground chutes and
+      splitters. Second science: glass flask.
+    - Revival charge II from rectified spirit and strong nitric acid in glass bottles. Waves 4-6 need it.
+    - Tin never occurs at the camp; one deposit is guaranteed 150-250 tiles away.
+  Features:
+    - Coal burns in kilns, alembics and the chamber like charcoal.
+    - Switching the chamber to a stronger charge pours out the weaker one.
+    - The wave line shows the charge tier in the chamber and the tier the next wave needs.
+    - Notes: an observation about tin and three alternative recipes (low-tin bronze, glass with ash,
+      tin reduced with coal). Caches hold epoch 2 supplies once smelting is researched.
+  Changes:
+    - Games that ended after wave 3 continue with wave 4. Existing saves get a tin deposit.
+---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2026-09-24
   Major Features:

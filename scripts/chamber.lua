@@ -32,11 +32,18 @@ function chamber.consume(force)
   e.disabled_by_script = false
 end
 
--- Keeps every chamber off while it holds a charge.
+-- Keeps every chamber off while it holds a charge. A charge of another tier than the chamber's recipe
+-- makes (the team switched to a stronger charge) is poured out, so the new recipe can run.
 function chamber.update()
   for _, e in pairs(storage.chambers) do
     if e.valid then
       local fb = e.fluidbox[1]
+      local recipe = e.get_recipe()
+      local product = recipe and recipe.prototype.main_product
+      if fb and product and fb.name ~= product.name then
+        e.fluidbox[1] = nil
+        fb = nil
+      end
       e.disabled_by_script = fb ~= nil and fb.amount >= 1
     end
   end

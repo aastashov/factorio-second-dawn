@@ -39,5 +39,12 @@ script.on_event(defines.events.on_tick, function(e)
     end
     local st = remote.call("second-dawn", "notes")
     L("notes: ruins " .. st.ruins .. ", caches " .. st.caches .. ", diary " .. #st.read[game.forces.player.index])
+    charge()
+  elseif t == 1100 then
+    -- switching the chamber to charge II pours the tier I charge out
+    game.forces.player.recipes["sd-revival-charge-2"].enabled = true
+    storage.t.chamber.set_recipe("sd-revival-charge-2")
+  elseif t == 1200 then
+    L("tank after switching to charge II: " .. tostring(storage.t.chamber.fluidbox[1]))
   end
 end)

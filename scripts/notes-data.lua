@@ -13,5 +13,9 @@ return {
   {id = "lime-acid", kind = "recipe", recipe = "sd-alt-lime-acid"},
   {id = "compost", kind = "recipe", recipe = "sd-alt-compost"},
   {id = "double-firing", kind = "recipe", recipe = "sd-alt-double-firing"},
+  {id = "tin", kind = "hint", epoch = 2},
+  {id = "low-tin-bronze", kind = "recipe", recipe = "sd-alt-low-tin-bronze", epoch = 2},
+  {id = "ash-glass", kind = "recipe", recipe = "sd-alt-ash-glass", epoch = 2},
+  {id = "coal-tin", kind = "recipe", recipe = "sd-alt-coal-tin", epoch = 2},
   {id = "cache", kind = "cache"},
 }

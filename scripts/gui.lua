@@ -1,5 +1,6 @@
 -- A small line at the top of the screen: time to the next wave, or what a petrified team waits for.
 local chamber = require("scripts.chamber")
+local waves = require("scripts.waves")
 
 local gui = {}
 
@@ -17,8 +18,17 @@ local function text(player, tick)
   local w = storage.waves
   if w.finished then return nil end
   if not w.next_tick then return nil end
-  local charged = chamber.charge_tier(player.force) ~= nil
-  return {"sd-gui.next-wave", w.count + 1, hms(w.next_tick - tick), {charged and "sd-gui.charged" or "sd-gui.not-charged"}}
+  local tier = chamber.charge_tier(player.force)
+  local required = waves.required_tier(w.count + 1)
+  local charge
+  if not tier then
+    charge = {"sd-gui.not-charged", required}
+  elseif tier < required then
+    charge = {"sd-gui.too-weak", tier, required}
+  else
+    charge = {"sd-gui.charged", tier}
+  end
+  return {"sd-gui.next-wave", w.count + 1, hms(w.next_tick - tick), charge}
 end
 
 function gui.update(tick)

@@ -26,8 +26,11 @@ script.on_init(function()
 end)
 
 script.on_configuration_changed(function()
-  -- Saves from before 0.2 get their starting ruins too.
+  -- Saves from earlier versions get what a new game would have: starting ruins (0.2), tin (0.3),
+  -- the waves of the new version.
   if init() then notes.place_start_ruins(game.surfaces.nauvis) end
+  start.ensure_starting_area(game.surfaces.nauvis)
+  waves.on_version_changed()
 end)
 
 script.on_event(defines.events.on_chunk_generated, notes.on_chunk_generated)
@@ -101,6 +104,11 @@ remote.add_interface("second-dawn", {
   wave_in = function(ticks)
     storage.waves.next_tick = game.tick + ticks
     storage.waves.warned = {}
+  end,
+  set_wave_count = function(n)
+    storage.waves.count = n
+    storage.waves.finished = false
+    waves.schedule()
   end,
   charge_tier = function(force) return chamber.charge_tier(game.forces[force]) end,
   chamber = function(force) return chamber.get(game.forces[force]) end,
