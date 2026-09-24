@@ -15,5 +15,6 @@ Date: 2026-09-24
     - Every epoch 1 resource and fruit trees are guaranteed near the spawn.
     - Settings: wave difficulty (relaxed / normal / hard / off), new players start as statues.
     - This version ends after wave 3.
+    - Incompatible with Space Age and Space Exploration (both replace the same tech tree).
   Locale:
     - English and Russian.

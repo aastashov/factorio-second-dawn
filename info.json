@@ -7,6 +7,7 @@
   "description": "Humanity turned to stone. Wake up, rebuild science from clay and fire, and automate your own revival before the next petrification wave. Overhaul for base 2.0 (no Space Age).",
   "dependencies": [
     "base >= 2.0.77",
-    "! space-age"
+    "! space-age",
+    "! space-exploration"
   ]
 }
