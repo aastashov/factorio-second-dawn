@@ -39,6 +39,9 @@ for name, recipe in pairs(data.raw.recipe) do
   end
 end
 
+-- Buildings with drawn art (tools/art.sh).
+require("prototypes.art")
+
 -- Drawn icons (tools/render_icons.py) for every prototype of that name except technologies, which need
 -- large pictures. Waterway rails share the waterway's icon.
 local drawn = require("prototypes.generated-icons")

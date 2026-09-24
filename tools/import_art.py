@@ -135,6 +135,8 @@ def record_sizes(sizes):
     if os.path.exists(path):
         for m in re.finditer(r'\["([\w-]+)"\] = \{(\d+), (\d+)\}', open(path).read()):
             known[m.group(1)] = (int(m.group(2)), int(m.group(3)))
+    building = min(sizes, key=len)  # this import replaces all layers of its building
+    known = {k: v for k, v in known.items() if k != building and not k.startswith(building + "-")}
     known.update(sizes)
     with open(path, "w") as f:
         f.write("-- Written by tools/import_art.py: pixel sizes of the sprites in graphics/entity/<building>/.\nreturn {\n")
@@ -170,6 +172,8 @@ for st in states:
     keyed["-" + st], other = key(os.path.join(incoming, name + "-" + st + ".png"))
     box = [min(box[0], other[0]), min(box[1], other[1]), max(box[2], other[2]), max(box[3], other[3])]
 os.makedirs(os.path.join(ROOT, "graphics", "entity", name), exist_ok=True)
+for old in os.listdir(os.path.join(ROOT, "graphics", "entity", name)):
+    os.remove(os.path.join(ROOT, "graphics", "entity", name, old))
 out_dir = os.path.join(ROOT, "graphics", "entity", name)
 silhouette, sizes = None, {}
 for suffix, img in keyed.items():

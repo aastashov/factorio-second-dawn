@@ -1,0 +1,4 @@
+# Imported art: <name> <width in tiles> [import_art.py options]. tools/art.sh keeps this list and
+# re-imports everything from it when run without arguments.
+sd-campfire 1.35 --ground 0.46
+sd-scholar-desk 3.2

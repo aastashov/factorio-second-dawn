@@ -54,25 +54,7 @@ campfire.energy_source = lib.burner("wood", 3)
 campfire.energy_usage = "50kW"
 campfire.module_slots = 0
 lib.size(campfire, 1)
--- Drawn art (art/incoming/sd-campfire*.png, tools/import_art.py). Idle: cold logs and ash on scorched
--- earth. Working: the lit picture with vanilla's animated fire on top, a flickering light and smoke.
-local flame = table.deepcopy(data.raw.fire["fire-flame"].pictures[1])
-flame.scale = 0.22
-flame.shift = {0.02, -0.3}
-flame.draw_as_glow = true
-local at = {0.08, -0.05}
-campfire.graphics_set = {
-  animation = {layers = {
-    lib.art_sprite("sd-campfire", "ground", at),
-    lib.art_sprite("sd-campfire", "shadow", at, {draw_as_shadow = true}),
-    lib.art_sprite("sd-campfire", "unlit", at),
-  }},
-  working_visualisations = {
-    {animation = lib.art_sprite("sd-campfire", nil, at)},
-    {animation = flame},
-    {effect = "flicker", light = {intensity = 0.8, size = 12, color = {1, 0.65, 0.35}}},
-  },
-}
+-- Graphics: drawn art, set in prototypes/art.lua.
 
 local kiln = crafter("furnace", "stone-furnace", "kiln", 2, 1, c.clay, "sd-firing", 1, lib.burner("charcoal", 3), "90kW")
 kiln.crafting_categories = {"sd-firing", "sd-campfire"}   -- everything the campfire does, and more
@@ -87,7 +69,7 @@ desk.energy_usage = "60kW"
 desk.inputs = {"sd-clay-tablet"}
 desk.module_slots = 0
 desk.researching_speed = 1
-lib.recolor_fields(desk, {"on_animation", "off_animation"}, c.wood)
+lib.recolor_fields(desk, {"on_animation", "off_animation"}, c.wood) -- replaced by drawn art when there is one
 
 local digger = copy("mining-drill", "burner-mining-drill", "digger")
 digger.resource_categories = {"basic-solid"}

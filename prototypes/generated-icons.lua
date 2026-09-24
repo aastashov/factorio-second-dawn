@@ -61,6 +61,7 @@ return {
   "sd-rubber",
   "sd-saltpeter",
   "sd-sand",
+  "sd-scholar-desk",
   "sd-shells",
   "sd-spacesuit",
   "sd-spirit-jug",
