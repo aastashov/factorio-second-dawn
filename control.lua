@@ -6,6 +6,7 @@ local gui = require("scripts.gui")
 local notes = require("scripts.notes")
 local diary = require("scripts.diary")
 local wildlife = require("scripts.wildlife")
+local capture = require("scripts.capture")
 
 local INTRO_STATUE = 4 * 60      -- the first players wake from stone a few seconds into the game
 local NEWCOMER_STATUE = 3 * 60 * 60
@@ -48,7 +49,7 @@ script.on_event(defines.events.on_gui_selection_state_changed, diary.on_selectio
 script.on_event(defines.events.on_gui_click, diary.on_click)
 script.on_event(defines.events.on_gui_closed, diary.on_closed)
 
-local chamber_filter = {{filter = "name", name = chamber.NAME}}
+local chamber_filter = {{filter = "name", name = chamber.NAMES[1]}, {filter = "name", name = chamber.NAMES[2]}}
 local function on_built(e)
   local player = e.player_index and game.get_player(e.player_index)
   chamber.on_built(e.entity, player)
@@ -95,6 +96,8 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(e)
   if e.setting == "sd-wildlife" then wildlife.apply_mode() end
 end)
 
+script.on_event(defines.events.on_script_trigger_effect, capture.on_trigger)
+
 script.on_event(defines.events.on_force_created, function() wildlife.apply_mode() end)
 
 script.on_nth_tick(30, function(e)
@@ -127,6 +130,10 @@ remote.add_interface("second-dawn", {
   chamber = function(force) return chamber.get(game.forces[force]) end,
   starting_area = function() return start.ensure_starting_area(game.surfaces.nauvis) end,
   wildlife = function() return storage.wildlife end,
+  capture = function(position, force)
+    local farm, reason = capture.at(game.surfaces.nauvis, position, game.forces[force])
+    return farm and farm.name or reason
+  end,
   raid = function(force, count) return #wildlife.raid(game.forces[force], count or 1) end,
   provoke = function(position)
     local c = game.surfaces.nauvis.find_entities_filtered{type = "character", position = position, radius = 1}[1]

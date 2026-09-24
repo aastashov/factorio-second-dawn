@@ -2,7 +2,7 @@
 -- epoch 1 resource and fruit trees (the garden needs fruit to start, so missing fruit would be a dead end).
 local start = {}
 
-local RESOURCES = {"sd-clay", "sd-shells", "sd-saltpeter", "stone", "copper-ore", "coal"}
+local RESOURCES = {"sd-clay", "sd-shells", "sd-saltpeter", "stone", "copper-ore", "coal", "iron-ore"}
 local TIN = {"sd-tin-ore", 150, 250} -- the first expedition: tin is never in the starting area
 local FRUIT_TREES = {"tree-02-red", "tree-08-red", "tree-09-red"}
 local RADIUS = 150

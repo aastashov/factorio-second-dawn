@@ -1,4 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: 2026-09-24
+  Major Features:
+    - Epoch 3 "Steam and current": iron from the bloomery, then the blast furnace (iron and steel); pipes,
+      offshore pump, boiler and steam engine; copper wire, poles and lamps; electric drills, inserters,
+      assemblers and the laboratory; fast belts. Third science: mechanism.
+    - Electric revival chamber: built over the old one, makes charges I to III. Charge III (with copper
+      electrodes) is needed from wave 7 on. This version continues to wave 10.
+    - Domestication: throw a capture net at a lair whose animals are dead, away, or turned to stone by a
+      wave, and it becomes your pig farm, kennel or bear pen. Farms turn feed or meat into meat, hides
+      and bones; they can be moved but not crafted.
+  Changes:
+    - Chutes upgrade into each other and into fast belts.
+    - Iron ore is guaranteed near the spawn.
+  Bugfixes:
+    - Refusing a second revival chamber no longer fails for the electric one.
+---------------------------------------------------------------------------------------------------
 Version: 0.4.0
 Date: 2026-09-24
   Major Features:

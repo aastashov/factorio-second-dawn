@@ -10,7 +10,8 @@ end
 
 -- Things the world gives without machines: trees and rocks. Resources come from whatever can mine them:
 -- the character from the start, drills once they can be built.
-local RAW = {"wood", "sd-fruit", "sd-fiber", "stone", "coal", "sd-meat", "sd-hide", "sd-bones"}
+-- Farms come only from captured lairs.
+local RAW = {"wood", "sd-fruit", "sd-fiber", "stone", "coal", "sd-meat", "sd-hide", "sd-bones", "sd-boar-farm", "sd-wolf-kennel", "sd-bear-pen"}
 
 local function tree_check()
   local have, enabled, researched = {}, {}, {}
@@ -103,6 +104,7 @@ local function tree_check()
   check("tree: every unlocked recipe makeable", #problems == 0, table.concat(problems, "; "))
   check("tree: revival charge I reachable", have["sd-revival-charge-1"] == true)
   check("tree: revival charge II reachable", have["sd-revival-charge-2"] == true)
+  check("tree: revival charge III reachable", have["sd-revival-charge-3"] == true)
 end
 
 script.on_event(defines.events.on_tick, function(e)
@@ -123,7 +125,7 @@ script.on_event(defines.events.on_tick, function(e)
   local spawners = s.count_entities_filtered{type = {"unit-spawner", "turret"}, force = "enemy"}
   check("no biters", spawners == 0, spawners .. " enemy structures")
 
-  for _, name in pairs{"sd-clay", "sd-shells", "sd-saltpeter", "stone", "copper-ore", "coal"} do
+  for _, name in pairs{"sd-clay", "sd-shells", "sd-saltpeter", "stone", "copper-ore", "coal", "iron-ore"} do
     local n = s.count_entities_filtered{name = name, position = {0, 0}, radius = 150}
     check("starting area has " .. name, n > 0, n .. " tiles")
   end

@@ -59,5 +59,11 @@ script.on_event(defines.events.on_tick, function(e)
     remote.call("second-dawn", "wave_in", 30)
   elseif t == 3100 then
     L("lair frozen by the wave: " .. tostring(storage.t.lair.valid and storage.t.lair.disabled_by_script))
+    -- a net thrown at the frozen lair
+    local s = game.surfaces.nauvis
+    s.create_entity{name = "sd-net-projectile", position = {300, 348}, target = storage.t.lair.position, speed = 0.3,
+      source = storage.t.char.valid and storage.t.char or nil, force = "player"}
+  elseif t == 3300 then
+    L("kennel after the net: " .. game.surfaces.nauvis.count_entities_filtered{name = "sd-wolf-kennel"})
   end
 end)

@@ -4,7 +4,7 @@
 -- nothing is stockpiled.
 local chamber = {}
 
-chamber.NAME = "sd-revival-chamber"
+chamber.NAMES = {"sd-revival-chamber", "sd-revival-chamber-2"}  -- burner, electric
 
 function chamber.init()
   storage.chambers = storage.chambers or {}
@@ -53,9 +53,9 @@ end
 function chamber.on_built(entity, player)
   local existing = chamber.get(entity.force)
   if existing and existing ~= entity then
-    local surface, position = entity.surface, entity.position
+    local surface, position, name = entity.surface, entity.position, entity.name
     entity.destroy()
-    local stack = {name = chamber.NAME, count = 1}
+    local stack = {name = name, count = 1}
     if not (player and player.insert(stack) > 0) then
       surface.spill_item_stack{position = position, stack = stack, enable_looted = true}
     end
