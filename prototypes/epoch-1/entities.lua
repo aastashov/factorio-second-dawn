@@ -54,11 +54,21 @@ campfire.energy_source = lib.burner("wood", 3)
 campfire.energy_usage = "50kW"
 campfire.module_slots = 0
 lib.size(campfire, 1)
--- Drawn art (art/incoming/sd-campfire.png); the stone ring sits on the tile, the spare sticks stick out.
+-- Drawn art (art/incoming/sd-campfire*.png). Idle: cold logs and ash. Working: the lit picture with
+-- vanilla's animated fire on top, a flickering light and smoke (from the burner).
+local flame = table.deepcopy(data.raw.fire["fire-flame"].pictures[1])
+flame.scale = 0.28
+flame.shift = {0.02, -0.42}
+flame.draw_as_glow = true
 campfire.graphics_set = {
-  animation = lib.art_sprite("sd-campfire", 173, 143, {0.08, -0.05}),
-  working_visualisations = {{effect = "flicker", light = {intensity = 0.7, size = 10, color = {1, 0.65, 0.35}}}},
+  animation = lib.art_sprite("sd-campfire-unlit", 173, 146, {0.08, -0.05}, "sd-campfire"),
+  working_visualisations = {
+    {animation = lib.art_sprite("sd-campfire", 173, 146, {0.08, -0.05})},
+    {animation = flame},
+    {effect = "flicker", light = {intensity = 0.8, size = 12, color = {1, 0.65, 0.35}}},
+  },
 }
+
 local kiln = crafter("furnace", "stone-furnace", "kiln", 2, 1, c.clay, "sd-firing", 1, lib.burner("charcoal", 3), "90kW")
 kiln.crafting_categories = {"sd-firing", "sd-campfire"}   -- everything the campfire does, and more
 local workbench = crafter("assembling-machine", "assembling-machine-1", "workbench", 2, 2 / 3, c.wood, "sd-crafting", 0.5, void, "1kW")

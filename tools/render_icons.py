@@ -678,7 +678,7 @@ def write_list():
         f.write("-- Written by tools/render_icons.py: prototypes with an icon in graphics/icons/<name>.png.\nreturn {\n")
         root = os.path.join(os.path.dirname(__file__), "..")
         imported = {os.path.splitext(n)[0] for n in os.listdir(os.path.join(root, "art", "incoming"))
-                    if n.endswith(".png") and os.path.exists(os.path.join(OUT, n))}
+                    if n.endswith(".png") and os.path.exists(os.path.join(OUT, n))}  # other states have no icon
         for n in sorted(set(ICONS) | imported):
             f.write('  "%s",\n' % n)
         f.write("}\n")

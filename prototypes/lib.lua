@@ -65,9 +65,10 @@ end
 local barrel = "__base__/graphics/icons/fluid/barreling/"
 
 function lib.jug_icon(fill)
-  if not fill then -- A sprite imported by tools/import_art.py: graphics/entity/<name>/<name>.png at 128 px per tile.
-function lib.art_sprite(name, width, height, shift)
-  return {filename = "__second-dawn__/graphics/entity/" .. name .. "/" .. name .. ".png", width = width,
+  if not fill then -- A sprite imported by tools/import_art.py: graphics/entity/<dir>/<name>.png at 128 px per tile (dir is
+-- the building's name, name one of its states, e.g. "sd-campfire-unlit").
+function lib.art_sprite(name, width, height, shift, dir)
+  return {filename = "__second-dawn__/graphics/entity/" .. (dir or name) .. "/" .. name .. ".png", width = width,
     height = height, scale = 0.25, shift = shift}
 end
 
@@ -108,9 +109,10 @@ function lib.ship_icon(name)
   return {{icon = "__second-dawn__/graphics/icons/" .. name .. ".png", icon_size = 64}}
 end
 
--- A sprite imported by tools/import_art.py: graphics/entity/<name>/<name>.png at 128 px per tile.
-function lib.art_sprite(name, width, height, shift)
-  return {filename = "__second-dawn__/graphics/entity/" .. name .. "/" .. name .. ".png", width = width,
+-- A sprite imported by tools/import_art.py: graphics/entity/<dir>/<name>.png at 128 px per tile (dir is
+-- the building's name, name one of its states, e.g. "sd-campfire-unlit").
+function lib.art_sprite(name, width, height, shift, dir)
+  return {filename = "__second-dawn__/graphics/entity/" .. (dir or name) .. "/" .. name .. ".png", width = width,
     height = height, scale = 0.25, shift = shift}
 end
 

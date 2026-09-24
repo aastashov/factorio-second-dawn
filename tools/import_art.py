@@ -4,6 +4,9 @@ cuts the background out (soft edge without a magenta fringe; a darker magenta ca
 black shadow),
 crops to the object and writes the entity sprite and the 64 px icon.
     python3 tools/import_art.py sd-campfire 1.35        # sprite 1.35 tiles wide
+    python3 tools/import_art.py sd-campfire 1.35 --state unlit
+        # also art/incoming/sd-campfire-unlit.png (the same picture edited: another state of the building),
+        # cropped with the same box so the states line up: graphics/entity/sd-campfire/sd-campfire-unlit.png
 Sprites are stored at 128 px per tile and drawn with scale 0.25 (see lib.art_sprite in prototypes/lib.lua)."""
 import os
 import statistics
@@ -41,6 +44,10 @@ def key(path):
             if a > 0.5 and max(c) > 40:  # the object itself, not only its shadow
                 box = [min(box[0], x), min(box[1], y), max(box[2], x), max(box[3], y)]
         out.append(row)
+    return out, box
+
+
+def crop(out, box):
     x0, y0, x1, y1 = box
     return x1 - x0 + 1, y1 - y0 + 1, [r[x0:x1 + 1] for r in out[y0:y1 + 1]]
 
@@ -64,10 +71,19 @@ def square(w, h, px):
 
 
 name, tiles = sys.argv[1], float(sys.argv[2])
-w, h, px = key(os.path.join(ROOT, "art", "incoming", name + ".png"))
-sw, sh, spx = resized(w, h, px, round(tiles * PX_PER_TILE))
+states = [sys.argv[i + 1] for i, a in enumerate(sys.argv) if a == "--state"]
+incoming = os.path.join(ROOT, "art", "incoming")
+main, box = key(os.path.join(incoming, name + ".png"))
+keyed = {"": main}
+for st in states:
+    keyed["-" + st], other = key(os.path.join(incoming, name + "-" + st + ".png"))
+    box = [min(box[0], other[0]), min(box[1], other[1]), max(box[2], other[2]), max(box[3], other[3])]
 os.makedirs(os.path.join(ROOT, "graphics", "entity", name), exist_ok=True)
-png_io.write(os.path.join(ROOT, "graphics", "entity", name, name + ".png"), sw, sh, spx)
-iw, ih, ipx = resized(*square(w, h, px), 64, 64)
-png_io.write(os.path.join(ROOT, "graphics", "icons", name + ".png"), iw, ih, ipx)
-print(f"{name}: sprite {sw}x{sh} ({tiles} tiles wide), icon 64x64")
+for suffix, img in keyed.items():
+    w, h, px = crop(img, box)
+    sw, sh, spx = resized(w, h, px, round(tiles * PX_PER_TILE))
+    png_io.write(os.path.join(ROOT, "graphics", "entity", name, name + suffix + ".png"), sw, sh, spx)
+    print(f"{name}{suffix}: sprite {sw}x{sh} ({tiles} tiles wide)")
+    if suffix == "":
+        iw, ih, ipx = resized(*square(w, h, px), 64, 64)
+        png_io.write(os.path.join(ROOT, "graphics", "icons", name + ".png"), iw, ih, ipx)
