@@ -1,42 +1,53 @@
 # Запросы для Gemini
 
-Готовые запросы для генерации графики по [ART.md](ART.md), в том же порядке. Запросы на английском:
-на нём генераторы картинок слушаются точнее.
+Готовые запросы для графики по [ART.md](ART.md). Запросы на английском: на нём генераторы картинок
+слушаются точнее.
 
-## Как пользоваться
+## Как пользоваться (проверено на костре)
 
-1. **Один запрос — одна картинка.** Скопировать **блок стиля** (ниже) и сразу за ним строку элемента.
-2. **Начать с эталона.** Сначала сделать 1.1 «Костёр» и 1.2 «Стол учёного», перегенерировать, пока не
-   понравится. Дальше **прикладывать эти две картинки к каждому запросу** и дописывать в конце:
-   `Match the style, camera angle and lighting of the attached images exactly.`
-3. **Фон — пурпурный (#FF00FF).** Прозрачный фон Gemini рисует плохо, а пурпур я сам вырежу. Если в
-   картинке фон вышел не ровный или объект сам стал пурпурным — перегенерировать.
-4. **Проверено на первых картинках:** пурпур любого оттенка вырезается чисто. Если Gemini всё равно
-   рисует здание углом к зрителю (ромбом), дописать: `The front wall is a straight horizontal line.`
-5. **Размер и тени не важны:** подгоню скриптом. Важно, чтобы объект был целиком, не обрезан, и ракурс
-   был как у эталона.
-6. **Складывать** в папку `art/incoming/` в репозитории, имя файла — из скобок у элемента (например,
-   `sd-campfire.png`). Несколько вариантов: `sd-campfire-2.png`.
-7. **Звери и корабли** — отдельный путь, см. раздел «3D».
+1. **Один запрос — одна картинка.** Запрос копируется целиком, как есть. Отдельные «блоки стиля» и списки
+   Gemini пропускает — поэтому каждый запрос ниже уже полный.
+2. **Прикладывать эталон.** К каждому запросу прикладывать готовую картинку костра (`art/incoming/sd-campfire.png`)
+   — так Gemini держит тот же стиль, ракурс и свет.
+3. **Почти хорошо — не перегенерировать, а править в том же чате** короткими фразами по одной:
+   `Remove the black outlines, keep everything else.` · `Make the background pure magenta #FF00FF.` ·
+   `The front edge must be a straight horizontal line, not a corner.`
+4. **Второе состояние** (погасший, выключенный) — правкой готовой картинки в том же чате, запрос есть
+   у каждого здания. Так оба состояния совпадают по рамке.
+5. **Не важно:** точный размер, тень, оттенок фона, лёгкая холодность цвета — это делает
+   `tools/import_art.py` (вырезает фон, подгоняет цвет к игре, добавляет тень и пятно земли).
+6. **Складывать** в `art/incoming/` под именем из скобок: `sd-scholar-desk.png`, второе состояние —
+   `sd-scholar-desk-idle.png`.
 
-## Блоки стиля
+## Готово
+- **Костёр** (`sd-campfire`, `sd-campfire-unlit`) — в игре с 0.11.1.
 
-**Для зданий и объектов на карте (A):**
+## Стол учёного (`sd-scholar-desk`, 3×3 клетки)
+
+Рабочее состояние (идёт исследование):
 ```
-Game asset for a top-down factory-building game in the style of Factorio. Front-facing orthographic top-down view, NOT isometric: the building stands square to the image, its front edge is perfectly horizontal and faces the viewer, the camera looks down from the south at about 45 degrees, so we see the top and the front (south) side, never a corner pointing at the viewer. No perspective distortion. Light comes from the top-left. Realistic painterly rendering like Factorio, no black ink outlines, no cartoon style, fine detail, muted natural colors (stone, clay, wood, leather, charcoal). Primitive stone-age craftsmanship. One single object, centered, fully visible, nothing cropped. Do not draw any ground, grass, soil or cast shadow under it. Plain solid flat magenta background, exact color #FF00FF, uniform, no gradient. No text, no frame, no border, no watermark. Do not use magenta or pink colors on the object itself.
+Draw a single game sprite of a scholar's research desk for the video game Factorio. Use the attached campfire picture as the reference for style, camera angle and lighting.
+
+The desk: a large, low, square work table of rough hewn wooden planks standing on a base of grey fieldstones. On the table: stacks of clay tablets with cuneiform marks, an unrolled parchment scroll, a few rolled scrolls tied with twine, a small clay oil lamp with a lit flame, a bone stylus. A simple wooden stool stands at the front edge.
+
+Camera: seen from above at a steep angle, like all buildings in Factorio. The desk faces the viewer straight on: its front edge is a straight horizontal line, we see the table top and the front side. It is NOT isometric, no corner points at the viewer. The footprint is a square.
+
+Style: realistic, painted like the original Factorio graphics. No black outlines, not a cartoon.
+
+Background: one flat solid magenta color (#FF00FF) filling the whole image. No grass, no ground, no shadow under the desk, no text.
+
+Square image, the desk in the center, not cropped.
 ```
 
-**Для иконок предметов (B):**
+Потом в том же чате — выключенное состояние (нет топлива или нечего изучать):
 ```
-Inventory icon for a Factorio-style game, realistic painterly style like Factorio icons, no black ink outlines, no cartoon style. One single item, centered, filling about 85% of a square 1:1 image, viewed slightly from above, strong clear silhouette that stays readable when shrunk to 32 pixels. Realistic, slightly painterly rendering, muted natural colors, soft light from the top-left. Plain solid flat magenta background, exact color #FF00FF, uniform, no gradient, no cast shadow. No text, no frame, no border, no watermark. Do not use magenta or pink colors on the item itself.
-```
-
-**Для россыпей ресурса на земле (C):**
-```
-Sprite sheet for a Factorio-style game: a 4 by 4 grid of square cells, each cell shows a small cluster of loose pieces of the same material lying flat, seen from above at a 3/4 angle, light from the top-left. Top-left cell: a few tiny scattered pieces; each next cell has more and bigger pieces; bottom-right cell: a dense heap filling the cell. Every cell is a different random arrangement. No ground, no grass, no soil between pieces. Plain solid flat magenta background, exact color #FF00FF. No grid lines, no text.
+Edit this image: the same desk, same objects, same camera and lighting, but the oil lamp is not lit: no flame, a thin dark wick. Keep everything else exactly the same. Keep the magenta background.
 ```
 
 ---
+
+Ниже — старые черновики запросов по волнам. Их я перепишу в формат выше по мере того, как дойдём
+до каждого элемента; пока их не использовать.
 
 ## Волна 1. Старт
 
