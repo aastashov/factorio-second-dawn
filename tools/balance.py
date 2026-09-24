@@ -15,6 +15,7 @@ MACHINES = {
     "millstone": 0.5, "bloomery": 1.0, "glassworks": 1.0,
     "blast-furnace": 2.0, "electric-chamber": 1.0, "assembler-2": 0.75,
     "chemical-plant": 1.0, "refinery": 1.0, "electric-furnace": 2.0, "plantation": 1.0,
+    "rocket-silo": 1.0,
 }
 CATEGORY_MACHINE = {
     "firing": "kiln", "crafting": "workbench", "distillation": "alembic", "fermenting": "fermentation-vat",
@@ -23,6 +24,7 @@ CATEGORY_MACHINE = {
     "blast": "blast-furnace", "awakening-electric": "electric-chamber",
     "chemistry": "chemical-plant", "oil-processing": "refinery", "electric-smelting": "electric-furnace",
     "plantation": "plantation",
+    "rocket-building": "rocket-silo",
 }
 # mined items: mining time; miners: digger 0.25 (soft only), pick digger 0.2, bronze drill 0.4 (soft + hard)
 RAW = {"wood", "stone", "clay", "shells", "saltpeter", "fruit", "copper-ore", "tin-ore", "coal", "iron-ore",
@@ -126,6 +128,18 @@ RECIPES = {
     "tungsten-electrode": (4, "crafting", 3, {"tungsten": 1, "glass": 1}, {"tungsten-electrode": 1}, "tungsten-electrodes"),
     "charge-4":      (4, "awakening-electric", 1500, {"rectified-bottle": 20, "conc-acid-bottle": 20, "ether-bottle": 10,
                       "tungsten-electrode": 5}, {"charge-4": 1, "bottle": 50}, "fourth-awakening"),
+    # epoch 5 (release 0.10)
+    "plastic":       (5, "chemistry", 1, {"petroleum": 20, "coal": 1}, {"plastic": 2}, "plastics"),
+    "circuit":       (5, "crafting", 0.5, {"plastic": 1, "cable": 3, "iron": 1}, {"circuit": 1}, "electronics"),
+    "board":         (5, "crafting", 10, {"circuit": 3, "plastic": 2, "tungsten": 1}, {"board": 2}, "instrument-board"),
+    "rocket-fuel":   (5, "chemistry", 10, {"light-oil": 10, "fuel-oil": 1}, {"rocket-fuel": 1}, "rocket-fuel"),
+    "low-density":   (5, "crafting", 10, {"steel": 2, "copper": 5, "plastic": 2}, {"low-density": 1}, "light-structures"),
+    "control-unit":  (5, "crafting", 10, {"circuit": 5, "tungsten": 1, "plastic": 1}, {"control-unit": 1}, "control-units"),
+    "rocket-part":   (5, "rocket-building", 3, {"low-density": 2, "rocket-fuel": 2, "control-unit": 2}, {"rocket-part": 1}, "rocket-silo"),
+    "spacesuit":     (5, "crafting", 20, {"rubber": 30, "glass": 20, "tungsten": 10, "circuit": 10, "leather": 10}, {"spacesuit": 1}, "spacesuit"),
+    "oxygen-tank":   (5, "crafting", 5, {"steel": 2, "rubber": 1}, {"oxygen-tank": 1}, "spacesuit"),
+    "charge-5":      (5, "awakening-electric", 1800, {"rectified-bottle": 25, "conc-acid-bottle": 25, "ether-bottle": 15,
+                      "control-unit": 5}, {"charge-5": 1, "bottle": 65}, "fifth-awakening"),
     "charge-2":      (2, "awakening", 900, {"rectified-bottle": 10, "conc-acid-bottle": 10, "coal": 45},
                       {"charge-2": 1, "bottle": 20}, "second-awakening"),
 }
@@ -135,11 +149,15 @@ PRODUCER = {out: name for name, r in RECIPES.items() for out in r[4]
             and not (out == "fruit" and name in ("grow-fruit", "fertilized-fruit"))
             and not (out == "light-oil" and name == "heavy-cracking") and not (out == "petroleum" and name == "light-cracking")
             and not (out in ("heavy-oil", "petroleum") and name == "oil-processing" and False)}
+# byproducts are not producers: charcoal comes from charcoal burning, not pitch; sulfur is mined
+PRODUCER.update({"charcoal": "charcoal", "jug": "jug", "bottle": "bottle"})
+PRODUCER.pop("sulfur", None)
 RAW |= {"fiber"}  # also from trees
 
 # name: (epoch, count, seconds per unit, packs, prerequisites)
 T, F, M = ("tablet",), ("tablet", "flask"), ("tablet", "flask", "mechanism")
 R, N = M + ("reactive",), M + ("reactive", "navigation")
+B = N + ("board",)
 TECHS = {
     "pottery":          (1, 10, 10, T, []),
     "workbench":        (1, 15, 10, T, ["pottery"]),
@@ -203,16 +221,29 @@ TECHS = {
     "ether":            (4, 250, 30, R, ["reactive", "rectification"]),
     "tungsten-electrodes": (4, 250, 30, N, ["navigation", "third-awakening"]),
     "fourth-awakening": (4, 400, 60, N, ["ether", "tungsten-electrodes"]),
+    "plastics":         (5, 200, 30, N, ["oil-processing", "navigation"]),
+    "electronics":      (5, 200, 30, N, ["plastics"]),
+    "radio":            (5, 150, 30, N, ["electronics"]),
+    "instrument-board": (5, 250, 30, N, ["electronics", "tungsten"]),
+    "rocket-fuel":      (5, 250, 30, B, ["instrument-board", "fuel-oil"]),
+    "light-structures": (5, 250, 30, B, ["instrument-board"]),
+    "control-units":    (5, 250, 30, B, ["instrument-board"]),
+    "rocket-silo":      (5, 400, 60, B, ["rocket-fuel", "light-structures", "control-units"]),
+    "spacesuit":        (5, 300, 30, B, ["instrument-board", "rubber", "tanning"]),
+    "fifth-awakening":  (5, 400, 60, B, ["control-units", "fourth-awakening"]),
     "lab-glassware-1":  (3, 150, 30, M, ["mechanism"]),
     "lab-glassware-2":  (4, 250, 30, R, ["lab-glassware-1", "reactive"]),
 }
-PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism", "reactive": "reactive", "navigation": "navigation"}
+PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism", "reactive": "reactive", "navigation": "navigation",
+             "board": "board"}
 
 # per-epoch tables: (item, per minute, label)
 TARGETS = {
     1: [("tablet", 6, "табличка 6/мин"), ("charge-1", 1 / 30, "заряд I за 30 мин")],
     2: [("flask", 4, "колба 4/мин"), ("bronze", 6, "бронза 6/мин"), ("charge-2", 1 / 45, "заряд II за 45 мин")],
     3: [("mechanism", 6, "механизм 6/мин"), ("steel", 3, "сталь 3/мин"), ("charge-3", 1 / 60, "заряд III за час")],
+    5: [("board", 3, "приборная плата 3/мин"), ("rocket-part", 1, "часть ракеты 1/мин (30 на ракету)"),
+        ("charge-5", 1 / 60, "заряд V за час")],
     4: [("reactive", 4, "реактив 4/мин"), ("navigation", 2, "морская карта 2/мин"), ("charge-4", 1 / 60, "заряд IV за час")],
 }
 
@@ -288,7 +319,7 @@ def table(item, per_min):
     acc = {}
     rates(item, per_min, acc)
     credit(acc, "jug", ["spirit", "charge-1", "rectified", "conc-acid"])
-    credit(acc, "bottle", ["charge-2", "charge-3", "charge-4"])
+    credit(acc, "bottle", ["charge-2", "charge-3", "charge-4", "charge-5"])
     rows = []
     for (kind, name), v in acc.items():
         if v < 1e-6:
