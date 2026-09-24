@@ -109,7 +109,7 @@ tools/map-preview.sh 7 777                   # превью карты 7168×716
 SD_BENCH_VERBOSE=1 tests/run-scenario.sh ups-wild 6000 && python3 tests/ups-report.py "$SD_TEST_DIR/bench.log" 4000
 SD_BENCH_VERBOSE=1 tests/run-scenario.sh ups 3700 && python3 tests/ups-report.py "$SD_TEST_DIR/bench.log"
 tests/run-heavy.sh desync 240                # heavy mode на сервере: нет рассинхрона
-tests/run-all.sh                             # всё сразу
+tests/run-all.sh                             # всё сразу (с проверкой путей ко всем картинкам)
 ```
 
 Сценарные тесты запускают отдельный безграфический экземпляр Factorio со своей папкой (`SD_TEST_DIR`,

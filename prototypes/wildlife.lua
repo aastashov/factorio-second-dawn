@@ -79,7 +79,7 @@ end
 local function food(name, order, tint, heal)
   local f = table.deepcopy(data.raw.capsule["raw-fish"])
   f.name = "sd-" .. name
-  f.icons = lib.icon(icons .. "raw-fish.png", tint)
+  f.icons = lib.icon(icons .. "fish.png", tint)
   f.icon = nil
   f.subgroup = "sd-hunting"
   f.order = order
@@ -142,7 +142,7 @@ data:extend{
 -- Palisade and crossbow turret.
 local palisade = table.deepcopy(data.raw.wall["stone-wall"])
 palisade.name = "sd-palisade"
-palisade.icons = lib.icon(icons .. "stone-wall.png", c.wood)
+palisade.icons = lib.icon(icons .. "wall.png", c.wood)
 palisade.icon = nil
 palisade.minable = {mining_time = 0.2, result = "sd-palisade"}
 palisade.max_health = 200
