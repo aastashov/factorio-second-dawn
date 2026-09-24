@@ -1,0 +1,8 @@
+require("prototypes.epoch-1.categories")
+require("prototypes.epoch-1.items")
+require("prototypes.epoch-1.resources")
+require("prototypes.epoch-1.entities")
+require("prototypes.epoch-1.recipes")
+require("prototypes.epoch-1.technologies")
+require("prototypes.statue")
+require("prototypes.world")
