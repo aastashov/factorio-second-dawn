@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.10.4
+Date: 2026-09-24
+  Locale:
+    - Recipes that make vanilla items (wooden chest, gears, pipes, machines and about 40 more) showed
+      "Unknown key"; they now use the name of what they make.
+    - Names for hot fuel, arrows, sling stones and hard rock in tooltips.
+---------------------------------------------------------------------------------------------------
 Version: 0.10.3
 Date: 2026-09-24
   Graphics:

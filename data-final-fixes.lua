@@ -25,3 +25,16 @@ for name, recipe in pairs(data.raw.recipe) do
     recipe.enabled = false
   end
 end
+
+-- Names of the mod's recipes: a recipe named "sd-x" that makes a vanilla item "x" has no key of its own;
+-- the first name that exists wins: the recipe's own, then the product's as item, entity or fluid.
+for name, recipe in pairs(data.raw.recipe) do
+  if name:find("^sd%-") and not recipe.localised_name then
+    local product = recipe.main_product
+    if not product and recipe.results and #recipe.results == 1 then product = recipe.results[1].name end
+    if product and product ~= "" then
+      recipe.localised_name = {"?", {"recipe-name." .. name}, {"item-name." .. product}, {"entity-name." .. product},
+        {"fluid-name." .. product}}
+    end
+  end
+end
