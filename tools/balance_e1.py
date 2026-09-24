@@ -1,6 +1,5 @@
 """Epoch 1 balance model for Second Dawn: rates, machine counts, tech-tree sanity checks."""
 import math
-from fractions import Fraction as F
 
 # machine: (speed, categories)
 MACHINES = {
@@ -21,10 +20,10 @@ RESOURCES = {  # mining time per unit
 
 # name: (category, time, {inputs}, {outputs}, unlocked_by)
 RECIPES = {
-    "charcoal":  ("firing", 3.2, {"wood": 2}, {"charcoal": 1}, None),
+    "charcoal":  ("firing", 3.2, {"wood": 3}, {"charcoal": 1}, None),
     "rope":      ("crafting", 1, {"fiber": 3}, {"rope": 1}, None),
     "fiber":     ("hand", 1, {"wood": 1}, {"fiber": 2}, None),
-    "tablet":    ("crafting", 5, {"clay": 1, "charcoal": 1}, {"tablet": 1}, None),
+    "tablet":    ("crafting", 8, {"clay": 2, "charcoal": 1}, {"tablet": 2}, None),
     "brick":     ("firing", 3.2, {"clay": 2}, {"brick": 1}, "pottery"),
     "jug":       ("firing", 4, {"clay": 3}, {"jug": 1}, "pottery"),
     "lime":      ("firing", 3.2, {"shells": 2}, {"lime": 1}, "lime"),
@@ -33,7 +32,8 @@ RECIPES = {
     "brew":      ("fermenting", 30, {"jug": 1, "fruit": 4}, {"brew-jug": 1}, "fermentation"),
     "spirit":    ("distillation", 8, {"brew-jug": 2}, {"spirit-jug": 1, "jug": 1}, "distillation"),
     "acid":      ("distillation", 10, {"jug": 1, "saltpeter": 4, "charcoal": 1}, {"acid-jug": 1}, "distillation"),
-    "charge-1":  ("awakening", 600, {"acid-jug": 10, "spirit-jug": 10}, {"charge-1": 1, "jug": 20}, "awakening"),
+    # charcoal 30 here is the chamber's fuel (200 kW x 600 s = 120 MJ), modelled as an ingredient
+    "charge-1":  ("awakening", 600, {"acid-jug": 10, "spirit-jug": 10, "charcoal": 30}, {"charge-1": 1, "jug": 20}, "awakening"),
 }
 RAW = set(RESOURCES) | {"fruit"}  # fruit: from fruit trees (30% chance) until gardens
 
@@ -91,18 +91,23 @@ def table(item, per_min):
     rates(item, per_min, acc)
     # byproduct credit: jugs returned by spirit and chamber
     back = sum(acc.get(("recipe", r), 0) * RECIPES[r][3].get("jug", 0) for r in ("spirit", "charge-1"))
-    if ("recipe", "jug") in acc:
-        acc[("recipe", "jug")] = max(0, acc[("recipe", "jug")] - back)
-        print(f"  jugs returned {back:.2f}/min -> net jug crafts {acc[('recipe','jug')]:.2f}/min (clay not reduced in naive model)")
+    if ("recipe", "jug") in acc and back > 0:
+        saved = min(back, acc[("recipe", "jug")])
+        credit = {}
+        rates("jug", saved, credit)  # what those saved jug crafts would have consumed
+        for k, v in credit.items():
+            acc[k] -= v
+        print(f"  jugs returned {back:.2f}/min, net new jugs {acc[('recipe', 'jug')]:.2f}/min")
     rows = []
     for (kind, name), v in acc.items():
         if kind == "recipe":
             cat, time, _, _, _ = RECIPES[name]
             m = machine_for(cat); sp = MACHINES[m][0]
             n = v * time / 60 / sp
-            rows.append((name, f"{v:.2f}/мин", m, f"{n:.2f}", math.ceil(n - 1e-9)))
+            rows.append((name, f"{v:.2f} крафт/мин", m, f"{n:.2f}", math.ceil(n - 1e-9)))
         else:
             rows.append((name, f"{v:.2f}/мин", "сырьё", "", ""))
+    rows = [r for r in rows if not r[1].startswith(("0.00", "-"))]
     return rows
 
 if __name__ == "__main__":
