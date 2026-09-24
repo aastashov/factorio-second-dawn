@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.10.3
+Date: 2026-09-24
+  Graphics:
+    - The map generator shows icons for clay, shells, saltpeter, tin ore, tungsten ore and sulfur deposits.
+---------------------------------------------------------------------------------------------------
 Version: 0.10.2
 Date: 2026-09-24
   Bugfixes:

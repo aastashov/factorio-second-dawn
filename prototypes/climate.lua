@@ -47,7 +47,8 @@ local function belt_resource(name, base, tint, result, mask, map_color, order)
   r.autoplace = resource_autoplace.resource_autoplace_settings{name = name, order = "b", base_density = 8,
     base_spots_per_km2 = 4, has_starting_area_placement = false, regular_rq_factor_multiplier = 1}
   r.autoplace.probability_expression = "(" .. r.autoplace.probability_expression .. ") * " .. mask
-  data:extend{r, {type = "autoplace-control", name = name, richness = true, order = "b-" .. order, category = "resource"}}
+  data:extend{r, {type = "autoplace-control", name = name, richness = true, order = "b-" .. order, category = "resource",
+    localised_name = {"", "[entity=" .. name .. "] ", {"entity-name." .. name}}}}
   gen.autoplace_controls[name] = {}
   gen.autoplace_settings.entity.settings[name] = {}
 end

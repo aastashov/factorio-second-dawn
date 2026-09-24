@@ -25,7 +25,8 @@ local function resource(name, tint, mining_time, order, density, spots)
   }
   data:extend{
     r,
-    {type = "autoplace-control", name = "sd-" .. name, richness = true, order = "b-" .. order, category = "resource"},
+    {type = "autoplace-control", name = "sd-" .. name, richness = true, order = "b-" .. order, category = "resource",
+     localised_name = {"", "[entity=sd-" .. name .. "] ", {"entity-name.sd-" .. name}}},
   }
   local gen = data.raw.planet.nauvis.map_gen_settings
   gen.autoplace_controls["sd-" .. name] = {}

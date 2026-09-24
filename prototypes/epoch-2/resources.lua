@@ -19,7 +19,8 @@ r.autoplace = resource_autoplace.resource_autoplace_settings{
 }
 -- never at the camp: the first expedition is the point
 r.autoplace.probability_expression = "(" .. r.autoplace.probability_expression .. ") * (distance > 160)"
-data:extend{r, {type = "autoplace-control", name = "sd-tin-ore", richness = true, order = "b-i", category = "resource"}}
+data:extend{r, {type = "autoplace-control", name = "sd-tin-ore", richness = true, order = "b-i", category = "resource",
+  localised_name = {"", "[entity=sd-tin-ore] ", {"entity-name.sd-tin-ore"}}}}
 local gen = data.raw.planet.nauvis.map_gen_settings
 gen.autoplace_controls["sd-tin-ore"] = {}
 gen.autoplace_settings.entity.settings["sd-tin-ore"] = {}
