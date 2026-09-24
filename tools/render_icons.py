@@ -636,6 +636,13 @@ for tier, col in enumerate(("7ae8c8", "70c8ff", "c09aff", "ffc070", "ffffff"), s
 def render(names, sheet=False):
     done = []
     for name in names:
+        # A picture imported with tools/import_art.py replaces the drawn icon.
+        if os.path.exists(os.path.join(os.path.dirname(__file__), "..", "art", "incoming", name + ".png")):
+            import png_io
+            _, _, px = png_io.read(os.path.join(OUT, name + ".png"))
+            done.append((name, b"".join(b"\x00" + bytes(v for p in row for v in p) for row in px)))
+            print("icon", name, "(imported art)")
+            continue
         c = Canvas()
         ICONS[name](c)
         done.append((name, c.finish(os.path.join(OUT, name + ".png"))))
@@ -669,7 +676,10 @@ def write_list():
     path = os.path.join(os.path.dirname(__file__), "..", "prototypes", "generated-icons.lua")
     with open(path, "w") as f:
         f.write("-- Written by tools/render_icons.py: prototypes with an icon in graphics/icons/<name>.png.\nreturn {\n")
-        for n in sorted(ICONS):
+        root = os.path.join(os.path.dirname(__file__), "..")
+        imported = {os.path.splitext(n)[0] for n in os.listdir(os.path.join(root, "art", "incoming"))
+                    if n.endswith(".png") and os.path.exists(os.path.join(OUT, n))}
+        for n in sorted(set(ICONS) | imported):
             f.write('  "%s",\n' % n)
         f.write("}\n")
 

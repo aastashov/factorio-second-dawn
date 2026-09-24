@@ -54,7 +54,11 @@ campfire.energy_source = lib.burner("wood", 3)
 campfire.energy_usage = "50kW"
 campfire.module_slots = 0
 lib.size(campfire, 1)
-lib.recolor_fields(campfire, {"graphics_set"}, {1, 0.8, 0.6}, 0.5)
+-- Drawn art (art/incoming/sd-campfire.png); the stone ring sits on the tile, the spare sticks stick out.
+campfire.graphics_set = {
+  animation = lib.art_sprite("sd-campfire", 173, 143, {0.08, -0.05}),
+  working_visualisations = {{effect = "flicker", light = {intensity = 0.7, size = 10, color = {1, 0.65, 0.35}}}},
+}
 local kiln = crafter("furnace", "stone-furnace", "kiln", 2, 1, c.clay, "sd-firing", 1, lib.burner("charcoal", 3), "90kW")
 kiln.crafting_categories = {"sd-firing", "sd-campfire"}   -- everything the campfire does, and more
 local workbench = crafter("assembling-machine", "assembling-machine-1", "workbench", 2, 2 / 3, c.wood, "sd-crafting", 0.5, void, "1kW")

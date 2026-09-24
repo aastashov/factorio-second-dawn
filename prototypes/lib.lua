@@ -65,7 +65,13 @@ end
 local barrel = "__base__/graphics/icons/fluid/barreling/"
 
 function lib.jug_icon(fill)
-  if not fill then return lib.icon(barrel .. "barrel-empty.png", lib.colors.clay) end
+  if not fill then -- A sprite imported by tools/import_art.py: graphics/entity/<name>/<name>.png at 128 px per tile.
+function lib.art_sprite(name, width, height, shift)
+  return {filename = "__second-dawn__/graphics/entity/" .. name .. "/" .. name .. ".png", width = width,
+    height = height, scale = 0.25, shift = shift}
+end
+
+return lib.icon(barrel .. "barrel-empty.png", lib.colors.clay) end
   return {
     {icon = barrel .. "barrel-fill.png", icon_size = 64, tint = lib.colors.clay},
     {icon = barrel .. "barrel-side-mask.png", icon_size = 64, tint = fill},
@@ -100,6 +106,12 @@ end
 
 function lib.ship_icon(name)
   return {{icon = "__second-dawn__/graphics/icons/" .. name .. ".png", icon_size = 64}}
+end
+
+-- A sprite imported by tools/import_art.py: graphics/entity/<name>/<name>.png at 128 px per tile.
+function lib.art_sprite(name, width, height, shift)
+  return {filename = "__second-dawn__/graphics/entity/" .. name .. "/" .. name .. ".png", width = width,
+    height = height, scale = 0.25, shift = shift}
 end
 
 return lib

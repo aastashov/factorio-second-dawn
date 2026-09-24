@@ -13,6 +13,7 @@ return {
   "sd-briquettes",
   "sd-bronze",
   "sd-buoy",
+  "sd-campfire",
   "sd-chain-buoy",
   "sd-charcoal",
   "sd-clay",
