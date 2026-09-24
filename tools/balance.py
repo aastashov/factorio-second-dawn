@@ -18,7 +18,7 @@ MACHINES = {
     "rocket-silo": 1.0,
 }
 CATEGORY_MACHINE = {
-    "firing": "kiln", "crafting": "workbench", "distillation": "alembic", "fermenting": "fermentation-vat",
+    "firing": "kiln", "campfire": "campfire", "crafting": "workbench", "distillation": "alembic", "fermenting": "fermentation-vat",
     "growing": "garden", "awakening": "chamber", "hand": "hand",
     "grinding": "millstone", "smelting": "bloomery", "glassmaking": "glassworks",
     "blast": "blast-furnace", "awakening-electric": "electric-chamber",
@@ -53,7 +53,7 @@ RECIPES = {
     # hunting (release 0.4)
     "sling-stones":  (1, "hand", 1, {"stone": 1}, {"sling-stones": 5}, "hunting"),
     "palisade":      (1, "crafting", 1, {"wood": 6, "rope": 1}, {"palisade": 2}, "hunting"),
-    "cooked-meat":   (1, "firing", 5, {"meat": 1}, {"cooked-meat": 1}, "hunting"),
+    "cooked-meat":   (1, "campfire", 5, {"meat": 1}, {"cooked-meat": 1}, "hunting"),
     "leather":       (1, "fermenting", 20, {"hide": 2, "quicklime": 1}, {"leather": 2}, "tanning"),
     "leather-jacket": (1, "crafting", 5, {"leather": 10, "rope": 5}, {"leather-jacket": 1}, "tanning"),
     "arrows":        (2, "crafting", 2, {"wood": 1, "bronze": 1, "fiber": 2}, {"arrows": 10}, "bow"),

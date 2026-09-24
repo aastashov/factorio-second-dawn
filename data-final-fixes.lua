@@ -38,3 +38,21 @@ for name, recipe in pairs(data.raw.recipe) do
     end
   end
 end
+
+-- Drawn icons (tools/render_icons.py) for every prototype of that name except technologies, which need
+-- large pictures. Waterway rails share the waterway's icon.
+local drawn = require("prototypes.generated-icons")
+for _, name in pairs(drawn) do
+  local icons = {{icon = "__second-dawn__/graphics/icons/" .. name .. ".png", icon_size = 64}}
+  for type, protos in pairs(data.raw) do
+    if type ~= "technology" and protos[name] then
+      protos[name].icons = icons
+      protos[name].icon = nil
+      protos[name].icon_size = nil
+    end
+  end
+end
+for _, t in pairs{"straight-rail", "half-diagonal-rail", "curved-rail-a", "curved-rail-b"} do
+  local rail = data.raw[t]["sd-waterway-" .. t]
+  if rail then rail.icons = data.raw["rail-planner"]["sd-waterway"].icons end
+end

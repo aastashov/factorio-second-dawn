@@ -190,7 +190,7 @@ data:extend{
   recipe("sling", "sd-crafting", 1, {{"wood", 3}, {"sd-rope", 2}}, {{"sd-sling", 1}}),
   recipe("sling-stones", "sd-handcraft", 1, {{"stone", 1}}, {{"sd-sling-stones", 5}}),
   recipe("palisade", "sd-crafting", 1, {{"wood", 6}, {"sd-rope", 1}}, {{"sd-palisade", 2}}),
-  recipe("cooked-meat", "sd-firing", 5, {{"sd-meat", 1}}, {{"sd-cooked-meat", 1}}),
+  recipe("cooked-meat", "sd-campfire", 5, {{"sd-meat", 1}}, {{"sd-cooked-meat", 1}}),
   recipe("leather", "sd-fermenting", 20, {{"sd-hide", 2}, {"sd-quicklime", 1}}, {{"sd-leather", 2}}),
   recipe("leather-jacket", "sd-crafting", 5, {{"sd-leather", 10}, {"sd-rope", 5}}, {{"sd-leather-jacket", 1}}),
   recipe("bow", "sd-crafting", 3, {{"wood", 5}, {"sd-rope", 3}, {"sd-bronze", 2}}, {{"sd-bow", 1}}),

@@ -5,6 +5,7 @@ data:extend{
   {type = "recipe-category", name = "sd-crafting"},   -- by hand and on the workbench
   {type = "recipe-category", name = "sd-handcraft"},  -- by hand only
   {type = "recipe-category", name = "sd-firing"},
+  {type = "recipe-category", name = "sd-campfire"},   -- furnace: one recipe per input
   {type = "recipe-category", name = "sd-fermenting"},
   {type = "recipe-category", name = "sd-growing"},
   {type = "recipe-category", name = "sd-distillation"},

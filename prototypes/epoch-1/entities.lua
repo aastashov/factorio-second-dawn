@@ -45,7 +45,16 @@ end
 
 local void = {type = "void"}
 
-local campfire = crafter("furnace", "stone-furnace", "campfire", 1, 0.5, {1, 0.8, 0.6}, "sd-firing", 0.5, lib.burner("wood", 3), "50kW")
+-- The campfire is a furnace: it picks its recipe from what is put in (wood -> charcoal, clay -> brick),
+-- so the very first machine of the game needs no recipe chosen.
+local campfire = copy("furnace", "stone-furnace", "campfire")
+campfire.crafting_categories = {"sd-campfire"}
+campfire.crafting_speed = 0.5
+campfire.energy_source = lib.burner("wood", 3)
+campfire.energy_usage = "50kW"
+campfire.module_slots = 0
+lib.size(campfire, 1)
+lib.recolor_fields(campfire, {"graphics_set"}, {1, 0.8, 0.6}, 0.5)
 local kiln = crafter("furnace", "stone-furnace", "kiln", 2, 1, c.clay, "sd-firing", 1, lib.burner("charcoal", 3), "90kW")
 local workbench = crafter("assembling-machine", "assembling-machine-1", "workbench", 2, 2 / 3, c.wood, "sd-crafting", 0.5, void, "1kW")
 local garden = crafter("assembling-machine", "assembling-machine-1", "garden", 3, 1, c.green, "sd-growing", 1, void, "1kW")

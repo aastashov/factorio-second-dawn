@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.10.5
+Date: 2026-09-24
+  Changes:
+    - The campfire works like a furnace: put in wood and it makes charcoal, clay and it makes bricks, meat
+      and it roasts it. No recipe to choose. Campfires placed with an older version disappear on load:
+      craft them again (5 stone, 2 wood).
+    - The first diary entry lists the order of work up to the first research; the intro message points to it.
+  Graphics:
+    - 69 new item icons drawn for the mod (resources, materials, jugs and bottles, sciences, food, hunting,
+      clothing, fuel, shipping items, revival charges) instead of recoloured vanilla ones.
+---------------------------------------------------------------------------------------------------
 Version: 0.10.4
 Date: 2026-09-24
   Locale:

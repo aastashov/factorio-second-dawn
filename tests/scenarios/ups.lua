@@ -18,7 +18,7 @@ local function build()
     {"sd-workbench", "sd-clay-tablet", 2, {{"sd-clay", 2000}, {"sd-charcoal", 1000}}},
     {"sd-alembic", "sd-nitric-acid", 3, {{"sd-jug", 500}, {"sd-saltpeter", 2000}, {"sd-charcoal", 500}}, "sd-charcoal"},
     {"sd-fermentation-vat", "sd-mash", 2, {{"sd-jug", 500}, {"sd-fruit", 2000}}},
-    {"sd-campfire", "sd-charcoal", 1, {{"wood", 2000}}, "wood"},
+    {"sd-kiln", "sd-charcoal", 1, {{"wood", 2000}}, "sd-charcoal"},
   }
   local n = 0
   for row, k in pairs(kinds) do

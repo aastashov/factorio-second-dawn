@@ -27,6 +27,9 @@ end
 data:extend{
   -- Start: no research needed.
   recipe("charcoal", "sd-firing", 3.2, {{"wood", 3}}, {{"sd-charcoal", 1}}, true),
+  -- the same, in the campfire (a furnace picks the recipe from its input)
+  recipe("campfire-charcoal", "sd-campfire", 3.2, {{"wood", 3}}, {{"sd-charcoal", 1}}, true),
+  recipe("campfire-brick", "sd-campfire", 3.2, {{"sd-clay", 2}}, {{"sd-brick", 1}}, true),
   recipe("fiber", "sd-handcraft", 1, {{"wood", 1}}, {{"sd-fiber", 2}}, true),
   recipe("rope", "sd-crafting", 1, {{"sd-fiber", 3}}, {{"sd-rope", 1}}, true),
   recipe("clay-tablet", "sd-crafting", 8, {{"sd-clay", 2}, {"sd-charcoal", 1}}, {{"sd-clay-tablet", 2}}, true),

@@ -32,9 +32,9 @@ local function setup()
     return s.create_entity{name = name, position = at(x, y), force = force, recipe = recipe}
   end
 
-  E.campfire = make("sd-campfire", 0, 0, "sd-charcoal")
+  E.campfire = make("sd-campfire", 0, 0)
   E.campfire.get_fuel_inventory().insert{name = "wood", count = 10}
-  input(E.campfire).insert{name = "wood", count = 30}
+  E.campfire.get_inventory(defines.inventory.furnace_source).insert{name = "wood", count = 30}
 
   E.kiln = make("sd-kiln", 4, 0, "sd-brick")
   E.kiln_wood = E.kiln.get_fuel_inventory().insert{name = "wood", count = 5}
