@@ -36,11 +36,18 @@ end)
 
 script.on_configuration_changed(function()
   -- Saves from earlier versions get what a new game would have: starting ruins (0.2), tin (0.3),
-  -- the waves of the new version, no vanilla victory on rocket launch (0.10).
+  -- the waves of the new version, no vanilla victory on rocket launch (0.10), and see below (0.11).
   if remote.interfaces["silo_script"] then remote.call("silo_script", "set_no_victory", true) end
   if init() then notes.place_start_ruins(game.surfaces.nauvis) end
   start.ensure_starting_area(game.surfaces.nauvis)
   waves.on_version_changed()
+  -- 0.11: fewer lairs, the bow and stone arrows from the start, bone arrows with "Hunting".
+  wildlife.thin_out()
+  for _, force in pairs(game.forces) do
+    force.recipes["sd-bow"].enabled = true
+    force.recipes["sd-stone-arrows"].enabled = true
+    if force.technologies["sd-hunting"].researched then force.recipes["sd-bone-arrows"].enabled = true end
+  end
 end)
 
 script.on_event(defines.events.on_chunk_generated, function(e)
@@ -146,7 +153,10 @@ script.on_nth_tick(30, function(e)
   waves.update(e.tick)
   if storage.waves.count > count then wildlife.freeze(e.tick) end
   wildlife.update(e.tick)
-  if e.tick % 120 == 0 then wildlife.territory(statues.is_petrified) end
+  if e.tick % 120 == 0 then
+    wildlife.territory(statues.is_petrified)
+    wildlife.leash(e.tick)
+  end
   if e.tick % 300 == 0 then wildlife.night(e.tick, storage.waves.count > 0) end
   if e.tick % 60 == 0 then
     climate.update_sources()

@@ -51,13 +51,14 @@ RECIPES = {
     # charcoal 30 = chamber fuel (200 kW x 600 s), modelled as an ingredient
     "charge-1":      (1, "awakening", 600, {"acid-jug": 10, "spirit-jug": 10, "charcoal": 30}, {"charge-1": 1, "jug": 20}, "awakening"),
     # hunting (release 0.4)
-    "sling-stones":  (1, "hand", 1, {"stone": 1}, {"sling-stones": 5}, "hunting"),
+    "bow":           (1, "crafting", 3, {"wood": 5, "rope": 2}, {"bow": 1}, None),
+    "stone-arrows":  (1, "crafting", 1, {"wood": 1, "stone": 1}, {"stone-arrows": 5}, None),
+    "bone-arrows":   (1, "crafting", 1, {"wood": 1, "bones": 1}, {"bone-arrows": 5}, "hunting"),
     "palisade":      (1, "crafting", 1, {"wood": 6, "rope": 1}, {"palisade": 2}, "hunting"),
     "cooked-meat":   (1, "campfire", 5, {"meat": 1}, {"cooked-meat": 1}, "hunting"),
     "leather":       (1, "fermenting", 20, {"hide": 2, "quicklime": 1}, {"leather": 2}, "tanning"),
     "leather-jacket": (1, "crafting", 5, {"leather": 10, "rope": 5}, {"leather-jacket": 1}, "tanning"),
     "arrows":        (2, "crafting", 2, {"wood": 1, "bronze": 1, "fiber": 2}, {"arrows": 10}, "bow"),
-    "bow":           (2, "crafting", 3, {"wood": 5, "rope": 3, "bronze": 2}, {"bow": 1}, "bow"),
     "crossbow":      (2, "crafting", 5, {"bronze": 10, "wood": 10, "rope": 5, "leather": 2}, {"crossbow": 1}, "crossbow"),
     "bone-meal":     (2, "grinding", 2, {"bones": 1}, {"bone-meal": 3}, "bone-meal"),
     "fertilized-fruit": (2, "growing", 60, {"fruit": 2, "bone-meal": 2}, {"fruit": 10}, "bone-meal"),

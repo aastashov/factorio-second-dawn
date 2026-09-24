@@ -22,7 +22,7 @@ chain 73100
 chain2 55800
 chain3 72400
 notes 10
-wildlife 44700
+wildlife 47200
 capture 5700
 climate 20300
 sea 5

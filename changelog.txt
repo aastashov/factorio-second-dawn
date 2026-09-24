@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.11.0
+Date: 2026-09-24
+  Changes:
+    - A bow and stone arrows from the start, no research needed (5 wood + 2 rope; wood + stone -> 5 arrows).
+      Bone arrows come with Hunting, bronze arrows in epoch 2. The sling is gone.
+    - Wild animals are slower than a running character, see only 16 tiles and give up a chase 60 tiles
+      from their lair. Lairs are half as common and start 200 tiles from the camp; existing maps are thinned out.
+    - Every technology's description says what its research takes and where.
+    - Hard rock (tin, copper, coal...) says why it can't be mined by hand and what mines it.
+    - Descriptions for every item and building, including buoys.
+    - Factoriopedia no longer lists vanilla buildings and items that don't exist in Second Dawn.
+    - The first diary entry covers the bow and the new campfire.
+---------------------------------------------------------------------------------------------------
 Version: 0.10.6
 Date: 2026-09-24
   Bugfixes:

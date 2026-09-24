@@ -5,9 +5,11 @@ local wildlife = {}
 local FORCE = "sd-wildlife"
 local LAIRS = {"sd-wolf-lair", "sd-boar-lair", "sd-bear-den"}
 local PREDATORS = {"sd-wolf-lair", "sd-bear-den"}
-local SAFE_RADIUS = 150
+local SAFE_RADIUS = 200
 local D = settings.startup["sd-climate-distance"].value -- bears live in the cold, boars outside it
 local TERRITORY = 25
+local LEASH = 60 -- animals chase no farther than this from their lair
+local WOLF_CHANCE, OTHER_CHANCE = 0.03, 0.02 -- per generated chunk
 local RAID_REACH = 300
 local FREEZE = 10 * 60 * 60
 local FIRST_RAID_TICK = 2 * 60 * 60 * 60 -- raids start with the first wave (or 2 h when waves are off)
@@ -31,8 +33,10 @@ function wildlife.init()
       night = false,
       raids = 0,
       frozen_until = nil,
+      thinned = true,
     }
   end
+  storage.wildlife.chasers = storage.wildlife.chasers or {}
   wildlife.apply_mode()
 end
 
@@ -56,20 +60,55 @@ function wildlife.on_chunk_generated(e)
   local r = storage.wildlife.rng()
   local cold = centre.y < -D
   local name
-  if r < 0.06 then name = "sd-wolf-lair"
-  elseif r < 0.10 then name = cold and "sd-bear-den" or "sd-boar-lair"
+  if r < WOLF_CHANCE then name = "sd-wolf-lair"
+  elseif r < WOLF_CHANCE + OTHER_CHANCE then name = cold and "sd-bear-den" or "sd-boar-lair"
   else return end
   local pos = e.surface.find_non_colliding_position(name, centre, 10, 1)
   if pos then e.surface.create_entity{name = name, position = pos, force = FORCE} end
 end
 
--- The units of a lair attack `target`.
+-- The units of a lair attack `target`. A scripted attack takes them out of the lair, so they are
+-- remembered with their home for the leash.
 local function unleash(lair, target)
+  local chasers = storage.wildlife.chasers
   for _, unit in pairs(lair.units) do
     if unit.valid then
       unit.commandable.set_command{type = defines.command.attack, target = target, distraction = defines.distraction.by_anything}
+      chasers[unit.unit_number] = {unit = unit, home = lair.position, since = game.tick}
     end
   end
+end
+
+function wildlife.provoke(character)
+  local lairs = character.surface.find_entities_filtered{
+    position = character.position, radius = TERRITORY, type = "unit-spawner", force = FORCE,
+  }
+  for _, lair in pairs(lairs) do unleash(lair, character) end
+  return #lairs
+end
+
+-- Runs every 2 s: animals that chased farther than LEASH from their lair give up and go home. Returns
+-- how many were sent home.
+local CHASE_TIMEOUT = 5 * 60 * 60
+function wildlife.leash(tick)
+  local w = storage.wildlife
+  local sent = 0
+  for id, c in pairs(w.chasers) do
+    local unit = c.unit
+    if not unit.valid or tick - c.since > CHASE_TIMEOUT then
+      w.chasers[id] = nil
+    else
+      local dx, dy = unit.position.x - c.home.x, unit.position.y - c.home.y
+      if dx * dx + dy * dy > LEASH * LEASH then
+        unit.commandable.set_command{type = defines.command.go_to_location, destination = c.home, radius = 5,
+          distraction = defines.distraction.none}
+        w.chasers[id] = nil
+        w.leashed = (w.leashed or 0) + 1
+        sent = sent + 1
+      end
+    end
+  end
+  return sent
 end
 
 -- Runs every 2 s: animals attack players who come closer than 25 tiles to their lair.
@@ -81,6 +120,25 @@ function wildlife.territory(is_petrified)
       wildlife.provoke(character)
     end
   end
+end
+
+-- 0.11: lairs were twice as dense and came as close as 150 tiles. Existing maps are thinned out to
+-- what generation gives now.
+function wildlife.thin_out()
+  local w = storage.wildlife
+  if w.thinned then return end
+  w.thinned = true
+  local removed = 0
+  for _, lair in pairs(game.surfaces.nauvis.find_entities_filtered{name = LAIRS, force = FORCE}) do
+    local p = lair.position
+    local keep = lair.name == "sd-wolf-lair" and WOLF_CHANCE / 0.06 or OTHER_CHANCE / 0.04
+    if p.x * p.x + p.y * p.y < SAFE_RADIUS * SAFE_RADIUS or w.rng() >= keep then
+      for _, unit in pairs(lair.units) do if unit.valid then unit.destroy() end end
+      lair.destroy()
+      removed = removed + 1
+    end
+  end
+  return removed
 end
 
 function wildlife.provoke(character)

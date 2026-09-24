@@ -1,3 +1,4 @@
+local util = require("util")
 -- Wild animals: lairs by distance, animals spawning, loot, the crossbow turret, a raid, territory,
 -- and a petrification wave freezing animals for 10 minutes.
 local function L(s) log("SD-TEST " .. s) end
@@ -23,7 +24,7 @@ local steps = {
     local s = game.surfaces.nauvis
     s.request_to_generate_chunks({0, 0}, 20)
     s.force_generate_chunk_requests()
-    local near = s.count_entities_filtered{type = "unit-spawner", position = {0, 0}, radius = 140}
+    local near = s.count_entities_filtered{type = "unit-spawner", position = {0, 0}, radius = 190}
     local bears_close = s.count_entities_filtered{name = "sd-bear-den", position = {0, 0}, radius = 480}
     local wolves = s.count_entities_filtered{name = "sd-wolf-lair"}
     local boars = s.count_entities_filtered{name = "sd-boar-lair"}
@@ -31,6 +32,11 @@ local steps = {
     check("no lairs at the camp", near == 0, near .. "")
     check("lairs spread out", wolves > 10 and boars > 5, wolves .. " wolf, " .. boars .. " boar")
     check("no bears in the temperate belt", bears == 0, bears .. " bears (they live in the cold, see climate test)")
+    local run = prototypes.entity.character.running_speed
+    for _, a in pairs{"sd-wolf", "sd-boar", "sd-bear"} do
+      check(a .. " is slower than a running character", prototypes.entity[a].speed < run, prototypes.entity[a].speed .. " < " .. run)
+    end
+    check("the bow and stone arrows need no research", game.forces.player.recipes["sd-bow"].enabled and game.forces.player.recipes["sd-stone-arrows"].enabled)
     check("no vanilla biters", s.count_entities_filtered{force = "enemy"} == 0)
 
     -- A test ground far away: a wolf lair, a building 60 tiles off, a character near the lair.
@@ -56,26 +62,31 @@ local steps = {
     local b = storage.t.box
     check("raid reaches the building", not b.valid or b.health < b.max_health, b.valid and (b.health .. " hp") or "destroyed")
 
-    -- Crossbow turret with arrows against three wolves.
+    -- Crossbow turret with the weakest arrows against three wolves.
     local s = game.surfaces.nauvis
     local t = s.create_entity{name = "sd-crossbow", position = at(-50, -50), force = "player"}
-    t.insert{name = "sd-arrows", count = 50}
+    t.insert{name = "sd-stone-arrows", count = 50}
     storage.t.turret = t
     storage.t.wolves = {}
     for i = 1, 3 do
       storage.t.wolves[i] = s.create_entity{name = "sd-wolf", position = at(-50 + 8 + i, -50), force = "sd-wildlife"}
+      storage.t.wolves[i].commandable.set_command{type = defines.command.attack, target = t} -- no wandering off
     end
   end,
   [8500] = function()
-    local alive = 0
-    for _, w in pairs(storage.t.wolves) do if w.valid then alive = alive + 1 end end
-    check("crossbow turret kills wolves", alive == 0, alive .. " alive")
+    -- Now and then a wolf breaks off and runs home; the turret is judged on the ones in its reach.
+    local alive, killed = 0, 0
+    for _, w in pairs(storage.t.wolves) do
+      if not w.valid then killed = killed + 1
+      elseif util.distance(w.position, storage.t.turret.position) < 25 then alive = alive + 1 end
+    end
+    check("crossbow turret kills wolves", alive == 0 and killed >= 2, killed .. " killed, " .. alive .. " alive in reach")
     local s = game.surfaces.nauvis
     local items = {}
     for _, e in pairs(s.find_entities_filtered{name = "item-on-ground", position = at(-50, -50), radius = 25}) do
       items[e.stack.name] = (items[e.stack.name] or 0) + e.stack.count
     end
-    check("wolves drop meat", (items["sd-meat"] or 0) >= 3, serpent.line(items))
+    check("wolves drop meat", (items["sd-meat"] or 0) >= killed, serpent.line(items))
 
     remote.call("second-dawn", "wave_in", 60)
   end,
@@ -89,6 +100,19 @@ local steps = {
   [8560 + 36000 + 100] = function()
     local lair = storage.t.lair
     check("animals thaw after 10 minutes", lair.valid and not lair.disabled_by_script)
+    -- The leash: provoke the lair, then run away at a character's running speed. The pack gives up
+    -- 60 tiles from its lair and goes home.
+    local s = game.surfaces.nauvis
+    local c = s.create_entity{name = "character", position = at(15, 0), force = "player"}
+    remote.call("second-dawn", "provoke", c.position)
+    storage.t.far = c
+  end,
+  [8560 + 36000 + 100 + 2400] = function()
+    local c, lair = storage.t.far, storage.t.lair
+    local near_player = game.surfaces.nauvis.count_entities_filtered{type = "unit", position = c.position, radius = 25}
+    local leashed = remote.call("second-dawn", "wildlife").leashed or 0
+    check("animals give up the chase 60 tiles from their lair", leashed > 0 and near_player == 0 and c.valid,
+      leashed .. " sent home, " .. near_player .. " within 25 tiles of the player, player " .. (c.valid and c.health .. " hp" or "dead"))
     L("failures: " .. failures)
   end,
 }
@@ -96,4 +120,8 @@ local steps = {
 script.on_event(defines.events.on_tick, function(e)
   local f = steps[e.tick]
   if f then f() end
+  local runner = storage.t.far
+  if runner and runner.valid and runner.position.x < O.x + 150 then
+    runner.teleport({runner.position.x + 0.15, runner.position.y})
+  end
 end)

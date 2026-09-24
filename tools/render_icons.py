@@ -497,31 +497,27 @@ def _(c):
         c.blob(x, y, 3, 2, hexc("e0c060"), spec=0.2)
     c.line([(20, 22), (44, 22)], 2, hexc("6a5030"))
 
-@icon("sd-sling")
-def _(c):
-    c.line([(8, 8), (26, 44)], 2, hexc("b89060"))
-    c.line([(56, 8), (38, 44)], 2, hexc("b89060"))
-    c.blob(32, 46, 10, 7, hexc("8a5a34"), spec=0.2)
-    c.blob(32, 44, 4, 4, hexc("8a8a8a"), spec=0.4)
-
-@icon("sd-sling-stones")
-def _(c):
-    for x, y, r in ((20, 42, 10), (40, 44, 9), (30, 26, 9)):
-        c.blob(x, y, r, r * 0.85, hexc("8e8a84"), spec=0.3)
-
 @icon("sd-bow")
 def _(c):
     c.arc(8, 32, 40, -1.1, 1.1, 5, hexc("8a5a2c"))
     c.line([(8 + 40 * math.cos(-1.1), 32 + 40 * math.sin(-1.1)), (8 + 40 * math.cos(1.1), 32 + 40 * math.sin(1.1))], 1.2, hexc("e8e0c8"))
 
-@icon("sd-arrows")
-def _(c):
+def arrows(c, tip):
     for i in range(3):
         d = i * 7
         c.line([(10 + d, 56 - d * 0.2), (46 + d * 0.6, 12 + d * 0.2)], 2.2, hexc("a87a4a"))
         tx, ty = 46 + d * 0.6, 12 + d * 0.2
-        c.poly([(tx + 7, ty - 7), (tx - 1, ty - 1), (tx + 2, ty + 2)], hexc("c07a38"), shade=0.2)
+        c.poly([(tx + 7, ty - 7), (tx - 1, ty - 1), (tx + 2, ty + 2)], tip, shade=0.2)
         c.poly([(10 + d, 56 - d * 0.2), (6 + d, 50 - d * 0.2), (14 + d, 54 - d * 0.2)], hexc("e8e8e0"), shade=0.1)
+
+@icon("sd-stone-arrows")
+def _(c): arrows(c, hexc("7e7a74"))
+
+@icon("sd-bone-arrows")
+def _(c): arrows(c, hexc("f0e8d4"))
+
+@icon("sd-arrows")
+def _(c): arrows(c, hexc("c07a38"))
 
 @icon("sd-leather-jacket")
 def _(c): garment(c, hexc("8a5230"))

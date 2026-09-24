@@ -77,6 +77,17 @@ for type_name, protos in dump.items():
             for w in want:
                 if not resolves(w, lang):
                     problems.append(f"{lang} {type_name}/{name}: {json.dumps(w, ensure_ascii=False)}")
+# Descriptions: every item of the mod and every building placed by one says what it is for.
+for type_name, protos in dump.items():
+    if type_name not in ITEM_TYPES:
+        continue
+    for name, p in protos.items():
+        if not name.startswith("sd-") or p.get("hidden") or "localised_description" in p:
+            continue
+        want = ["item-description." + name, "entity-description." + p.get("place_result", name)]
+        for lang in ("en", "ru"):
+            if not any(w in mod_keys[lang] for w in want):
+                problems.append(f"{lang} {type_name}/{name}: no description")
 for p in sorted(problems):
     print("UNKNOWN", p)
 print(f"{len(problems)} names without translation")

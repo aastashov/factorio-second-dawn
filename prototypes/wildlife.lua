@@ -29,6 +29,8 @@ local function animal(name, base, tint, health, damage, speed, drops)
   u.icon = nil
   u.max_health = health
   u.movement_speed = speed
+  u.vision_distance = 16 -- they notice a player close by, not across the clearing
+  u.max_pursue_distance = 40 -- and give up a chase they started themselves (scripted ones: scripts/wildlife.lua)
   u.absorptions_to_join_attack = {}
   u.loot = loot(drops)
   u.factoriopedia_simulation = nil
@@ -37,6 +39,7 @@ local function animal(name, base, tint, health, damage, speed, drops)
   return u
 end
 
+-- Speeds stay below a running character's 0.15 tiles/tick: you can always get away.
 -- cooldown: seconds between animals (with evolution off, the first value of spawning_cooldown applies)
 local function lair(name, base, tint, health, unit, count, cooldown, bones)
   local s = table.deepcopy(data.raw["unit-spawner"][base])
@@ -59,13 +62,12 @@ end
 
 local wolf, boar, bear = {0.60, 0.58, 0.55}, {0.60, 0.42, 0.28}, {0.42, 0.30, 0.22}
 data:extend{
-  animal("wolf", "small-biter", wolf, 40, 8, 0.2, {{"sd-meat", 1}, {"sd-hide", 1, 1, 0.7}, {"sd-bones", 1, 1, 0.5}}),
-  animal("boar", "medium-biter", boar, 120, 15, 0.18, {{"sd-meat", 3}, {"sd-hide", 1}, {"sd-bones", 1, 2}}),
-  animal("bear", "big-biter", bear, 400, 35, 0.15, {{"sd-meat", 6}, {"sd-hide", 2}, {"sd-bones", 3}}),
+  animal("wolf", "small-biter", wolf, 40, 8, 0.13, {{"sd-meat", 1}, {"sd-hide", 1, 1, 0.7}, {"sd-bones", 1, 1, 0.5}}),
+  animal("boar", "medium-biter", boar, 120, 15, 0.12, {{"sd-meat", 3}, {"sd-hide", 1}, {"sd-bones", 1, 2}}),
+  animal("bear", "big-biter", bear, 400, 35, 0.11, {{"sd-meat", 6}, {"sd-hide", 2}, {"sd-bones", 3}}),
   lair("wolf-lair", "biter-spawner", wolf, 300, "wolf", 5, 20, {5, 10}),
   lair("boar-lair", "spitter-spawner", boar, 400, "boar", 4, 30, {5, 10}),
   lair("bear-den", "biter-spawner", bear, 800, "bear", 2, 90, {8, 10}),
-  {type = "ammo-category", name = "sd-sling"},
   {type = "ammo-category", name = "sd-arrow"},
   {type = "item-subgroup", name = "sd-hunting", group = "second-dawn", order = "h"},
 }
@@ -132,10 +134,11 @@ jacket.order = "k"
 jacket.resistances = {{type = "physical", decrease = 2, percent = 20}}
 
 data:extend{
-  gun("sling", "g", c.wood, "sd-sling", 14, 45),
-  ammo("sling-stones", "h", c.stone, "sd-sling", 8, 5),
-  gun("bow", "i", c.bronze, "sd-arrow", 18, 36),
-  ammo("arrows", "j", c.bronze, "sd-arrow", 15, 10),
+  -- One ammo category: the bow and the crossbow turret shoot any arrows (docs/DESIGN.md §22).
+  gun("bow", "g", c.wood, "sd-arrow", 16, 36),
+  ammo("stone-arrows", "h", c.stone, "sd-arrow", 10, 10),
+  ammo("bone-arrows", "i", {1, 0.97, 0.9}, "sd-arrow", 14, 10),
+  ammo("arrows", "j", c.bronze, "sd-arrow", 18, 10),
   jacket,
 }
 
@@ -187,13 +190,14 @@ local function recipe(name, category, time, ingredients, results, extra)
   return r
 end
 data:extend{
-  recipe("sling", "sd-crafting", 1, {{"wood", 3}, {"sd-rope", 2}}, {{"sd-sling", 1}}),
-  recipe("sling-stones", "sd-handcraft", 1, {{"stone", 1}}, {{"sd-sling-stones", 5}}),
+  -- The bow and stone arrows need no research: wolves come before the first tablet is fired.
+  recipe("bow", "sd-crafting", 3, {{"wood", 5}, {"sd-rope", 2}}, {{"sd-bow", 1}}, {enabled = true}),
+  recipe("stone-arrows", "sd-crafting", 1, {{"wood", 1}, {"stone", 1}}, {{"sd-stone-arrows", 5}}, {enabled = true}),
+  recipe("bone-arrows", "sd-crafting", 1, {{"wood", 1}, {"sd-bones", 1}}, {{"sd-bone-arrows", 5}}),
   recipe("palisade", "sd-crafting", 1, {{"wood", 6}, {"sd-rope", 1}}, {{"sd-palisade", 2}}),
   recipe("cooked-meat", "sd-campfire", 5, {{"sd-meat", 1}}, {{"sd-cooked-meat", 1}}),
   recipe("leather", "sd-fermenting", 20, {{"sd-hide", 2}, {"sd-quicklime", 1}}, {{"sd-leather", 2}}),
   recipe("leather-jacket", "sd-crafting", 5, {{"sd-leather", 10}, {"sd-rope", 5}}, {{"sd-leather-jacket", 1}}),
-  recipe("bow", "sd-crafting", 3, {{"wood", 5}, {"sd-rope", 3}, {"sd-bronze", 2}}, {{"sd-bow", 1}}),
   recipe("arrows", "sd-crafting", 2, {{"wood", 1}, {"sd-bronze", 1}, {"sd-fiber", 2}}, {{"sd-arrows", 10}}),
   recipe("crossbow", "sd-crafting", 5, {{"sd-bronze", 10}, {"wood", 10}, {"sd-rope", 5}, {"sd-leather", 2}}, {{"sd-crossbow", 1}}),
   recipe("bone-meal", "sd-grinding", 2, {{"sd-bones", 1}}, {{"sd-bone-meal", 3}}),
@@ -212,9 +216,9 @@ local function tech(name, icon, tint, count, time, flasks, prerequisites, recipe
     effects = effects, prerequisites = pre, unit = {count = count, time = time, ingredients = ingredients}}
 end
 data:extend{
-  tech("hunting", "military", c.wood, 15, 10, false, {}, {"sling", "sling-stones", "palisade", "cooked-meat"}),
+  tech("hunting", "military", c.wood, 15, 10, false, {}, {"bone-arrows", "palisade", "cooked-meat"}),
   tech("tanning", "armor-making", {0.65, 0.45, 0.3}, 25, 15, false, {"quicklime", "fermentation"}, {"leather", "leather-jacket"}),
-  tech("bow", "weapon-shooting-speed-1", c.bronze, 60, 20, false, {"bronze"}, {"bow", "arrows"}),
+  tech("bow", "weapon-shooting-speed-1", c.bronze, 60, 20, false, {"bronze"}, {"arrows"}), -- bronze arrows
   tech("crossbow", "gun-turret", c.bronze, 75, 25, true, {"bow", "glass-flask", "tanning"}, {"crossbow"}),
   tech("bone-meal", "sulfur-processing", {1, 1, 0.95}, 40, 15, false, {"millstone"}, {"bone-meal", "fertilized-fruit"}),
 }
