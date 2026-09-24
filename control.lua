@@ -5,6 +5,7 @@ local start = require("scripts.start")
 local gui = require("scripts.gui")
 local notes = require("scripts.notes")
 local diary = require("scripts.diary")
+local wildlife = require("scripts.wildlife")
 
 local INTRO_STATUE = 4 * 60      -- the first players wake from stone a few seconds into the game
 local NEWCOMER_STATUE = 3 * 60 * 60
@@ -13,6 +14,7 @@ local function init()
   chamber.init()
   statues.init()
   waves.init()
+  wildlife.init()
   local new_notes = not storage.notes
   notes.init()
   return new_notes
@@ -33,7 +35,10 @@ script.on_configuration_changed(function()
   waves.on_version_changed()
 end)
 
-script.on_event(defines.events.on_chunk_generated, notes.on_chunk_generated)
+script.on_event(defines.events.on_chunk_generated, function(e)
+  notes.on_chunk_generated(e)
+  wildlife.on_chunk_generated(e)
+end)
 local note_filter = {{filter = "name", name = "sd-note"}}
 script.on_event(defines.events.on_player_mined_entity, notes.on_mined, note_filter)
 script.on_event(defines.events.on_robot_mined_entity, notes.on_mined, note_filter)
@@ -87,11 +92,19 @@ end)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(e)
   if e.setting == "sd-wave-difficulty" then waves.on_difficulty_changed() end
+  if e.setting == "sd-wildlife" then wildlife.apply_mode() end
 end)
+
+script.on_event(defines.events.on_force_created, function() wildlife.apply_mode() end)
 
 script.on_nth_tick(30, function(e)
   chamber.update()
+  local count = storage.waves.count
   waves.update(e.tick)
+  if storage.waves.count > count then wildlife.freeze(e.tick) end
+  wildlife.update(e.tick)
+  if e.tick % 120 == 0 then wildlife.territory(statues.is_petrified) end
+  if e.tick % 300 == 0 then wildlife.night(e.tick, storage.waves.count > 0) end
   statues.update(e.tick, waves.force_petrified)
   if e.tick % 60 == 0 then gui.update(e.tick) end
 end)
@@ -113,6 +126,12 @@ remote.add_interface("second-dawn", {
   charge_tier = function(force) return chamber.charge_tier(game.forces[force]) end,
   chamber = function(force) return chamber.get(game.forces[force]) end,
   starting_area = function() return start.ensure_starting_area(game.surfaces.nauvis) end,
+  wildlife = function() return storage.wildlife end,
+  raid = function(force, count) return #wildlife.raid(game.forces[force], count or 1) end,
+  provoke = function(position)
+    local c = game.surfaces.nauvis.find_entities_filtered{type = "character", position = position, radius = 1}[1]
+    return c and wildlife.provoke(c)
+  end,
   notes = function()
     local n = storage.notes
     return {ruins = n.ruins, caches = n.caches, placed = n.placed, entities = n.entities, read = n.read}

@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.0
+Date: 2026-09-24
+  Major Features:
+    - Wild animals: wolves, boars and bears live in lairs from 150 tiles out (bears past 500). They attack
+      anyone who comes within 25 tiles. Wolves and bears raid buildings at night now and then, starting
+      with the first petrification wave. Boars only defend.
+    - A petrification wave turns all animals to stone for 10 minutes.
+    - Hunting: sling and sling stones, bow and arrows, palisade, crossbow turret that shoots arrows.
+    - Animals drop meat, hides and bones: roast meat heals, hides are tanned into leather (leather jacket,
+      crossbow turret), bones are ground into bone meal that makes a garden bear more.
+  Features:
+    - Setting "Wild animals": peaceful, calm (no raids), normal, dangerous.
+---------------------------------------------------------------------------------------------------
 Version: 0.3.0
 Date: 2026-09-24
   Major Features:

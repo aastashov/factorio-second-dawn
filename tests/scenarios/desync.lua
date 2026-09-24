@@ -46,5 +46,18 @@ script.on_event(defines.events.on_tick, function(e)
     storage.t.chamber.set_recipe("sd-revival-charge-2")
   elseif t == 1200 then
     L("tank after switching to charge II: " .. tostring(storage.t.chamber.fluidbox[1]))
+    -- a wolf lair next to a chest; its wolves get provoked, then sent on a raid
+    local s = game.surfaces.nauvis
+    storage.t.lair = s.create_entity{name = "sd-wolf-lair", position = {300, 360}, force = "sd-wildlife"}
+    storage.t.box = s.create_entity{name = "wooden-chest", position = {300, 400}, force = "player"}
+    storage.t.char = s.create_entity{name = "character", position = {300, 345}, force = "player"}
+  elseif t == 2600 then
+    L("provoked lairs: " .. tostring(remote.call("second-dawn", "provoke", storage.t.char.position)))
+    L("raids sent: " .. remote.call("second-dawn", "raid", "player", 1))
+  elseif t == 3000 then
+    L("chest after raid: " .. (storage.t.box.valid and storage.t.box.health or "destroyed"))
+    remote.call("second-dawn", "wave_in", 30)
+  elseif t == 3100 then
+    L("lair frozen by the wave: " .. tostring(storage.t.lair.valid and storage.t.lair.disabled_by_script))
   end
 end)

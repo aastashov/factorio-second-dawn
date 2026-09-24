@@ -8,6 +8,14 @@ data:extend{
     order = "a",
   },
   {
+    type = "string-setting",
+    name = "sd-wildlife",
+    setting_type = "runtime-global",
+    default_value = "normal",
+    allowed_values = {"peaceful", "calm", "normal", "dangerous"},
+    order = "c",
+  },
+  {
     type = "bool-setting",
     name = "sd-petrify-newcomers",
     setting_type = "runtime-global",
