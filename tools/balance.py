@@ -20,7 +20,8 @@ CATEGORY_MACHINE = {
     "grinding": "millstone", "smelting": "bloomery", "glassmaking": "glassworks",
 }
 # mined items: mining time; miners: digger 0.25 (soft only), pick digger 0.2, bronze drill 0.4 (soft + hard)
-RAW = {"wood", "stone", "clay", "shells", "saltpeter", "fruit", "copper-ore", "tin-ore", "coal"}
+RAW = {"wood", "stone", "clay", "shells", "saltpeter", "fruit", "copper-ore", "tin-ore", "coal",
+       "meat", "hide", "bones"}  # animals: hunting from the start
 MINERS = {"digger": 0.25, "pick-digger": 0.2, "bronze-drill": 0.4}
 MINING_TIME = {"stone": 1, "clay": 1, "shells": 1, "saltpeter": 1.5, "copper-ore": 1, "tin-ore": 1, "coal": 1}
 
@@ -41,6 +42,17 @@ RECIPES = {
     "nitric-acid":   (1, "distillation", 10, {"jug": 1, "saltpeter": 4, "charcoal": 1}, {"acid-jug": 1}, "distillation"),
     # charcoal 30 = chamber fuel (200 kW x 600 s), modelled as an ingredient
     "charge-1":      (1, "awakening", 600, {"acid-jug": 10, "spirit-jug": 10, "charcoal": 30}, {"charge-1": 1, "jug": 20}, "awakening"),
+    # hunting (release 0.4)
+    "sling-stones":  (1, "hand", 1, {"stone": 1}, {"sling-stones": 5}, "hunting"),
+    "palisade":      (1, "crafting", 1, {"wood": 6, "rope": 1}, {"palisade": 2}, "hunting"),
+    "cooked-meat":   (1, "firing", 5, {"meat": 1}, {"cooked-meat": 1}, "hunting"),
+    "leather":       (1, "fermenting", 20, {"hide": 2, "quicklime": 1}, {"leather": 2}, "tanning"),
+    "leather-jacket": (1, "crafting", 5, {"leather": 10, "rope": 5}, {"leather-jacket": 1}, "tanning"),
+    "arrows":        (2, "crafting", 2, {"wood": 1, "bronze": 1, "fiber": 2}, {"arrows": 10}, "bow"),
+    "bow":           (2, "crafting", 3, {"wood": 5, "rope": 3, "bronze": 2}, {"bow": 1}, "bow"),
+    "crossbow":      (2, "crafting", 5, {"bronze": 10, "wood": 10, "rope": 5, "leather": 2}, {"crossbow": 1}, "crossbow"),
+    "bone-meal":     (2, "grinding", 2, {"bones": 1}, {"bone-meal": 3}, "bone-meal"),
+    "fertilized-fruit": (2, "growing", 60, {"fruit": 2, "bone-meal": 2}, {"fruit": 10}, "bone-meal"),
     # epoch 2
     "sand":          (2, "grinding", 2, {"stone": 1}, {"sand": 2}, "millstone"),
     "ash":           (2, "firing", 3.2, {"wood": 4}, {"ash": 2}, "potash"),
@@ -60,7 +72,7 @@ RECIPES = {
 # item -> recipe that makes it (byproducts are credited separately)
 PRODUCER = {out: name for name, r in RECIPES.items() for out in r[4]
             if not (out == "jug" and name != "jug") and not (out == "bottle" and name != "bottle")
-            and not (out == "fruit" and name == "grow-fruit")}
+            and not (out == "fruit" and name in ("grow-fruit", "fertilized-fruit"))}
 RAW |= {"fiber"}  # also from trees
 
 # name: (epoch, count, seconds per unit, packs, prerequisites)
@@ -74,6 +86,8 @@ TECHS = {
     "fermentation":     (1, 25, 15, T, ["pottery"]),
     "distillation":     (1, 30, 15, T, ["fermentation", "quicklime"]),
     "awakening":        (1, 50, 20, T, ["distillation"]),
+    "hunting":          (1, 15, 10, T, []),
+    "tanning":          (1, 25, 15, T, ["quicklime", "fermentation"]),
     "mining":           (2, 50, 15, T, ["awakening"]),
     "smelting":         (2, 60, 15, T, ["mining"]),
     "millstone":        (2, 40, 15, T, ["awakening"]),
@@ -85,6 +99,9 @@ TECHS = {
     "logistics-2":      (2, 75, 25, F, ["glass-flask"]),
     "rectification":    (2, 100, 25, F, ["glass-flask"]),
     "second-awakening": (2, 150, 30, F, ["rectification"]),
+    "bow":              (2, 60, 20, T, ["bronze"]),
+    "crossbow":         (2, 75, 25, F, ["bow", "glass-flask", "tanning"]),
+    "bone-meal":        (2, 40, 15, T, ["millstone"]),
 }
 PACK_ITEM = {"tablet": "tablet", "flask": "flask"}
 
