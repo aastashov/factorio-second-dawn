@@ -91,6 +91,8 @@ RECIPES = {
     "mechanism":     (3, "crafting", 8, {"gear": 2, "cable": 2, "steel": 1}, {"mechanism": 1}, "mechanism"),
     "radiator":      (3, "crafting", 2, {"pipe": 10, "iron": 10, "copper": 5}, {"radiator": 1}, "steam-heating"),
     "cooler":        (3, "crafting", 2, {"pipe": 10, "gear": 5, "cable": 10, "iron": 10}, {"cooler": 1}, "cooling"),
+    "landfill":      (3, "crafting", 1, {"stone": 20}, {"landfill": 1}, "land-reclamation"),
+    "deep-landfill": (3, "crafting", 1, {"stone": 150, "steel": 5, "mortar": 10}, {"deep-landfill": 1}, "deep-landfill"),
     "feed":          (3, "grinding", 4, {"fruit": 4, "fiber": 4}, {"feed": 4}, "domestication"),
     "net":           (3, "crafting", 2, {"rope": 10, "leather": 2, "bronze": 2}, {"net": 1}, "domestication"),
     "electrode":     (3, "crafting", 3, {"copper": 2, "glass": 1}, {"electrode": 1}, "third-awakening"),
@@ -151,6 +153,8 @@ TECHS = {
     "third-awakening":  (3, 250, 45, M, ["electric-chamber", "rectification"]),
     "steam-heating":    (3, 100, 30, F, ["steam-power"]),
     "cooling":          (3, 100, 30, F, ["fluid-handling", "electricity"]),
+    "land-reclamation": (3, 100, 30, F, ["fluid-handling"]),
+    "deep-landfill":    (3, 150, 30, M, ["mechanism", "land-reclamation"]),
 }
 PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism"}
 

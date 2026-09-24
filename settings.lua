@@ -9,6 +9,13 @@ data:extend{
     order = "a",
   },
   {
+    type = "bool-setting",
+    name = "sd-continents",
+    setting_type = "startup",
+    default_value = true,
+    order = "b",
+  },
+  {
     type = "string-setting",
     name = "sd-wave-difficulty",
     setting_type = "runtime-global",

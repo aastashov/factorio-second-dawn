@@ -18,6 +18,7 @@ notes 10
 wildlife 44700
 capture 5700
 climate 20300
+sea 5
 LIST
 tests/run-heavy.sh desync 240 | grep -E "heavy mode ran|desync" || status=1
 exit $status

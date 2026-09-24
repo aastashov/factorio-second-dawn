@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.7.0
+Date: 2026-09-24
+  Major Features:
+    - Continents: the game starts on a temperate continent about 1600 tiles across. The cold north and the
+      hot south lie beyond some 700 tiles of deep ocean. A shelf of shallow water, 45-80 tiles wide, runs
+      along every coast. Setting "Continents" (on by default; off gives ordinary land with the belts).
+    - Landfill now fills only shallow water (the shelf, lakes). Deep landfill (stone, steel, mortar) fills
+      deep water: a road across the ocean is possible but costly.
+  Changes:
+    - Lakes are shallow water; far inland the big lakes shrink.
+    - Tin ore never generates within 160 tiles of the spawn.
+---------------------------------------------------------------------------------------------------
 Version: 0.6.0
 Date: 2026-09-24
   Major Features:
