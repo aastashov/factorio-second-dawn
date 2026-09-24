@@ -56,6 +56,7 @@ campfire.module_slots = 0
 lib.size(campfire, 1)
 lib.recolor_fields(campfire, {"graphics_set"}, {1, 0.8, 0.6}, 0.5)
 local kiln = crafter("furnace", "stone-furnace", "kiln", 2, 1, c.clay, "sd-firing", 1, lib.burner("charcoal", 3), "90kW")
+kiln.crafting_categories = {"sd-firing", "sd-campfire"}   -- everything the campfire does, and more
 local workbench = crafter("assembling-machine", "assembling-machine-1", "workbench", 2, 2 / 3, c.wood, "sd-crafting", 0.5, void, "1kW")
 local garden = crafter("assembling-machine", "assembling-machine-1", "garden", 3, 1, c.green, "sd-growing", 1, void, "1kW")
 local vat = crafter("assembling-machine", "assembling-machine-1", "fermentation-vat", 2, 2 / 3, c.mash, "sd-fermenting", 1, void, "1kW")

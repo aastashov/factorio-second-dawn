@@ -40,7 +40,7 @@ RECIPES = {
     "fiber":         (1, "hand", 1, {"wood": 1}, {"fiber": 2}, None),
     "rope":          (1, "crafting", 1, {"fiber": 3}, {"rope": 1}, None),
     "clay-tablet":   (1, "crafting", 8, {"clay": 2, "charcoal": 1}, {"tablet": 2}, None),
-    "brick":         (1, "firing", 3.2, {"clay": 2}, {"brick": 1}, "pottery"),
+    "brick":         (1, "firing", 3.2, {"clay": 2}, {"brick": 1}, None),   # campfire from the start
     "jug":           (1, "firing", 4, {"clay": 3}, {"jug": 1}, "pottery"),
     "quicklime":     (1, "firing", 3.2, {"shells": 2}, {"quicklime": 1}, "quicklime"),
     "mortar":        (1, "crafting", 1, {"quicklime": 1, "stone": 2}, {"mortar": 2}, "quicklime"),

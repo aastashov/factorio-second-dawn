@@ -19,7 +19,7 @@ local function tech(name, icon, tint, count, time, prerequisites, recipes)
 end
 
 data:extend{
-  tech("pottery", "advanced-material-processing", c.clay, 10, 10, {}, {"brick", "jug", "kiln"}),
+  tech("pottery", "advanced-material-processing", c.clay, 10, 10, {}, {"jug", "kiln"}),
   tech("workbench", "automation-1", c.wood, 15, 10, {"pottery"}, {"workbench"}),
   tech("levers", "logistics-1", c.wood, 20, 10, {"pottery"}, {"lever-arm", "wooden-chute"}),
   tech("digger", "steel-axe", c.wood, 20, 10, {"pottery"}, {"digger"}),
