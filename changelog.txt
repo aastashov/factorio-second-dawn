@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2026-09-24
+  Major Features:
+    - Ruins: about one per ten generated chunks, two guaranteed near the spawn. Each holds a note and
+      sometimes a chest.
+    - Notes: pick one up to read it; the whole team gets it. Hints, four alternative recipes that can only
+      be found this way (charcoal pit, nitric acid with lime, compost bed, double firing) and caches:
+      a chest with supplies, marked on the map.
+    - Diary (J): every note the team has read, new ones marked.
+  Changes:
+    - Existing saves get the two starting ruins on load.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 2026-09-24
   Major Features:

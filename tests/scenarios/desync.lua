@@ -25,5 +25,19 @@ script.on_event(defines.events.on_tick, function(e)
     charge()
   elseif t == 800 then
     L("woken by chamber: " .. serpent.line(forces()))
+  elseif t == 900 then
+    local s = game.surfaces.nauvis
+    s.request_to_generate_chunks({0, 0}, 10)
+    s.force_generate_chunk_requests()
+  elseif t == 1000 then
+    -- read the first two notes found: ruins, recipes and caches go through save/load too
+    local n = 0
+    for unit in pairs(remote.call("second-dawn", "notes").entities) do
+      remote.call("second-dawn", "read_note", unit, "player")
+      n = n + 1
+      if n == 12 then break end
+    end
+    local st = remote.call("second-dawn", "notes")
+    L("notes: ruins " .. st.ruins .. ", caches " .. st.caches .. ", diary " .. #st.read[game.forces.player.index])
   end
 end)

@@ -3,6 +3,8 @@ local statues = require("scripts.statues")
 local waves = require("scripts.waves")
 local start = require("scripts.start")
 local gui = require("scripts.gui")
+local notes = require("scripts.notes")
+local diary = require("scripts.diary")
 
 local INTRO_STATUE = 4 * 60      -- the first players wake from stone a few seconds into the game
 local NEWCOMER_STATUE = 3 * 60 * 60
@@ -11,15 +13,32 @@ local function init()
   chamber.init()
   statues.init()
   waves.init()
+  local new_notes = not storage.notes
+  notes.init()
+  return new_notes
 end
 
 script.on_init(function()
   init()
   start.configure_freeplay()
   start.ensure_starting_area(game.surfaces.nauvis)
+  notes.place_start_ruins(game.surfaces.nauvis)
 end)
 
-script.on_configuration_changed(init)
+script.on_configuration_changed(function()
+  -- Saves from before 0.2 get their starting ruins too.
+  if init() then notes.place_start_ruins(game.surfaces.nauvis) end
+end)
+
+script.on_event(defines.events.on_chunk_generated, notes.on_chunk_generated)
+local note_filter = {{filter = "name", name = "sd-note"}}
+script.on_event(defines.events.on_player_mined_entity, notes.on_mined, note_filter)
+script.on_event(defines.events.on_robot_mined_entity, notes.on_mined, note_filter)
+
+script.on_event("sd-diary", function(e) diary.toggle(game.get_player(e.player_index)) end)
+script.on_event(defines.events.on_gui_selection_state_changed, diary.on_selection)
+script.on_event(defines.events.on_gui_click, diary.on_click)
+script.on_event(defines.events.on_gui_closed, diary.on_closed)
 
 local chamber_filter = {{filter = "name", name = chamber.NAME}}
 local function on_built(e)
@@ -86,4 +105,12 @@ remote.add_interface("second-dawn", {
   charge_tier = function(force) return chamber.charge_tier(game.forces[force]) end,
   chamber = function(force) return chamber.get(game.forces[force]) end,
   starting_area = function() return start.ensure_starting_area(game.surfaces.nauvis) end,
+  notes = function()
+    local n = storage.notes
+    return {ruins = n.ruins, caches = n.caches, placed = n.placed, entities = n.entities, read = n.read}
+  end,
+  read_note = function(unit_number, force)
+    local e = game.get_entity_by_unit_number(unit_number)
+    return e and notes.read(e, game.forces[force])
+  end,
 })
