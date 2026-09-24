@@ -70,9 +70,21 @@ for _, t in pairs(climate.AFFECTED) do build_filter[#build_filter + 1] = {filter
 local CHAMBERS = {[chamber.NAMES[1]] = true, [chamber.NAMES[2]] = true}
 local function on_built(e)
   local entity = e.entity
+  local player = e.player_index and game.get_player(e.player_index)
   if CHAMBERS[entity.name] then
-    chamber.on_built(entity, e.player_index and game.get_player(e.player_index))
+    chamber.on_built(entity, player)
     if not entity.valid then return end
+  end
+  -- Rubber plantations only grow in the hot belt.
+  if entity.name == "sd-plantation" and climate.belt(entity.position) ~= "hot" then
+    local surface, position = entity.surface, entity.position
+    entity.destroy()
+    local stack = {name = "sd-plantation", count = 1}
+    if not (player and player.insert(stack) > 0) then
+      surface.spill_item_stack{position = position, stack = stack, enable_looted = true}
+    end
+    if player then player.print({"sd-message.plantation-hot-only"}) end
+    return
   end
   climate.on_built(entity)
 end

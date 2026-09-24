@@ -11,14 +11,14 @@ local HOUR = 60 * MINUTE
 local FIRST_WAVE = 2 * HOUR
 local FIRST_INTERVAL = 4 * HOUR
 local SHRINK = 0.92
-local LAST_WAVE = 10            -- release 0.5 ends after wave 10; later epochs extend this
+local LAST_WAVE = 14            -- release 0.9 ends after wave 14; the last epoch extends this
 local CHAMBER_WAKE_DELAY = 180  -- a charged chamber still leaves the team stone for 3 s
 local WARNINGS = {10 * MINUTE, 1 * MINUTE}
 
 local FACTORS = {relaxed = 1.5, normal = 1, hard = 0.7}
 
 -- Wave from which each charge tier is required (docs/DESIGN.md §4.2).
-local TIERS = {{wave = 1, tier = 1}, {wave = 4, tier = 2}, {wave = 7, tier = 3}}
+local TIERS = {{wave = 1, tier = 1}, {wave = 4, tier = 2}, {wave = 7, tier = 3}, {wave = 11, tier = 4}}
 
 function waves.required_tier(n)
   local tier = 1

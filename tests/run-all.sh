@@ -20,6 +20,7 @@ capture 5700
 climate 20300
 sea 5
 ships 9100
+chain4 90400
 LIST
 tests/run-heavy.sh desync 320 | grep -E "heavy mode ran|desync" || status=1
 exit $status

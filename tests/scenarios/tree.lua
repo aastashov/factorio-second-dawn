@@ -56,6 +56,9 @@ local function tree_check()
               changed = true
               local e = prototypes.entity[p.name]
               if e and e.type == "mining-drill" then mine_with(e.resource_categories) end
+              -- fluids that come from buildings, not recipes
+              if p.name == "offshore-pump" then have.water = true end
+              if p.name == "boiler" and have.water then have.steam = true end
             end
           end
         end
@@ -135,6 +138,7 @@ local function tree_check()
   check("tree: revival charge I reachable", have["sd-revival-charge-1"] == true)
   check("tree: revival charge II reachable", have["sd-revival-charge-2"] == true)
   check("tree: revival charge III reachable", have["sd-revival-charge-3"] == true)
+  check("tree: revival charge IV reachable", have["sd-revival-charge-4"] == true)
 end
 
 script.on_event(defines.events.on_tick, function(e)

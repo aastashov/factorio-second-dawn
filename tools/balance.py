@@ -203,6 +203,8 @@ TECHS = {
     "ether":            (4, 250, 30, R, ["reactive", "rectification"]),
     "tungsten-electrodes": (4, 250, 30, N, ["navigation", "third-awakening"]),
     "fourth-awakening": (4, 400, 60, N, ["ether", "tungsten-electrodes"]),
+    "lab-glassware-1":  (3, 150, 30, M, ["mechanism"]),
+    "lab-glassware-2":  (4, 250, 30, R, ["lab-glassware-1", "reactive"]),
 }
 PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism", "reactive": "reactive", "navigation": "navigation"}
 

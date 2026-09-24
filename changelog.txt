@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.0
+Date: 2026-09-24
+  Major Features:
+    - Epoch 4 "Chemistry and sea": sulfuric acid from southern sulfur; southern oil with pumpjacks, refinery,
+      cracking and fuel oil; rubber from plantations that grow only in the hot belt; tungsten from the north
+      in the electric furnace. Fourth science: reagent. Fifth science: sea chart.
+    - Revival charge IV (ether and tungsten electrodes) is needed from wave 11 on. This version continues to
+      wave 14.
+    - Screw steamer: 27 tiles per second. Fuel oil: +30% top speed, +50% acceleration.
+    - Laboratory glassware I and II: research 20% and 30% faster.
+---------------------------------------------------------------------------------------------------
 Version: 0.8.0
 Date: 2026-09-24
   Major Features:
