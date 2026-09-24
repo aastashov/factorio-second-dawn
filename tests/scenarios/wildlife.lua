@@ -29,8 +29,8 @@ local steps = {
     local boars = s.count_entities_filtered{name = "sd-boar-lair"}
     local bears = s.count_entities_filtered{name = "sd-bear-den"}
     check("no lairs at the camp", near == 0, near .. "")
-    check("lairs spread out", wolves > 10 and boars > 5 and bears > 3, wolves .. " wolf, " .. boars .. " boar, " .. bears .. " bear")
-    check("bears only far out", bears_close == 0, bears_close .. " within 480")
+    check("lairs spread out", wolves > 10 and boars > 5, wolves .. " wolf, " .. boars .. " boar")
+    check("no bears in the temperate belt", bears == 0, bears .. " bears (they live in the cold, see climate test)")
     check("no vanilla biters", s.count_entities_filtered{force = "enemy"} == 0)
 
     -- A test ground far away: a wolf lair, a building 60 tiles off, a character near the lair.
@@ -38,12 +38,11 @@ local steps = {
     clear(s, {at(-80, -80), at(80, 80)})
     storage.t.lair = s.create_entity{name = "sd-wolf-lair", position = at(0, 0), force = "sd-wildlife"}
     storage.t.box = s.create_entity{name = "wooden-chest", position = at(0, 60), force = "player"}
-    storage.t.char = s.create_entity{name = "character", position = at(70, 0), force = "player"}
   end,
   [3700] = function()
     local lair = storage.t.lair
     check("wolves spawn in the lair", #lair.units >= 3, #lair.units .. " wolves")
-    storage.t.char.teleport(at(20, 0))
+    storage.t.char = game.surfaces.nauvis.create_entity{name = "character", position = at(20, 0), force = "player"}
     local provoked = remote.call("second-dawn", "provoke", storage.t.char.position)
     check("a character 20 tiles from a lair provokes it", provoked == 1, tostring(provoked))
   end,

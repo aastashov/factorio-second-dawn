@@ -6,7 +6,7 @@ local FORCE = "sd-wildlife"
 local LAIRS = {"sd-wolf-lair", "sd-boar-lair", "sd-bear-den"}
 local PREDATORS = {"sd-wolf-lair", "sd-bear-den"}
 local SAFE_RADIUS = 150
-local FAR = 500
+local D = settings.startup["sd-climate-distance"].value -- bears live in the cold, boars outside it
 local TERRITORY = 25
 local RAID_REACH = 300
 local FREEZE = 10 * 60 * 60
@@ -54,10 +54,10 @@ function wildlife.on_chunk_generated(e)
   local d = math.sqrt(centre.x * centre.x + centre.y * centre.y)
   if d < SAFE_RADIUS then return end
   local r = storage.wildlife.rng()
+  local cold = centre.y < -D
   local name
   if r < 0.06 then name = "sd-wolf-lair"
-  elseif r < 0.10 then name = "sd-boar-lair"
-  elseif d >= FAR and r < 0.13 then name = "sd-bear-den"
+  elseif r < 0.10 then name = cold and "sd-bear-den" or "sd-boar-lair"
   else return end
   local pos = e.surface.find_non_colliding_position(name, centre, 10, 1)
   if pos then e.surface.create_entity{name = name, position = pos, force = FORCE} end

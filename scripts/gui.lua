@@ -31,8 +31,26 @@ local function text(player, tick)
   return {"sd-gui.next-wave", w.count + 1, hms(w.next_tick - tick), charge}
 end
 
+local function climate_text(player)
+  local st = storage.climate and storage.climate.player_state and storage.climate.player_state[player.index]
+  if not st then return nil end
+  return {"sd-gui.climate-" .. st.belt .. (st.protected and "-ok" or "-exposed")}
+end
+
 function gui.update(tick)
   for _, player in pairs(game.connected_players) do
+    local c = climate_text(player)
+    local cl = player.gui.top.sd_climate
+    if not c then
+      if cl then cl.destroy() end
+    else
+      if not cl then
+        cl = player.gui.top.add{type = "label", name = "sd_climate"}
+        cl.style.font = "default-bold"
+        cl.style.left_padding = 8
+      end
+      cl.caption = c
+    end
     local caption = text(player, tick)
     local label = player.gui.top.sd_wave
     if not caption then

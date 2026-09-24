@@ -65,5 +65,16 @@ script.on_event(defines.events.on_tick, function(e)
       source = storage.t.char.valid and storage.t.char or nil, force = "player"}
   elseif t == 3300 then
     L("kennel after the net: " .. game.surfaces.nauvis.count_entities_filtered{name = "sd-wolf-kennel"})
+    -- climate: a kiln in the cold with a brazier, a workbench in the heat
+    local s, D = game.surfaces.nauvis, settings.startup["sd-climate-distance"].value
+    s.request_to_generate_chunks({0, -(D + 100)}, 1); s.request_to_generate_chunks({0, D + 100}, 1)
+    s.force_generate_chunk_requests()
+    local kiln = s.create_entity{name = "sd-kiln", position = {0, -(D + 100)}, force = "player", recipe = "sd-charcoal", raise_built = true}
+    local brazier = s.create_entity{name = "sd-brazier", position = {3, -(D + 100)}, force = "player", raise_built = true}
+    brazier.get_fuel_inventory().insert{name = "wood", count = 2}
+    s.create_entity{name = "sd-workbench", position = {0, D + 100}, force = "player", recipe = "sd-clay-tablet", raise_built = true}
+    storage.t.kiln = kiln
+  elseif t == 3500 then
+    L("cold kiln with a burning brazier disabled: " .. tostring(storage.t.kiln.disabled_by_script))
   end
 end)

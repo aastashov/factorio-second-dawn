@@ -55,6 +55,10 @@ RECIPES = {
     "crossbow":      (2, "crafting", 5, {"bronze": 10, "wood": 10, "rope": 5, "leather": 2}, {"crossbow": 1}, "crossbow"),
     "bone-meal":     (2, "grinding", 2, {"bones": 1}, {"bone-meal": 3}, "bone-meal"),
     "fertilized-fruit": (2, "growing", 60, {"fruit": 2, "bone-meal": 2}, {"fruit": 10}, "bone-meal"),
+    # climate (release 0.6)
+    "brazier":       (1, "crafting", 1, {"brick": 5, "stone": 5}, {"brazier": 1}, "brazier"),
+    "fur-coat":      (1, "crafting", 5, {"leather": 20, "hide": 10, "rope": 5}, {"fur-coat": 1}, "warm-clothing"),
+    "light-cloak":   (1, "crafting", 5, {"fiber": 40, "leather": 5}, {"light-cloak": 1}, "light-clothing"),
     # epoch 2
     "sand":          (2, "grinding", 2, {"stone": 1}, {"sand": 2}, "millstone"),
     "ash":           (2, "firing", 3.2, {"wood": 4}, {"ash": 2}, "potash"),
@@ -85,6 +89,8 @@ RECIPES = {
     "assembler-1":   (3, "crafting", 0.5, {"gear": 5, "cable": 6, "iron": 9}, {"assembler-1": 1}, "electromechanics"),
     "lab":           (3, "crafting", 2, {"gear": 10, "cable": 10, "glass": 10}, {"lab": 1}, "electromechanics"),
     "mechanism":     (3, "crafting", 8, {"gear": 2, "cable": 2, "steel": 1}, {"mechanism": 1}, "mechanism"),
+    "radiator":      (3, "crafting", 2, {"pipe": 10, "iron": 10, "copper": 5}, {"radiator": 1}, "steam-heating"),
+    "cooler":        (3, "crafting", 2, {"pipe": 10, "gear": 5, "cable": 10, "iron": 10}, {"cooler": 1}, "cooling"),
     "feed":          (3, "grinding", 4, {"fruit": 4, "fiber": 4}, {"feed": 4}, "domestication"),
     "net":           (3, "crafting", 2, {"rope": 10, "leather": 2, "bronze": 2}, {"net": 1}, "domestication"),
     "electrode":     (3, "crafting", 3, {"copper": 2, "glass": 1}, {"electrode": 1}, "third-awakening"),
@@ -113,6 +119,9 @@ TECHS = {
     "awakening":        (1, 50, 20, T, ["distillation"]),
     "hunting":          (1, 15, 10, T, []),
     "tanning":          (1, 25, 15, T, ["quicklime", "fermentation"]),
+    "brazier":          (1, 20, 10, T, ["pottery"]),
+    "warm-clothing":    (1, 30, 10, T, ["tanning"]),
+    "light-clothing":   (1, 30, 10, T, ["tanning"]),
     "mining":           (2, 50, 15, T, ["awakening"]),
     "smelting":         (2, 60, 15, T, ["mining"]),
     "millstone":        (2, 40, 15, T, ["awakening"]),
@@ -140,6 +149,8 @@ TECHS = {
     "domestication":    (3, 150, 30, M, ["mechanism", "tanning"]),
     "electric-chamber": (3, 200, 40, M, ["mechanism"]),
     "third-awakening":  (3, 250, 45, M, ["electric-chamber", "rectification"]),
+    "steam-heating":    (3, 100, 30, F, ["steam-power"]),
+    "cooling":          (3, 100, 30, F, ["fluid-handling", "electricity"]),
 }
 PACK_ITEM = {"tablet": "tablet", "flask": "flask", "mechanism": "mechanism"}
 

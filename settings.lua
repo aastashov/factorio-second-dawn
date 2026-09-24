@@ -1,5 +1,14 @@
 data:extend{
   {
+    type = "int-setting",
+    name = "sd-climate-distance",
+    setting_type = "startup",
+    default_value = 1200,
+    minimum_value = 600,
+    maximum_value = 5000,
+    order = "a",
+  },
+  {
     type = "string-setting",
     name = "sd-wave-difficulty",
     setting_type = "runtime-global",

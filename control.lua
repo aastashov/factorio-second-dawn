@@ -7,6 +7,7 @@ local notes = require("scripts.notes")
 local diary = require("scripts.diary")
 local wildlife = require("scripts.wildlife")
 local capture = require("scripts.capture")
+local climate = require("scripts.climate")
 
 local INTRO_STATUE = 4 * 60      -- the first players wake from stone a few seconds into the game
 local NEWCOMER_STATUE = 3 * 60 * 60
@@ -16,6 +17,9 @@ local function init()
   statues.init()
   waves.init()
   wildlife.init()
+  local new_climate = not storage.climate
+  climate.init()
+  if new_climate and game.tick > 0 then climate.scan() end
   local new_notes = not storage.notes
   notes.init()
   return new_notes
@@ -40,24 +44,42 @@ script.on_event(defines.events.on_chunk_generated, function(e)
   notes.on_chunk_generated(e)
   wildlife.on_chunk_generated(e)
 end)
-local note_filter = {{filter = "name", name = "sd-note"}}
-script.on_event(defines.events.on_player_mined_entity, notes.on_mined, note_filter)
-script.on_event(defines.events.on_robot_mined_entity, notes.on_mined, note_filter)
+-- Removal: notes are read when mined; climate forgets buildings and sources.
+local removal_filter = {{filter = "name", name = "sd-note"}}
+for _, t in pairs(climate.AFFECTED) do removal_filter[#removal_filter + 1] = {filter = "type", type = t} end
+local function on_removed(e)
+  if e.entity.name == "sd-note" then
+    if e.name ~= defines.events.on_entity_died and e.name ~= defines.events.script_raised_destroy then notes.on_mined(e) end
+  else
+    climate.on_removed(e.entity)
+  end
+end
+script.on_event(defines.events.on_player_mined_entity, on_removed, removal_filter)
+script.on_event(defines.events.on_robot_mined_entity, on_removed, removal_filter)
+script.on_event(defines.events.on_entity_died, on_removed, removal_filter)
+script.on_event(defines.events.script_raised_destroy, on_removed, removal_filter)
 
 script.on_event("sd-diary", function(e) diary.toggle(game.get_player(e.player_index)) end)
 script.on_event(defines.events.on_gui_selection_state_changed, diary.on_selection)
 script.on_event(defines.events.on_gui_click, diary.on_click)
 script.on_event(defines.events.on_gui_closed, diary.on_closed)
 
-local chamber_filter = {{filter = "name", name = chamber.NAMES[1]}, {filter = "name", name = chamber.NAMES[2]}}
+-- Building: one revival chamber per force; climate tracks buildings and sources in the belts.
+local build_filter = {}
+for _, t in pairs(climate.AFFECTED) do build_filter[#build_filter + 1] = {filter = "type", type = t} end
+local CHAMBERS = {[chamber.NAMES[1]] = true, [chamber.NAMES[2]] = true}
 local function on_built(e)
-  local player = e.player_index and game.get_player(e.player_index)
-  chamber.on_built(e.entity, player)
+  local entity = e.entity
+  if CHAMBERS[entity.name] then
+    chamber.on_built(entity, e.player_index and game.get_player(e.player_index))
+    if not entity.valid then return end
+  end
+  climate.on_built(entity)
 end
-script.on_event(defines.events.on_built_entity, on_built, chamber_filter)
-script.on_event(defines.events.on_robot_built_entity, on_built, chamber_filter)
-script.on_event(defines.events.script_raised_built, on_built, chamber_filter)
-script.on_event(defines.events.script_raised_revive, on_built, chamber_filter)
+script.on_event(defines.events.on_built_entity, on_built, build_filter)
+script.on_event(defines.events.on_robot_built_entity, on_built, build_filter)
+script.on_event(defines.events.script_raised_built, on_built, build_filter)
+script.on_event(defines.events.script_raised_revive, on_built, build_filter)
 
 script.on_event(defines.events.on_player_created, function(e)
   local player = game.get_player(e.player_index)
@@ -108,6 +130,11 @@ script.on_nth_tick(30, function(e)
   wildlife.update(e.tick)
   if e.tick % 120 == 0 then wildlife.territory(statues.is_petrified) end
   if e.tick % 300 == 0 then wildlife.night(e.tick, storage.waves.count > 0) end
+  if e.tick % 60 == 0 then
+    climate.update_sources()
+    climate.players(statues.is_petrified)
+  end
+  if e.tick % 300 == 0 then climate.heat_cycle() end
   statues.update(e.tick, waves.force_petrified)
   if e.tick % 60 == 0 then gui.update(e.tick) end
 end)
@@ -130,6 +157,16 @@ remote.add_interface("second-dawn", {
   chamber = function(force) return chamber.get(game.forces[force]) end,
   starting_area = function() return start.ensure_starting_area(game.surfaces.nauvis) end,
   wildlife = function() return storage.wildlife end,
+  expose = function(position)
+    local c = game.surfaces.nauvis.find_entities_filtered{type = "character", position = position, radius = 1}[1]
+    if not c then return nil end
+    local belt, protected = climate.expose(c)
+    return {belt = belt, protected = protected, health = c.health}
+  end,
+  climate = function(unit_number)
+    local entry = storage.climate.entities[unit_number]
+    return entry and {belt = entry.belt, covered = entry.covered}
+  end,
   capture = function(position, force)
     local farm, reason = capture.at(game.surfaces.nauvis, position, game.forces[force])
     return farm and farm.name or reason

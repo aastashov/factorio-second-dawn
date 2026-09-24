@@ -1,4 +1,19 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.0
+Date: 2026-09-24
+  Major Features:
+    - Climate belts by latitude: north of -1200 is cold (snow, few trees, tungsten ore, bears), south of +1200
+      is hot (dunes, sulfur deposits, all the crude oil, boars). The width is a map setting.
+    - In the cold, furnaces, assemblers, drills, labs and boilers stop unless a burning brazier (epoch 1) or
+      a steam radiator (epoch 3) is near. In the heat they work half of the time unless a water cooler
+      (epoch 3) is near.
+    - Without a fur coat in the cold or a light cloak in the heat, players lose 2 health per second.
+  Features:
+    - The top line shows the belt you are in and whether you are dressed for it.
+    - Frozen buildings show a snowflake; the building window explains what it needs.
+  Changes:
+    - Bear dens only in the cold belt; boar wallows only outside it.
+---------------------------------------------------------------------------------------------------
 Version: 0.5.0
 Date: 2026-09-24
   Major Features:

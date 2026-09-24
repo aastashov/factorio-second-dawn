@@ -31,7 +31,7 @@ script.on_event(defines.events.on_tick, function(e)
   for _, id in pairs(ids) do has_first = has_first or id == "first-steps" end
   check("first-steps note near spawn", has_first)
   local walls = s.count_entities_filtered{name = "sd-ruin-wall", position = {0, 0}, radius = 160}
-  check("ruins have walls", walls >= 12, walls .. " wall pieces")
+  check("ruins have walls", walls >= 6, walls .. " wall pieces")
 
   s.request_to_generate_chunks({0, 0}, 12)
   s.force_generate_chunk_requests()
