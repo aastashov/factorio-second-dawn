@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Publishes the built zip to mods.factorio.com through the mod portal API.
+#
+#   FACTORIO_API_KEY=... tools/publish.sh             # first time: creates the mod page; later: a new release
+#
+# The key is made at https://factorio.com/create-api-key with the permissions
+# "ModPortal: Publish Mods", "ModPortal: Upload Mods" and "ModPortal: Edit Mods". It is read from the
+# environment only and never written anywhere.
+#
+# First publication also sets: the long description (the markdown block of docs/PORTAL.md), the category,
+# the license (MOD_LICENSE, default "default_mit"; see the portal for other identifiers) and the gallery
+# pictures listed below. Later runs upload only the new release.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+: "${FACTORIO_API_KEY:?set FACTORIO_API_KEY (https://factorio.com/create-api-key)}"
+API=https://mods.factorio.com/api/v2
+AUTH=(-H "Authorization: Bearer $FACTORIO_API_KEY")
+name=$(python3 -c "import json; print(json.load(open('info.json'))['name'])")
+version=$(python3 -c "import json; print(json.load(open('info.json'))['version'])")
+zip="dist/2.0/${name}_${version}.zip"
+[ -f "$zip" ] || bash build.sh
+echo "mod $name $version: $zip"
+
+json() { python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('$1') or ''); sys.exit(0 if d.get('$1') else 1)"; }
+
+exists=$(curl -s -o /dev/null -w "%{http_code}" "https://mods.factorio.com/api/mods/$name")
+if [ "$exists" = "200" ]; then
+  url=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/releases/init_upload" | json upload_url)
+  curl -s -F "file=@$zip" "$url"; echo
+  echo "released $version"
+  exit 0
+fi
+
+# First publication: the page with its description, category and license.
+description=$(python3 - <<'EOF'
+import re
+s = open("docs/PORTAL.md", encoding="utf-8").read()
+print(re.search(r"```markdown\n(.*?)\n```", s, re.S).group(1))
+EOF
+)
+url=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/init_publish" | json upload_url)
+curl -s -F "file=@$zip" -F "description=$description" -F "category=overhaul" \
+  -F "license=${MOD_LICENSE:-default_mit}" "$url"; echo
+echo "published $name $version"
+
+# Gallery: upload the pictures, then set their order.
+ids=()
+for img in thumbnail.png docs/img/campfire.png docs/img/petrified.png docs/img/scholar-desk.png docs/img/map-777.png \
+           docs/img/ships.png docs/img/icons.png; do
+  up=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/images/add" | json upload_url)
+  id=$(curl -s -F "image=@$img" "$up" | json id) && ids+=("$id") && echo "image $img"
+done
+if [ ${#ids[@]} -gt 0 ]; then
+  curl -s "${AUTH[@]}" -F "mod=$name" -F "images=$(IFS=,; echo "${ids[*]}")" "$API/mods/images/edit"; echo
+fi
+echo "done: https://mods.factorio.com/mod/$name"
