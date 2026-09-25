@@ -29,14 +29,19 @@ echo "mod $name $version: $zip"
 json() { python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('$1') or ''); sys.exit(0 if d.get('$1') else 1)"; }
 
 # Uploads the pictures and makes them the gallery, in this order (pictures not listed leave the gallery).
+# Every step prints the portal's answer when it isn't what was expected.
 gallery() {
-  local ids=() img up id
+  local ids=() img resp up id
   for img in "$@"; do
-    up=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/images/add" | json upload_url)
-    id=$(curl -s -F "image=@$img" "$up" | json id) && ids+=("$id") && echo "image $img"
+    resp=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/images/add")
+    if ! up=$(echo "$resp" | json upload_url); then echo "images/add for $img: $resp"; continue; fi
+    resp=$(curl -s -F "image=@$img" "$up")
+    if id=$(echo "$resp" | json id); then ids+=("$id"); echo "image $img: $id"; else echo "upload of $img: $resp"; fi
   done
   if [ ${#ids[@]} -gt 0 ]; then
-    curl -s "${AUTH[@]}" -F "mod=$name" -F "images=$(IFS=,; echo "${ids[*]}")" "$API/mods/images/edit"; echo
+    echo "images/edit: $(curl -s "${AUTH[@]}" -F "mod=$name" -F "images=$(IFS=,; echo "${ids[*]}")" "$API/mods/images/edit")"
+  else
+    echo "no picture uploaded, the gallery is unchanged"
   fi
 }
 
