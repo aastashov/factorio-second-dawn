@@ -50,10 +50,11 @@ function lib.recolor_fields(entity, fields, tint, scale)
   end
 end
 
--- Collision and selection boxes for a w×h entity.
+-- Collision and selection boxes for a w×h entity. 0.3 tiles free on each side, like vanilla assemblers:
+-- two buildings side by side leave 0.6, and a character (0.4 wide) walks between them.
 function lib.size(entity, w, h)
   h = h or w
-  entity.collision_box = {{-w / 2 + 0.15, -h / 2 + 0.15}, {w / 2 - 0.15, h / 2 - 0.15}}
+  entity.collision_box = {{-w / 2 + 0.3, -h / 2 + 0.3}, {w / 2 - 0.3, h / 2 - 0.3}}
   entity.selection_box = {{-w / 2, -h / 2}, {w / 2, h / 2}}
   entity.drawing_box_vertical_extension = nil
 end

@@ -22,9 +22,12 @@ lab.next_upgrade = nil
 lab.factoriopedia_simulation = nil
 data:extend{lab}
 
--- Belts: the mod's chutes upgrade into each other and into vanilla red belts.
+-- Belts: all chutes are one fast-replace group, like vanilla belts (a splitter or an underground goes
+-- straight onto a chute), and upgrade wooden -> roller -> vanilla red.
 local belts = {
   {"transport-belt", "sd-wooden-chute", "sd-roller-chute"},
+  {"underground-belt", "sd-wooden-underground-chute", "sd-underground-chute"},
+  {"splitter", "sd-wooden-splitter-chute", "sd-splitter-chute"},
   {"transport-belt", "sd-roller-chute", "fast-transport-belt"},
   {"underground-belt", "sd-underground-chute", "fast-underground-belt"},
   {"splitter", "sd-splitter-chute", "fast-splitter"},

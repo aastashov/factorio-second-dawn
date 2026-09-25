@@ -55,7 +55,7 @@ local function setup()
   E.flasks_in = lab.insert{name = "sd-glass-flask", count = 20}
   lab.insert{name = "sd-clay-tablet", count = 50}
   local f = game.forces[force]
-  for _, t in pairs{"sd-pottery", "sd-quicklime", "sd-workbench", "sd-digger", "sd-fermentation", "sd-levers", "sd-distillation",
+  for _, t in pairs{"sd-pottery", "sd-quicklime", "sd-workbench", "sd-fermentation", "sd-levers", "sd-distillation",
                     "sd-awakening", "sd-mining", "sd-smelting", "sd-millstone", "sd-potash", "sd-glass", "sd-bronze", "sd-glass-flask"} do
     f.technologies[t].researched = true
   end

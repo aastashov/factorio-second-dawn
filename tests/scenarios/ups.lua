@@ -17,7 +17,7 @@ local function build()
     {"sd-kiln", "sd-brick", 2, {{"sd-clay", 2000}}, "sd-charcoal"},
     {"sd-workbench", "sd-clay-tablet", 2, {{"sd-clay", 2000}, {"sd-charcoal", 1000}}},
     {"sd-alembic", "sd-nitric-acid", 3, {{"sd-jug", 500}, {"sd-saltpeter", 2000}, {"sd-charcoal", 500}}, "sd-charcoal"},
-    {"sd-fermentation-vat", "sd-mash", 2, {{"sd-jug", 500}, {"sd-fruit", 2000}}},
+    {"sd-alembic", "sd-spirit", 3, {{"sd-jug", 500}, {"sd-fruit", 4000}}, "sd-charcoal"},
     {"sd-kiln", "sd-charcoal", 1, {{"wood", 2000}}, "sd-charcoal"},
   }
   local n = 0

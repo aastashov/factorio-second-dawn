@@ -17,7 +17,7 @@ for fv in "${targets[@]}"; do
   tmp=$(mktemp -d)
   dir="$tmp/${name}_${version}"
   mkdir -p "$dir" "$out"
-  cp -R info.json data.lua data-final-fixes.lua settings.lua control.lua changelog.txt prototypes scripts locale graphics "$dir/"
+  cp -R info.json thumbnail.png data.lua data-final-fixes.lua settings.lua control.lua changelog.txt prototypes scripts locale graphics "$dir/"
   python3 - "$dir/info.json" "$fv" <<'PY'
 import json, sys
 path, fv = sys.argv[1], sys.argv[2]

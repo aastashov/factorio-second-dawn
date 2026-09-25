@@ -4,6 +4,7 @@
 #
 #   tests/run-scenario.sh tree 600
 #   SD_TEST_MODS=my-mod tests/run-scenario.sh smoke    # also enable mods already in $SD_TEST_DIR/data/mods
+#   SD_SEED=123 tests/run-scenario.sh sea 5            # a fixed map seed (default: random)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 name=$1; ticks=${2:-600}
@@ -22,7 +23,8 @@ echo '{"name":"sd-test","version":"0.0.1","title":"sd test","author":"t","factor
 cp "tests/scenarios/$name.lua" "$dir/data/mods/sd-test/control.lua"
 rm -f "$dir/data/saves/$name.zip"
 # --create exits non-zero even on success, so the save file is the success signal.
-"$bin" --config "$dir/config.ini" --create "$dir/data/saves/$name.zip" > "$dir/create.log" 2>&1 || true
+seed=(); [ -n "${SD_SEED:-}" ] && seed=(--map-gen-seed "$SD_SEED")
+"$bin" --config "$dir/config.ini" --create "$dir/data/saves/$name.zip" ${seed[@]+"${seed[@]}"} > "$dir/create.log" 2>&1 || true
 if [ ! -f "$dir/data/saves/$name.zip" ]; then
   grep -E "Error|error" -A12 "$dir/create.log" | head -40; exit 1
 fi

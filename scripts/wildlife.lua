@@ -12,13 +12,15 @@ local LEASH = 60 -- animals chase no farther than this from their lair
 local WOLF_CHANCE, OTHER_CHANCE = 0.03, 0.02 -- per generated chunk
 local RAID_REACH = 300
 local FREEZE = 10 * 60 * 60
+local RAID_TIME = 4 * 60 * 60 -- a raiding pack goes home after 4 minutes
+local CALM_RADIUS = 60 -- after a player's death, animals this close go home
 local FIRST_RAID_TICK = 2 * 60 * 60 * 60 -- raids start with the first wave (or 2 h when waves are off)
 
 local MODES = {
   peaceful = {territorial = false, raid_chance = 0},
   calm = {territorial = true, raid_chance = 0},
-  normal = {territorial = true, raid_chance = 0.25, lairs = 1},
-  dangerous = {territorial = true, raid_chance = 0.5, lairs = 2},
+  normal = {territorial = true, raid_chance = 0.4, lairs = 2},
+  dangerous = {territorial = true, raid_chance = 0.7, lairs = 3},
 }
 
 local function mode() return MODES[settings.global["sd-wildlife"].value] end
@@ -37,6 +39,7 @@ function wildlife.init()
     }
   end
   storage.wildlife.chasers = storage.wildlife.chasers or {}
+  storage.wildlife.raiders = storage.wildlife.raiders or {}
   wildlife.apply_mode()
 end
 
@@ -87,12 +90,99 @@ function wildlife.provoke(character)
   return #lairs
 end
 
+-- Sends an animal back to `home` (or to the nearest lair; one with no lair left is gone), out of any pack.
+local function go_home(unit, home)
+  if not home then
+    local best, dist
+    for _, lair in pairs(unit.surface.find_entities_filtered{position = unit.position, radius = 400, type = "unit-spawner", force = FORCE}) do
+      local dx, dy = lair.position.x - unit.position.x, lair.position.y - unit.position.y
+      if not dist or dx * dx + dy * dy < dist then best, dist = lair, dx * dx + dy * dy end
+    end
+    if not best then
+      unit.destroy()
+      return
+    end
+    home = best.position
+  end
+  local cmd = unit.commandable
+  if cmd.parent_group and cmd.parent_group.valid then cmd.parent_group.destroy() end
+  cmd.set_command{type = defines.command.go_to_location, destination = home, radius = 5,
+    distraction = defines.distraction.none}
+end
+
+-- Every animal within `radius` of `position` goes home: after a player dies nobody camps on the corpse.
+function wildlife.calm(surface, position, radius)
+  local w = storage.wildlife
+  local n = 0
+  for _, unit in pairs(surface.find_entities_filtered{position = position, radius = radius or CALM_RADIUS, type = "unit", force = FORCE}) do
+    local known = w.chasers[unit.unit_number] or w.raiders[unit.unit_number]
+    w.chasers[unit.unit_number], w.raiders[unit.unit_number] = nil, nil
+    go_home(unit, known and known.home)
+    n = n + 1
+  end
+  return n
+end
+
+-- 0.12: packs from raids before raids ended stay at the bases. They go home now.
+function wildlife.calm_bases()
+  local w = storage.wildlife
+  if w.bases_calmed then return 0 end
+  w.bases_calmed = true
+  local n = 0
+  local surface = game.surfaces.nauvis
+  for _, unit in pairs(surface.find_entities_filtered{type = "unit", force = FORCE}) do
+    if unit.valid then
+      for _, force in pairs(game.forces) do
+        if #force.players > 0 and surface.count_entities_filtered{position = unit.position, radius = CALM_RADIUS, force = force, limit = 1} > 0 then
+          go_home(unit)
+          n = n + 1
+          break
+        end
+      end
+    end
+  end
+  return n
+end
+
 -- Runs every 2 s: animals that chased farther than LEASH from their lair give up and go home. Returns
 -- how many were sent home.
 local CHASE_TIMEOUT = 5 * 60 * 60
 function wildlife.leash(tick)
   local w = storage.wildlife
   local sent = 0
+  for id, r in pairs(w.raiders) do
+    if not r.unit.valid then
+      w.raiders[id] = nil
+    elseif tick >= r.until_tick then
+      w.raiders[id] = nil
+      go_home(r.unit, r.home)
+      w.raids_ended = (w.raids_ended or 0) + 1
+    else
+      -- The pack's order ends once its first target is down; until the raid is over each animal takes the
+      -- next building within reach, so the raid goes on into the base. Nothing left near: home.
+      local cmd = r.unit.commandable
+      local g = cmd.parent_group
+      local pack_busy = g and g.valid and g.command ~= nil
+      if not pack_busy and not (r.target and r.target.valid) then
+        local force = r.force and game.forces[r.force]
+        local target
+        if force then
+          for _, b in pairs(r.unit.surface.find_entities_filtered{force = force, position = r.unit.position, radius = 50, limit = 20}) do
+            if b.type ~= "character" and b.destructible then target = b break end
+          end
+        end
+        if target then
+          if g and g.valid then g.destroy() end
+          cmd.set_command{type = defines.command.attack, target = target, distraction = defines.distraction.by_anything}
+          r.target = target
+        else
+          w.raiders[id] = nil
+          go_home(r.unit, r.home)
+          w.raids_ended = (w.raids_ended or 0) + 1
+        end
+      end
+    end
+  end
   for id, c in pairs(w.chasers) do
     local unit = c.unit
     if not unit.valid or tick - c.since > CHASE_TIMEOUT then
@@ -173,8 +263,26 @@ function wildlife.raid(force, count)
     local i = storage.wildlife.rng(1, #candidates)
     local c = table.remove(candidates, i)
     local group = surface.create_unit_group{position = c.lair.position, force = FORCE}
-    for _, unit in pairs(c.lair.units) do group.add_member(unit) end
-    group.set_command{type = defines.command.attack_area, destination = c.target.position, radius = 16}
+    for _, unit in pairs(c.lair.units) do
+      -- Out of the lair's care: an animal that still belongs to its lair walks back to it as soon as an
+      -- order is done, which ended raids after the first building.
+      unit.release_from_spawner()
+      storage.wildlife.chasers[unit.unit_number] = nil -- a raider is off the leash: it goes where the raid goes
+      group.add_member(unit)
+      storage.wildlife.raiders[unit.unit_number] = {unit = unit, home = c.lair.position, until_tick = game.tick + RAID_TIME,
+        force = force.index}
+    end
+    -- Into the base, not only its edge: the pack goes for the middle of the buildings around the one nearest
+    -- to its lair, and anything in reach of that (the nearest building included) is fair game.
+    local x, y, n = 0, 0, 0
+    for _, bld in pairs(surface.find_entities_filtered{force = force, position = c.target.position, radius = 60, limit = 200}) do
+      if bld.type ~= "character" then x, y, n = x + bld.position.x, y + bld.position.y, n + 1 end
+    end
+    local inner = n > 0 and {x = x / n, y = y / n} or c.target.position
+    local dx, dy = inner.x - c.target.position.x, inner.y - c.target.position.y
+    local reach = math.min(45, math.max(20, math.sqrt(dx * dx + dy * dy) + 15))
+    group.set_command{type = defines.command.attack_area, destination = inner, radius = reach,
+      distraction = defines.distraction.by_anything}
     force.print({"sd-message.raid", string.format("[gps=%d,%d]", c.lair.position.x, c.lair.position.y)})
     sent[#sent + 1] = c.lair
     storage.wildlife.raids = storage.wildlife.raids + 1

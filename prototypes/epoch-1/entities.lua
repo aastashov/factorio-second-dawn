@@ -60,6 +60,8 @@ local kiln = crafter("furnace", "stone-furnace", "kiln", 2, 1, c.clay, "sd-firin
 kiln.crafting_categories = {"sd-firing", "sd-campfire"}   -- everything the campfire does, and more
 local workbench = crafter("assembling-machine", "assembling-machine-1", "workbench", 2, 2 / 3, c.wood, "sd-crafting", 0.5, void, "1kW")
 local garden = crafter("assembling-machine", "assembling-machine-1", "garden", 3, 1, c.green, "sd-growing", 1, void, "1kW")
+-- The woodlot grows wood from cuttings: wood for fuel and charcoal without chopping by hand.
+local woodlot = crafter("assembling-machine", "assembling-machine-1", "woodlot", 3, 1, {0.45, 0.62, 0.30}, "sd-forestry", 1, void, "1kW")
 local vat = crafter("assembling-machine", "assembling-machine-1", "fermentation-vat", 2, 2 / 3, c.mash, "sd-fermenting", 1, void, "1kW")
 local alembic = crafter("assembling-machine", "chemical-plant", "alembic", 3, 1, c.copper, "sd-distillation", 1, lib.burner("charcoal", 2), "100kW")
 
@@ -73,20 +75,35 @@ lib.recolor_fields(desk, {"on_animation", "off_animation"}, c.wood) -- replaced 
 
 local digger = copy("mining-drill", "burner-mining-drill", "digger")
 digger.resource_categories = {"basic-solid"}
-digger.mining_speed = 0.25
+digger.mining_speed = 0.5 -- twice a hand (0.5 with the +50% of the camp's start): the first machine worth having
 digger.energy_source = lib.burner("wood", 12)
 digger.energy_usage = "150kW"
 lib.recolor_fields(digger, {"graphics_set"}, c.wood)
 
+-- The lever arm swings on a counterweight: no fuel. Logistics that burnt wood ate half of an epoch 1 base's
+-- wood (docs/DESIGN.md §23).
 local lever = copy("inserter", "burner-inserter", "lever-arm")
-lever.energy_source.fuel_categories = {"chemical", "sd-charcoal"}
+lever.energy_source = {type = "void"}
+lever.allow_burner_leech = nil
 lib.recolor_fields(lever, {"hand_base_picture", "hand_closed_picture", "hand_open_picture", "platform_picture"}, c.wood)
 
 local chute = copy("transport-belt", "transport-belt", "wooden-chute")
 chute.speed = 0.015625 -- 7.5 items/s, half of a yellow belt
-chute.related_underground_belt = nil
+chute.related_underground_belt = "sd-wooden-underground-chute"
 chute.fast_replaceable_group = "sd-chute"
 lib.recolor_fields(chute, {"belt_animation_set"}, c.wood)
+
+-- Wooden underground chute (4 tiles) and splitter: lines of fuel and charcoal without loops, in epoch 1.
+local wooden_under = copy("underground-belt", "underground-belt", "wooden-underground-chute")
+wooden_under.speed = chute.speed
+wooden_under.max_distance = 4
+wooden_under.fast_replaceable_group = "sd-chute"
+lib.recolor_fields(wooden_under, {"structure", "belt_animation_set"}, c.wood)
+local wooden_splitter = copy("splitter", "splitter", "wooden-splitter-chute")
+wooden_splitter.speed = chute.speed
+wooden_splitter.related_transport_belt = "sd-wooden-chute"
+wooden_splitter.fast_replaceable_group = "sd-chute"
+lib.recolor_fields(wooden_splitter, {"structure", "structure_patch", "belt_animation_set"}, c.wood)
 
 -- The revival chamber: nuclear reactor graphics, one per force (enforced in scripts/chamber.lua).
 -- The charge goes into a fluid box without pipe connections, so it can't be taken out or stockpiled.
@@ -118,4 +135,5 @@ local chamber = {
 }
 lib.recolor(chamber.graphics_set, {0.72, 0.70, 0.66})
 
-data:extend{campfire, kiln, workbench, garden, vat, alembic, desk, digger, lever, chute, chamber}
+data:extend{campfire, kiln, workbench, garden, woodlot, vat, alembic, desk, digger, lever, chute, wooden_under,
+  wooden_splitter, chamber}

@@ -118,6 +118,34 @@ for _, t in pairs(ITEM_TYPES) do
   for name, p in pairs(data.raw[t] or {}) do hide(t, name, p) end
 end
 
+-- A recipe that only makes an item of another name (sd-pipe -> pipe) would be a second entry next to that
+-- item; the item's page lists how it is made, so the recipe stays out of Factoriopedia. Recipes that stay
+-- (processes with several products, fluids) get a subgroup, so none of them lands in "Unsorted".
+local ITEM_LIKE = {}
+for _, t in pairs(ITEM_TYPES) do for name in pairs(data.raw[t] or {}) do ITEM_LIKE[name] = true end end
+for name, recipe in pairs(data.raw.recipe) do
+  if name:find("^sd%-") then
+    local results = recipe.results or {}
+    local product = recipe.main_product or (#results == 1 and results[1].name) or nil
+    if product and product ~= name and ITEM_LIKE[product] and #results == 1 then
+      recipe.hidden_in_factoriopedia = true
+    elseif not recipe.subgroup and not (product and ITEM_LIKE[product]) then
+      recipe.subgroup = name:find("revival%-charge") and "sd-revival" or "fluid-recipes"
+    end
+  end
+end
+
+-- Tabs and rows of the crafting menu (prototypes/tabs.lua).
+require("prototypes.tabs")
+
+-- A technology named "...-2" is read by the game as level 2 of "...": it looks up the name without the
+-- number and adds " 2" ("Unknown key: technology-name.sd-logistics 2"). Ours have their own full names.
+for name, tech in pairs(data.raw.technology) do
+  if name:find("^sd%-") and name:find("%-%d+$") and not tech.localised_name then
+    tech.localised_name = {"technology-name." .. name}
+  end
+end
+
 -- Every technology says what its research takes and where: "Research: 10 × [clay tablet] at [scholar's desk]".
 -- The cost row at the bottom of the tech screen is easy to miss on the first research.
 for name, tech in pairs(data.raw.technology) do
@@ -142,7 +170,7 @@ for name, tech in pairs(data.raw.technology) do
         end
       end
     end
-    tech.localised_description = {"", {"?", {"technology-description." .. name}, ""}, "\n\n",
+    tech.localised_description = {"", tech.localised_description or {"?", {"technology-description." .. name}, ""}, "\n\n",
       {"sd-tech.cost", cost, labs}}
   end
 end

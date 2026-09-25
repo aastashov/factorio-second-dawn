@@ -11,7 +11,7 @@ import sys
 # machine: (speed, category) — mining machines use RESOURCES' mining time
 MACHINES = {
     "hand": 1.0, "campfire": 0.5, "kiln": 1.0, "workbench": 0.5, "alembic": 1.0, "fermentation-vat": 1.0,
-    "garden": 1.0, "chamber": 1.0,
+    "garden": 1.0, "woodlot": 1.0, "chamber": 1.0,
     "millstone": 0.5, "bloomery": 1.0, "glassworks": 1.0,
     "blast-furnace": 2.0, "electric-chamber": 1.0, "assembler-2": 0.75,
     "chemical-plant": 1.0, "refinery": 1.0, "electric-furnace": 2.0, "plantation": 1.0,
@@ -19,7 +19,7 @@ MACHINES = {
 }
 CATEGORY_MACHINE = {
     "firing": "kiln", "campfire": "campfire", "crafting": "workbench", "distillation": "alembic", "fermenting": "fermentation-vat",
-    "growing": "garden", "awakening": "chamber", "hand": "hand",
+    "growing": "garden", "forestry": "woodlot", "awakening": "chamber", "hand": "hand",
     "grinding": "millstone", "smelting": "bloomery", "glassmaking": "glassworks",
     "blast": "blast-furnace", "awakening-electric": "electric-chamber",
     "chemistry": "chemical-plant", "oil-processing": "refinery", "electric-smelting": "electric-furnace",
@@ -30,23 +30,22 @@ CATEGORY_MACHINE = {
 RAW = {"wood", "stone", "clay", "shells", "saltpeter", "fruit", "copper-ore", "tin-ore", "coal", "iron-ore",
        "meat", "hide", "bones",
        "sulfur", "tungsten-ore", "crude-oil", "water"}  # epoch 4: sulfur and oil in the south, tungsten in the north  # animals: hunting from the start
-MINERS = {"digger": 0.25, "pick-digger": 0.2, "bronze-drill": 0.4, "electric-drill": 0.5}
+MINERS = {"digger": 0.5, "pick-digger": 0.5, "bronze-drill": 0.75, "electric-drill": 0.5}
 MINING_TIME = {"stone": 1, "clay": 1, "shells": 1, "saltpeter": 1.5, "copper-ore": 1, "tin-ore": 1, "coal": 1, "iron-ore": 1}
 
 # name: (epoch, category, seconds, {inputs}, {outputs}, unlocked_by or None)
 RECIPES = {
     # epoch 1
     "charcoal":      (1, "firing", 3.2, {"wood": 3}, {"charcoal": 1}, None),
-    "fiber":         (1, "hand", 1, {"wood": 1}, {"fiber": 2}, None),
+    "fiber":         (1, "crafting", 1, {"wood": 1}, {"fiber": 2}, None),
     "rope":          (1, "crafting", 1, {"fiber": 3}, {"rope": 1}, None),
-    "clay-tablet":   (1, "crafting", 8, {"clay": 2, "charcoal": 1}, {"tablet": 2}, None),
+    "clay-tablet":   (1, "crafting", 8, {"clay": 1, "charcoal": 1}, {"tablet": 2}, None),
     "brick":         (1, "firing", 3.2, {"clay": 2}, {"brick": 1}, None),   # campfire from the start
     "jug":           (1, "firing", 4, {"clay": 3}, {"jug": 1}, "pottery"),
     "quicklime":     (1, "firing", 3.2, {"shells": 2}, {"quicklime": 1}, "quicklime"),
     "mortar":        (1, "crafting", 1, {"quicklime": 1, "stone": 2}, {"mortar": 2}, "quicklime"),
     "grow-fruit":    (1, "growing", 60, {"fruit": 2}, {"fruit": 6}, "fermentation"),
-    "mash":          (1, "fermenting", 30, {"jug": 1, "fruit": 4}, {"mash-jug": 1}, "fermentation"),
-    "spirit":        (1, "distillation", 8, {"mash-jug": 2}, {"spirit-jug": 1, "jug": 1}, "distillation"),
+    "spirit":        (1, "distillation", 20, {"fruit": 8, "jug": 1}, {"spirit-jug": 1}, "distillation"),
     "nitric-acid":   (1, "distillation", 10, {"jug": 1, "saltpeter": 4, "charcoal": 1}, {"acid-jug": 1}, "distillation"),
     # charcoal 30 = chamber fuel (200 kW x 600 s), modelled as an ingredient
     "charge-1":      (1, "awakening", 600, {"acid-jug": 10, "spirit-jug": 10, "charcoal": 30}, {"charge-1": 1, "jug": 20}, "awakening"),
@@ -59,6 +58,14 @@ RECIPES = {
     "leather":       (1, "fermenting", 20, {"hide": 2, "quicklime": 1}, {"leather": 2}, "tanning"),
     "leather-jacket": (1, "crafting", 5, {"leather": 10, "rope": 5}, {"leather-jacket": 1}, "tanning"),
     "arrows":        (2, "crafting", 2, {"wood": 1, "bronze": 1, "fiber": 2}, {"arrows": 10}, "bow"),
+    "hand-crossbow": (2, "crafting", 5, {"bronze": 5, "wood": 5, "rope": 3}, {"hand-crossbow": 1}, "bow"),
+    "gunpowder":     (2, "grinding", 4, {"saltpeter": 3, "charcoal": 1}, {"gunpowder": 2}, "gunpowder"),
+    "musket":        (2, "crafting", 5, {"bronze": 10, "wood": 5, "rope": 2}, {"musket": 1}, "gunpowder"),
+    "musket-balls":  (2, "crafting", 2, {"gunpowder": 1, "bronze": 1}, {"musket-balls": 5}, "gunpowder"),
+    "swivel-gun":    (2, "crafting", 8, {"bronze": 20, "wood": 10, "musket": 1}, {"swivel-gun": 1}, "swivel-gun"),
+    "steel-bolts":   (3, "crafting", 2, {"steel": 1, "wood": 1}, {"steel-bolts": 10}, "steel-bolts"),
+    "repeating-crossbow": (3, "crafting", 10, {"crossbow": 1, "steel": 10, "gear": 10}, {"repeating-crossbow": 1}, "steel-bolts"),
+    "sulfur-gunpowder": (4, "grinding", 4, {"saltpeter": 2, "charcoal": 1, "sulfur": 1}, {"gunpowder": 4}, "sulfur-gunpowder"),
     "crossbow":      (2, "crafting", 5, {"bronze": 10, "wood": 10, "rope": 5, "leather": 2}, {"crossbow": 1}, "crossbow"),
     "bone-meal":     (2, "grinding", 2, {"bones": 1}, {"bone-meal": 3}, "bone-meal"),
     "fertilized-fruit": (2, "growing", 60, {"fruit": 2, "bone-meal": 2}, {"fruit": 10}, "bone-meal"),
@@ -163,7 +170,7 @@ TECHS = {
     "pottery":          (1, 10, 10, T, []),
     "workbench":        (1, 15, 10, T, ["pottery"]),
     "levers":           (1, 20, 10, T, ["pottery"]),
-    "digger":           (1, 20, 10, T, ["pottery"]),
+    "wooden-logistics": (1, 30, 10, T, ["levers"]),
     "quicklime":        (1, 15, 10, T, ["pottery"]),
     "fermentation":     (1, 25, 15, T, ["pottery"]),
     "distillation":     (1, 30, 15, T, ["fermentation", "quicklime"]),
@@ -187,6 +194,13 @@ TECHS = {
     "bow":              (2, 60, 20, T, ["bronze"]),
     "crossbow":         (2, 75, 25, F, ["bow", "glass-flask", "tanning"]),
     "bone-meal":        (2, 40, 15, T, ["millstone"]),
+    "gunpowder":        (2, 100, 20, F, ["millstone", "bronze", "glass-flask"]),
+    "swivel-gun":       (2, 100, 25, F, ["gunpowder", "crossbow"]),
+    "arrowheads-1":     (1, 50, 15, T, ["hunting"]),
+    "arrowheads-2":     (2, 100, 20, F, ["arrowheads-1", "bow", "glass-flask"]),
+    "steel-bolts":      (3, 150, 30, M, ["blast-furnace", "mechanism", "crossbow"]),
+    "arrowheads-3":     (3, 150, 30, M, ["arrowheads-2", "steel-bolts"]),
+    "sulfur-gunpowder": (4, 150, 30, M, ["sulfur-processing", "gunpowder"]),
     "wrought-iron":     (3, 75, 25, F, ["bronze-tools"]),
     "ironworking":      (3, 75, 25, F, ["wrought-iron"]),
     "fluid-handling":   (3, 100, 25, F, ["ironworking"]),

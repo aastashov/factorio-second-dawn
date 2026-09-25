@@ -19,12 +19,12 @@ local function tech(name, icon, tint, count, time, prerequisites, recipes)
 end
 
 data:extend{
-  tech("pottery", "advanced-material-processing", c.clay, 10, 10, {}, {"jug", "kiln"}),
+  tech("pottery", "advanced-material-processing", c.clay, 10, 10, {}, {"jug", "kiln", "woodlot", "grow-wood"}),
   tech("workbench", "automation-1", c.wood, 15, 10, {"pottery"}, {"workbench"}),
   tech("levers", "logistics-1", c.wood, 20, 10, {"pottery"}, {"lever-arm", "wooden-chute"}),
-  tech("digger", "steel-axe", c.wood, 20, 10, {"pottery"}, {"digger"}),
+  tech("wooden-logistics", "logistics-2", c.wood, 30, 10, {"levers"}, {"wooden-underground-chute", "wooden-splitter-chute"}),
   tech("quicklime", "concrete", c.lime, 15, 10, {"pottery"}, {"quicklime", "mortar"}),
-  tech("fermentation", "fluid-handling", c.mash, 25, 15, {"pottery"}, {"garden", "fermentation-vat", "grow-fruit", "mash"}),
+  tech("fermentation", "fluid-handling", c.mash, 25, 15, {"pottery"}, {"garden", "grow-fruit"}),
   tech("distillation", "oil-processing", c.copper, 30, 15, {"fermentation", "quicklime"}, {"alembic", "spirit", "nitric-acid"}),
   tech("awakening", "research-speed", c.charge, 50, 20, {"distillation"}, {"revival-chamber", "revival-charge-1"}),
 }

@@ -9,6 +9,7 @@ local wildlife = require("scripts.wildlife")
 local capture = require("scripts.capture")
 local climate = require("scripts.climate")
 local moon = require("scripts.moon")
+local guide = require("scripts.guide")
 
 local INTRO_STATUE = 4 * 60      -- the first players wake from stone a few seconds into the game
 local NEWCOMER_STATUE = 3 * 60 * 60
@@ -19,6 +20,7 @@ local function init()
   waves.init()
   wildlife.init()
   moon.init()
+  guide.init()
   local new_climate = not storage.climate
   climate.init()
   if new_climate and game.tick > 0 then climate.scan() end
@@ -29,6 +31,8 @@ end
 
 script.on_init(function()
   init()
+  storage.kit_given = true -- a new game has the respawn kit from the start
+  for _, force in pairs(game.forces) do start.hands(force) end
   start.configure_freeplay()
   start.ensure_starting_area(game.surfaces.nauvis)
   notes.place_start_ruins(game.surfaces.nauvis)
@@ -41,6 +45,23 @@ script.on_configuration_changed(function()
   if init() then notes.place_start_ruins(game.surfaces.nauvis) end
   start.ensure_starting_area(game.surfaces.nauvis)
   waves.on_version_changed()
+  -- Statues from before the stone on screen get it now.
+  for _, player in pairs(game.connected_players) do
+    if statues.is_petrified(player) and not player.gui.screen.sd_petrified then statues.show_overlay(player) end
+  end
+  -- 0.12: packs left at bases by raids go home; respawning players get a bow and arrows.
+  wildlife.calm_bases()
+  start.configure_respawn()
+  start.give_kit_once()
+  -- 0.12: the digger from the start, the woodlot with pottery, quicker hands.
+  for _, force in pairs(game.forces) do
+    start.hands(force)
+    force.recipes["sd-digger"].enabled = true
+    if force.technologies["sd-pottery"].researched then
+      force.recipes["sd-woodlot"].enabled = true
+      force.recipes["sd-grow-wood"].enabled = true
+    end
+  end
   -- 0.11: fewer lairs, the bow and stone arrows from the start, bone arrows with "Hunting".
   wildlife.thin_out()
   for _, force in pairs(game.forces) do
@@ -121,6 +142,21 @@ script.on_event(defines.events.on_player_joined_game, function(e)
   statues.on_joined(player, waves.force_petrified(player.force))
 end)
 
+-- The stone on screen follows the window size.
+local function refit(e)
+  local player = game.get_player(e.player_index)
+  if statues.is_petrified(player) and player.gui.screen.sd_petrified then statues.show_overlay(player) end
+end
+script.on_event(defines.events.on_player_display_resolution_changed, refit)
+script.on_event(defines.events.on_player_display_scale_changed, refit)
+
+-- Whoever killed the player goes home: the corpse can be reached.
+script.on_event(defines.events.on_player_died, function(e)
+  local player = game.get_player(e.player_index)
+  local corpse = player.surface.find_entities_filtered{type = "character-corpse", position = player.position, radius = 3, limit = 1}[1]
+  wildlife.calm(player.surface, corpse and corpse.position or player.position)
+end)
+
 script.on_event(defines.events.on_player_respawned, function(e)
   local player = game.get_player(e.player_index)
   if waves.force_petrified(player.force) then statues.petrify(player) end
@@ -145,7 +181,10 @@ script.on_event(defines.events.on_rocket_launch_ordered, function(e) moon.on_lau
 script.on_event(defines.events.on_rocket_launched, function(e) moon.on_launched(e.rocket_silo) end)
 script.on_event(defines.events.on_object_destroyed, function(e) moon.on_destroyed(e, waves.wake_everyone) end)
 
-script.on_event(defines.events.on_force_created, function() wildlife.apply_mode() end)
+script.on_event(defines.events.on_force_created, function(e)
+  wildlife.apply_mode()
+  start.hands(e.force)
+end)
 
 script.on_nth_tick(30, function(e)
   chamber.update()
@@ -165,7 +204,10 @@ script.on_nth_tick(30, function(e)
   if e.tick % 300 == 0 then climate.heat_cycle() end
   if e.tick % 60 == 0 then moon.update(e.tick) end
   statues.update(e.tick, waves.force_petrified)
-  if e.tick % 60 == 0 then gui.update(e.tick) end
+  if e.tick % 60 == 0 then
+    gui.update(e.tick)
+    guide.update()
+  end
 end)
 
 -- For scenario tests and debugging.
@@ -186,6 +228,14 @@ remote.add_interface("second-dawn", {
   chamber = function(force) return chamber.get(game.forces[force]) end,
   starting_area = function() return start.ensure_starting_area(game.surfaces.nauvis) end,
   wildlife = function() return storage.wildlife end,
+  petrify = function(player_index, thaw_tick) statues.petrify(game.get_player(player_index), thaw_tick) end,
+  revive = function(player_index) statues.revive(game.get_player(player_index)) end,
+  calm = function(position, radius) return wildlife.calm(game.surfaces.nauvis, position, radius) end,
+  still = function(position)
+    local c = game.surfaces.nauvis.find_entities_filtered{type = "character", position = position, radius = 1}[1]
+    if c then statues.still(c) end
+  end,
+  guide_step = function(force) return guide.step(game.forces[force or "player"]) end,
   moon = function()
     local m = storage.moon
     local crew = {}

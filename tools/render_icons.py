@@ -637,7 +637,8 @@ def render(names, sheet=False):
     done = []
     for name in names:
         # A picture imported with tools/import_art.py replaces the drawn icon.
-        if os.path.exists(os.path.join(os.path.dirname(__file__), "..", "art", "incoming", name + ".png")):
+        incoming = os.path.join(os.path.dirname(__file__), "..", "art", "incoming")
+        if any(os.path.exists(os.path.join(incoming, *d, name + ".png")) for d in ((), ("icons",))):
             import png_io
             _, _, px = png_io.read(os.path.join(OUT, name + ".png"))
             done.append((name, b"".join(b"\x00" + bytes(v for p in row for v in p) for row in px)))
@@ -677,8 +678,9 @@ def write_list():
     with open(path, "w") as f:
         f.write("-- Written by tools/render_icons.py: prototypes with an icon in graphics/icons/<name>.png.\nreturn {\n")
         root = os.path.join(os.path.dirname(__file__), "..")
-        imported = {os.path.splitext(n)[0] for n in os.listdir(os.path.join(root, "art", "incoming"))
-                    if n.endswith(".png") and os.path.exists(os.path.join(OUT, n))}  # other states have no icon
+        imported = {os.path.splitext(n)[0] for d in ("", "icons") for n in os.listdir(os.path.join(root, "art", "incoming", d))
+                    if n.endswith(".png") and os.path.exists(os.path.join(OUT, n))
+                    and not n.startswith("sd-group-")}  # other states have no icon; tab icons are set in tabs.lua
         for n in sorted(set(ICONS) | imported):
             f.write('  "%s",\n' % n)
         f.write("}\n")

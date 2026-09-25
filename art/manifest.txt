@@ -2,3 +2,87 @@
 # re-imports everything from it when run without arguments.
 sd-campfire 1.2 --ground 0.5 --fire 0.5
 sd-scholar-desk 3.2
+sd-wolf-lair 5.2 --flat 12
+sd-boar-lair 5.2 --flat 12
+sd-clay 3 --pieces
+sd-shells 2.2 --pieces
+sd-saltpeter 3 --pieces
+sd-ruin-wall 1.3
+sd-note 0.9 --flat 3
+sd-fiber icon
+sd-rope icon
+sd-charcoal icon
+sd-brick icon
+sd-clay-tablet icon
+sd-bow icon
+sd-stone-arrows icon
+sd-acid-jug icon
+sd-bottle icon
+sd-conc-acid-bottle icon
+sd-ether-bottle icon
+sd-fuel-oil icon
+sd-glass-flask icon
+sd-glass icon
+sd-jug icon
+sd-mash-jug icon
+sd-reactive icon
+sd-rectified-bottle icon
+sd-spirit-jug icon
+sd-arrows icon
+sd-bone-arrows icon
+sd-bone-meal icon
+sd-bones icon
+sd-cooked-meat icon
+sd-feed icon
+sd-fruit icon
+sd-fur-coat icon
+sd-hide icon
+sd-latex icon
+sd-leather-jacket icon
+sd-leather icon
+sd-light-cloak icon
+sd-meat icon
+sd-net icon
+sd-pitch icon
+sd-rubber icon
+sd-ash icon
+sd-briquettes icon
+sd-bronze icon
+sd-clay icon
+sd-mortar icon
+sd-potash icon
+sd-quicklime icon
+sd-saltpeter icon
+sd-sand icon
+sd-shells icon
+sd-tin-ore icon
+sd-tin icon
+sd-tungsten icon
+sd-board icon
+sd-buoy icon
+sd-chain-buoy icon
+sd-control-unit icon
+sd-crossbow icon
+sd-electrode icon
+sd-mechanism icon
+sd-navigation icon
+sd-note icon
+sd-oxygen-tank icon
+sd-palisade icon
+sd-pier icon
+sd-spacesuit icon
+sd-tungsten-electrode icon
+sd-waterway icon
+sd-revival-charge-1 icon --pips 1
+sd-revival-charge-2 icon --pips 2
+sd-revival-charge-3 icon --pips 3
+sd-revival-charge-4 icon --pips 4
+sd-revival-charge-5 icon --pips 5
+sd-gunpowder icon
+sd-deep-landfill icon
+sd-tungsten-ore icon
+sd-musket-balls icon
+sd-steel-bolts icon
+sd-hand-crossbow icon
+sd-musket icon
+sd-group-awakening icon --size 128

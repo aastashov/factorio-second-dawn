@@ -5,7 +5,7 @@ def read(path):
         n, typ = struct.unpack(">I4s", d[pos:pos + 8]); body = d[pos + 8:pos + 8 + n]; pos += 12 + n
         if typ == b"IHDR": w, h, bd, ct = struct.unpack(">IIBB", body[:10])
         elif typ == b"IDAT": idat += body
-    bpp = {2: 3, 6: 4}[ct]; assert bd == 8
+    bpp = {0: 1, 2: 3, 4: 2, 6: 4}[ct]; assert bd == 8
     raw, stride = zlib.decompress(idat), w * bpp
     rows, prev, i = [], bytearray(stride), 0
     for _ in range(h):
@@ -20,6 +20,8 @@ def read(path):
                 line[x] = (line[x] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
         rows.append(line); prev = line
     px = [[tuple(r[x * bpp:x * bpp + bpp]) + ((255,) if bpp == 3 else ()) for x in range(w)] for r in rows]
+    if bpp < 3:  # grey (+ alpha) -> RGBA
+        px = [[(p[0], p[0], p[0], p[1] if bpp == 2 else 255) for p in row] for row in px]
     return w, h, px
 def write(path, w, h, px, alpha=True):
     ch = 4 if alpha else 3

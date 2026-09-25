@@ -38,4 +38,11 @@ data:extend{
     default_value = true,
     order = "b",
   },
+  {
+    type = "bool-setting",
+    name = "sd-show-guide",
+    setting_type = "runtime-per-user",
+    default_value = true,
+    order = "a",
+  },
 }

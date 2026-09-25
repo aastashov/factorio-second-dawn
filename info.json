@@ -1,10 +1,10 @@
 {
   "name": "second-dawn",
-  "version": "0.11.5",
-  "title": "Second Dawn",
+  "version": "0.1.4",
+  "title": "Second Dawn (beta)",
   "author": "aastashov",
   "factorio_version": "2.0",
-  "description": "Humanity turned to stone. Wake up, rebuild science from clay and fire, and automate your own revival before the next petrification wave. Overhaul for base 2.0 (no Space Age).",
+  "description": "BETA, in testing. A total overhaul where Factorio meets Dr. Stone: humanity turned to stone, and you rebuild civilisation from clay and fire to a rocket to the Moon, before petrification waves come back. The first epochs feel a bit like a farm (clay, wood, gardens, jugs); from bronze and steam on it is a full factory. Base 2.0, no Space Age. Multiplayer supported. Made with AI (Claude, ChatGPT), directed and playtested by a human.",
   "dependencies": [
     "base >= 2.0.77",
     "! space-age",

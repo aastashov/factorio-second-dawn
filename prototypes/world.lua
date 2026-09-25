@@ -16,7 +16,7 @@ for name, tree in pairs(data.raw.tree) do
   if m and m.result == "wood" and not name:find("dead") and not name:find("dry") then
     m.results = {
       {type = "item", name = "wood", amount = m.count or 4},
-      {type = "item", name = "sd-fiber", amount = 2},
+      {type = "item", name = "sd-fiber", amount = 1},
       {type = "item", name = "sd-fruit", amount = 1, probability = fruit_trees[name] and 0.3 or 0.05},
     }
     m.result = nil

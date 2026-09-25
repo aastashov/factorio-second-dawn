@@ -17,7 +17,7 @@ data:extend{
   {type = "fluid", name = "sd-revival-charge-3", subgroup = "sd-revival", order = "a3",
    default_temperature = 15, base_color = {0.75, 0.6, 1}, flow_color = {0.75, 0.6, 1},
    icons = lib.icon(icons .. "fluid/water.png", {0.75, 0.6, 1}), auto_barrel = false},
-  {type = "item", name = "sd-lab", subgroup = "sd-production", order = "n", stack_size = 10,
+  {type = "item", name = "sd-lab", subgroup = "sd-research-buildings", order = "b", stack_size = 10,
    icon = "__base__/graphics/icons/lab.png", icon_size = 64, place_result = "sd-lab"},
   {type = "item", name = "sd-revival-chamber-2", subgroup = "sd-revival", order = "c", stack_size = 1,
    icons = lib.icon(icons .. "nuclear-reactor.png", {0.6, 0.7, 0.85}), place_result = "sd-revival-chamber-2"},

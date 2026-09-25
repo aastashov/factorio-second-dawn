@@ -169,6 +169,27 @@ script.on_event(defines.events.on_tick, function(e)
   local fruit = s.count_entities_filtered{name = {"tree-02-red", "tree-08-red", "tree-09-red"}, position = {0, 0}, radius = 120}
   check("fruit trees near spawn", fruit >= 10, fruit .. " trees")
 
+  -- Buildings side by side leave room to walk between them.
+  local clay = 0
+  for _, r in pairs(s.find_entities_filtered{name = "sd-clay", position = {0, 0}, radius = 100}) do clay = clay + r.amount end
+  check("plenty of clay at the camp", clay >= 150000, clay .. "")
+  s.request_to_generate_chunks({3000, 3000}, 1); s.force_generate_chunk_requests()
+  local tiles = {}
+  for x = 2990, 3010 do for y = 2990, 3010 do tiles[#tiles + 1] = {name = "grass-1", position = {x, y}} end end
+  s.set_tiles(tiles)
+  for _, e in pairs(s.find_entities_filtered{area = {{2990, 2990}, {3010, 3010}}}) do e.destroy() end
+  for _, pair in pairs{{"sd-kiln", 2}, {"sd-workbench", 2}, {"sd-garden", 3}, {"sd-alembic", 3}} do
+    local name, size = pair[1], pair[2]
+    local a = s.create_entity{name = name, position = {3000, 3000}, force = "player"}
+    local b = s.create_entity{name = name, position = {3000 + size, 3000}, force = "player"}
+    -- odd-sized buildings snap to tile centres, so the gap is taken from where they actually stand
+    local gap = a and b and {(a.position.x + b.position.x) / 2, a.position.y}
+    check("walk between two " .. name, gap and s.can_place_entity{name = "character", position = gap},
+      tostring(a ~= nil) .. " " .. tostring(b ~= nil))
+    if a then a.destroy() end
+    if b then b.destroy() end
+  end
+
   local st = remote.call("second-dawn", "state")
   check("first wave scheduled at 2 h", st.waves.next_tick == 2 * 216000, tostring(st.waves.next_tick))
   L("failures: " .. failures)

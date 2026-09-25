@@ -30,7 +30,8 @@ local function animal(name, base, tint, health, damage, speed, drops)
   u.max_health = health
   u.movement_speed = speed
   u.vision_distance = 16 -- they notice a player close by, not across the clearing
-  u.max_pursue_distance = 40 -- and give up a chase they started themselves (scripted ones: scripts/wildlife.lua)
+  -- (no max_pursue_distance: it also made raiding packs turn back after the first building; chases are
+  -- leashed by script instead, scripts/wildlife.lua)
   u.absorptions_to_join_attack = {}
   u.loot = loot(drops)
   u.factoriopedia_simulation = nil
@@ -39,15 +40,16 @@ local function animal(name, base, tint, health, damage, speed, drops)
   return u
 end
 
--- Speeds stay below a running character's 0.15 tiles/tick: you can always get away.
--- cooldown: seconds between animals (with evolution off, the first value of spawning_cooldown applies)
-local function lair(name, base, tint, health, unit, count, cooldown, bones)
+-- units: {{name, weight}, ...} — which animals come out; cooldown: seconds between animals (with evolution
+-- off, the first value of spawning_cooldown applies).
+local function lair(name, base, tint, health, units, count, cooldown, bones)
   local s = table.deepcopy(data.raw["unit-spawner"][base])
   s.name = "sd-" .. name
   s.icons = lib.icon(icons .. base .. ".png", tint)
   s.icon = nil
   s.max_health = health
-  s.result_units = {{"sd-" .. unit, {{0, 1}}}}
+  s.result_units = {}
+  for _, u in pairs(units) do s.result_units[#s.result_units + 1] = {"sd-" .. u[1], {{0, u[2]}}} end
   s.max_count_of_owned_units = count
   s.max_friends_around_to_spawn = count
   s.spawning_cooldown = {cooldown * 60, cooldown * 60}
@@ -60,14 +62,22 @@ local function lair(name, base, tint, health, unit, count, cooldown, bones)
   return s
 end
 
+-- Every lair has a pack: ordinary animals and, about one in a lair, a bigger and much tougher one — the
+-- leader of the wolves, the old tusker of the boars, the she-bear with her cubs. Leaders use the next
+-- bigger biter model, so they stand out in the pack. Speeds stay below a running character's 0.15
+-- tiles/tick: you can always get away.
 local wolf, boar, bear = {0.60, 0.58, 0.55}, {0.60, 0.42, 0.28}, {0.42, 0.30, 0.22}
+local wolf_leader, tusker, cub = {0.36, 0.34, 0.33}, {0.42, 0.27, 0.17}, {0.58, 0.44, 0.32}
 data:extend{
   animal("wolf", "small-biter", wolf, 40, 8, 0.13, {{"sd-meat", 1}, {"sd-hide", 1, 1, 0.7}, {"sd-bones", 1, 1, 0.5}}),
+  animal("wolf-leader", "medium-biter", wolf_leader, 150, 15, 0.13, {{"sd-meat", 2}, {"sd-hide", 2}, {"sd-bones", 1, 2}}),
   animal("boar", "medium-biter", boar, 120, 15, 0.12, {{"sd-meat", 3}, {"sd-hide", 1}, {"sd-bones", 1, 2}}),
-  animal("bear", "big-biter", bear, 400, 35, 0.11, {{"sd-meat", 6}, {"sd-hide", 2}, {"sd-bones", 3}}),
-  lair("wolf-lair", "biter-spawner", wolf, 300, "wolf", 5, 20, {5, 10}),
-  lair("boar-lair", "spitter-spawner", boar, 400, "boar", 4, 30, {5, 10}),
-  lair("bear-den", "biter-spawner", bear, 800, "bear", 2, 90, {8, 10}),
+  animal("tusker", "big-biter", tusker, 350, 25, 0.115, {{"sd-meat", 6}, {"sd-hide", 2}, {"sd-bones", 2, 3}}),
+  animal("bear-cub", "medium-biter", cub, 150, 15, 0.11, {{"sd-meat", 2}, {"sd-hide", 1}, {"sd-bones", 1}}),
+  animal("bear", "big-biter", bear, 500, 40, 0.11, {{"sd-meat", 6}, {"sd-hide", 2}, {"sd-bones", 3}}),
+  lair("wolf-lair", "biter-spawner", wolf, 300, {{"wolf", 0.8}, {"wolf-leader", 0.2}}, 5, 20, {5, 10}),
+  lair("boar-lair", "spitter-spawner", boar, 400, {{"boar", 0.75}, {"tusker", 0.25}}, 4, 30, {5, 10}),
+  lair("bear-den", "biter-spawner", bear, 800, {{"bear-cub", 0.6}, {"bear", 0.4}}, 3, 60, {8, 10}),
   {type = "ammo-category", name = "sd-arrow"},
   {type = "item-subgroup", name = "sd-hunting", group = "second-dawn", order = "h"},
 }
@@ -142,6 +152,16 @@ data:extend{
   jacket,
 }
 
+-- Repair kit: the vanilla repair pack in wood and rope.
+local kit = table.deepcopy(data.raw["repair-tool"]["repair-pack"])
+kit.name = "sd-repair-kit"
+kit.icons = lib.icon(icons .. "repair-pack.png", c.wood)
+kit.icon = nil
+kit.pictures = nil
+kit.hidden = nil
+kit.hidden_in_factoriopedia = nil
+data:extend{kit}
+
 -- Palisade and crossbow turret.
 local palisade = table.deepcopy(data.raw.wall["stone-wall"])
 palisade.name = "sd-palisade"
@@ -195,7 +215,10 @@ data:extend{
   recipe("stone-arrows", "sd-crafting", 1, {{"wood", 1}, {"stone", 1}}, {{"sd-stone-arrows", 5}}, {enabled = true}),
   recipe("bone-arrows", "sd-crafting", 1, {{"wood", 1}, {"sd-bones", 1}}, {{"sd-bone-arrows", 5}}),
   recipe("palisade", "sd-crafting", 1, {{"wood", 6}, {"sd-rope", 1}}, {{"sd-palisade", 2}}),
-  recipe("cooked-meat", "sd-campfire", 5, {{"sd-meat", 1}}, {{"sd-cooked-meat", 1}}),
+  -- Healing from the start: meat roasts in the campfire like everything else it makes.
+  recipe("cooked-meat", "sd-campfire", 5, {{"sd-meat", 1}}, {{"sd-cooked-meat", 1}}, {enabled = true}),
+  -- Repairs from the start too: raids come with the first wave.
+  recipe("repair-kit", "sd-crafting", 1, {{"wood", 2}, {"sd-rope", 1}, {"stone", 1}}, {{"sd-repair-kit", 1}}, {enabled = true}),
   recipe("leather", "sd-fermenting", 20, {{"sd-hide", 2}, {"sd-quicklime", 1}}, {{"sd-leather", 2}}),
   recipe("leather-jacket", "sd-crafting", 5, {{"sd-leather", 10}, {"sd-rope", 5}}, {{"sd-leather-jacket", 1}}),
   recipe("arrows", "sd-crafting", 2, {{"wood", 1}, {"sd-bronze", 1}, {"sd-fiber", 2}}, {{"sd-arrows", 10}}),
@@ -216,8 +239,8 @@ local function tech(name, icon, tint, count, time, flasks, prerequisites, recipe
     effects = effects, prerequisites = pre, unit = {count = count, time = time, ingredients = ingredients}}
 end
 data:extend{
-  tech("hunting", "military", c.wood, 15, 10, false, {}, {"bone-arrows", "palisade", "cooked-meat"}),
-  tech("tanning", "armor-making", {0.65, 0.45, 0.3}, 25, 15, false, {"quicklime", "fermentation"}, {"leather", "leather-jacket"}),
+  tech("hunting", "military", c.wood, 15, 10, false, {}, {"bone-arrows", "palisade"}),
+  tech("tanning", "armor-making", {0.65, 0.45, 0.3}, 25, 15, false, {"quicklime", "fermentation"}, {"fermentation-vat", "leather", "leather-jacket"}),
   tech("bow", "weapon-shooting-speed-1", c.bronze, 60, 20, false, {"bronze"}, {"arrows"}), -- bronze arrows
   tech("crossbow", "gun-turret", c.bronze, 75, 25, true, {"bow", "glass-flask", "tanning"}, {"crossbow"}),
   tech("bone-meal", "sulfur-processing", {1, 1, 0.95}, 40, 15, false, {"millstone"}, {"bone-meal", "fertilized-fruit"}),

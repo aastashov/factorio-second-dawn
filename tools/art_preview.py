@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Preview of an imported building on vanilla grass at the game's scale, next to the vanilla lab (3x3) for
-comparison: idle state, then the working state. -> art/preview/<name>.png
+comparison: idle state, then the working state, then the ruin (lairs).
+For a resource (<name>-stages.png): an ore patch next to a vanilla stone patch. -> art/preview/<name>.png
     python3 tools/art_preview.py sd-scholar-desk"""
 import os
 import re
@@ -21,6 +22,36 @@ def load(path):
 
 
 grass = png_io.read(os.path.join(GAME, "terrain", "grass-1.png"))[2]
+stages = load(os.path.join(d, f"{name}-stages.png"))
+if stages:  # a resource: an ore patch next to vanilla stone, richest in the middle
+    import random
+    stone = png_io.read(os.path.join(GAME, "entity", "stone", "stone.png"))[2]
+    N, C = 7, 128
+    W, H = 2 * N * T, N * T
+    img = [[grass[y % T][x % T][:3] for x in range(W)] for y in range(H)]
+    rnd = random.Random(3)
+    for k, sheet in enumerate((stone, stages)):
+        for ty in range(N):
+            for tx in range(N):
+                dist = ((tx - N // 2) ** 2 + (ty - N // 2) ** 2) ** 0.5
+                if dist > N / 2:
+                    continue
+                st, v = min(7, int(dist * 2)), rnd.randrange(8)
+                x0, y0 = k * N * T + tx * T + T // 2 - C // 2, ty * T + T // 2 - C // 2
+                for y in range(C):
+                    for x in range(C):
+                        r, g, b, a = sheet[v * C + y][st * C + x]
+                        X, Y = x0 + x, y0 + y
+                        if a and 0 <= X < W and 0 <= Y < H:
+                            A, o = a / 255, img[Y][X]
+                            img[Y][X] = tuple(int(c * A + oc * (1 - A)) for c, oc in zip((r, g, b), o))
+    for y in range(H):
+        img[y][N * T] = (25, 25, 25)
+    os.makedirs(os.path.join(ROOT, "art", "preview"), exist_ok=True)
+    out = os.path.join(ROOT, "art", "preview", name + ".png")
+    png_io.write(out, W, H, img, alpha=False)
+    print(out)
+    sys.exit(0)
 lab = [r[0:194] for r in png_io.read(os.path.join(GAME, "entity", "lab", "lab.png"))[2][0:174]]
 states = [s for s in ("idle", "unlit") if os.path.exists(os.path.join(d, f"{name}-{s}.png"))]
 idle = load(os.path.join(d, f"{name}-{states[0]}.png")) if states else None
@@ -31,6 +62,7 @@ if m:
     shift = (float(m.group(1)) * T, float(m.group(2)) * T)
 
 fire = load(os.path.join(d, f"{name}-fire.png"))
+ruin = load(os.path.join(d, f"{name}-ruin.png"))
 fire_shift = (0, -0.5 * T)
 m = re.search(r'\["%s"\] = \{.*?fire_shift = \{([-\d.]+), ([-\d.]+)\}' % re.escape(name), open(os.path.join(ROOT, "prototypes", "art.lua")).read(), re.S)
 if m:
@@ -43,11 +75,13 @@ def fire_frame(k):
     return [r[x0:x0 + fw] for r in fire[y0:y0 + fh]]
 
 
-panels = [("lab", None)] + ([("idle", idle)] if idle else []) + [("working", main)]
+panels = [("lab", None)] + ([("idle", idle)] if idle else []) + [("working", main)] + ([("ruin", ruin)] if ruin else [])
 if fire:
     panels = [p for p in panels if p[0] != "lab"] + [("working", main, 6), ("working", main, 12)]
     panels[len(panels) - 3] = ("working", main, 0)
 P = (5 if not fire else 2) * T
+if not fire:  # big pictures (lairs) get room around them
+    P = max(P, max(max(len(p), len(p[0])) for p in (main, shadow) if p) + T // 2)
 W, H = P * len(panels), P
 img = [[grass[y % T][x % T][:3] for x in range(W)] for y in range(H)]
 
@@ -74,7 +108,7 @@ for k, (kind, px, *frame) in enumerate(panels):
     else:
         paste(ground, cx + shift[0], cy + shift[1])
         paste(shadow, cx + shift[0], cy + shift[1])
-        paste(idle or main, cx + shift[0], cy + shift[1])
+        paste(ruin if kind == "ruin" else idle or main, cx + shift[0], cy + shift[1])
         if kind == "working" and idle:
             paste(main, cx + shift[0], cy + shift[1])
         if kind == "working" and fire:

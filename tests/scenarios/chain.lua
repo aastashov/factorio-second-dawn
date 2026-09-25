@@ -52,9 +52,10 @@ local function setup()
 
   E.garden = make("sd-garden", 0, 8, "sd-grow-fruit")
   input(E.garden).insert{name = "sd-fruit", count = 4}
-  E.vat = make("sd-fermentation-vat", 5, 8, "sd-mash")
-  input(E.vat).insert{name = "sd-jug", count = 2}
-  input(E.vat).insert{name = "sd-fruit", count = 8}
+  game.forces[force].recipes["sd-leather"].enabled = true
+  E.vat = make("sd-fermentation-vat", 5, 8, "sd-leather")
+  input(E.vat).insert{name = "sd-hide", count = 4}
+  input(E.vat).insert{name = "sd-quicklime", count = 2}
   E.acid = make("sd-alembic", 10, 8, "sd-nitric-acid")
   E.acid.get_fuel_inventory().insert{name = "sd-charcoal", count = 10}
   input(E.acid).insert{name = "sd-jug", count = 2}
@@ -62,7 +63,8 @@ local function setup()
   input(E.acid).insert{name = "sd-charcoal", count = 2}
   E.spirit = make("sd-alembic", 15, 8, "sd-spirit")
   E.spirit.get_fuel_inventory().insert{name = "sd-charcoal", count = 10}
-  input(E.spirit).insert{name = "sd-mash-jug", count = 4}
+  input(E.spirit).insert{name = "sd-fruit", count = 16}
+  input(E.spirit).insert{name = "sd-jug", count = 2}
 
   for x = -1, 0 do for y = 15, 16 do s.create_entity{name = "sd-clay", position = at(x + 0.5, y + 0.5), amount = 500} end end
   E.digger = make("sd-digger", 0, 16)
@@ -70,7 +72,7 @@ local function setup()
   E.digger_chest = s.create_entity{name = "wooden-chest", position = E.digger.drop_position, force = force}
 
   E.lever = make("sd-lever-arm", 8, 16)
-  E.lever.get_fuel_inventory().insert{name = "wood", count = 5}
+  check("lever arm needs no fuel", E.lever.get_fuel_inventory() == nil)
   E.from = s.create_entity{name = "wooden-chest", position = E.lever.pickup_position, force = force}
   E.to = s.create_entity{name = "wooden-chest", position = E.lever.drop_position, force = force}
   E.from.insert{name = "stone", count = 10}
@@ -102,10 +104,10 @@ local steps = {
   end,
   [4000] = function()
     check("garden grows fruit", count(output(E.garden), "sd-fruit") >= 6, count(output(E.garden), "sd-fruit") .. "")
-    check("vat makes mash", count(output(E.vat), "sd-mash-jug") >= 1, count(output(E.vat), "sd-mash-jug") .. "")
+    check("vat tans leather", count(output(E.vat), "sd-leather") >= 2, count(output(E.vat), "sd-leather") .. "")
     check("alembic makes nitric acid", count(output(E.acid), "sd-acid-jug") >= 2, count(output(E.acid), "sd-acid-jug") .. "")
-    check("alembic makes spirit and returns a jug", count(output(E.spirit), "sd-spirit-jug") >= 1 and count(output(E.spirit), "sd-jug") >= 1,
-      count(output(E.spirit), "sd-spirit-jug") .. " spirit, " .. count(output(E.spirit), "sd-jug") .. " jugs")
+    check("alembic makes spirit straight from fruit", count(output(E.spirit), "sd-spirit-jug") >= 1,
+      count(output(E.spirit), "sd-spirit-jug") .. " spirit")
   end,
   [35900] = function()
     check("no charge before 10 min", remote.call("second-dawn", "charge_tier", force) == nil, "tank " .. tank())

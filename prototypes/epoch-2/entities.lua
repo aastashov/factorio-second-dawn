@@ -73,7 +73,7 @@ splitter.fast_replaceable_group = "sd-roller-chute"
 lib.recolor_fields(splitter, {"structure", "structure_patch", "belt_animation_set"}, c.bronze)
 
 data:extend{
-  drill("pick-digger", 0.2, c.stone), drill("bronze-drill", 0.4, c.bronze),
+  drill("pick-digger", 0.5, c.stone), drill("bronze-drill", 0.75, c.bronze), -- never slower than the digger before
   millstone, bloomery, glassworks, arm, chute, under, splitter,
 }
 

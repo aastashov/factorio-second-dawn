@@ -50,14 +50,27 @@ script.on_event(defines.events.on_tick, function(e)
   local median = widths[math.floor(#widths / 2) + 1]
   check("shelf median 35-90 tiles", median and median >= 35 and median <= 90,
     string.format("median %s, min %s, max %s over %d rays", tostring(median), tostring(widths[1]), tostring(widths[#widths]), #widths))
-  check("deep ocean 1000 tiles out in (almost) every direction", open_ocean >= 28, open_ocean .. " of 32 rays")
+  -- Over seeds: 27–32 of 32 rays (a big bay or an island can take a few); a broken ocean gives far fewer.
+  check("deep ocean 1000 tiles out in (almost) every direction", open_ocean >= 26, open_ocean .. " of 32 rays")
 
-  local function land_share(y)
-    local area = {{-600, y - 150}, {600, y + 150}}
-    return 1 - s.count_tiles_filtered{area = area, collision_mask = "water_tile"} / (1200 * 300)
+  -- Past the ocean the land is a continent with lakes; one strip can fall on a big lake (seen: 28% land),
+  -- so the share is taken over three strips across the far continent.
+  local function land_share(sign)
+    local land, total = 0, 0
+    for _, d in pairs{500, 900, 1300} do
+      local y = sign * (D + d)
+      s.request_to_generate_chunks({-300, y}, 6); s.request_to_generate_chunks({300, y}, 6)
+      s.force_generate_chunk_requests()
+      local area = {{-600, y - 100}, {600, y + 100}}
+      land = land + 1200 * 200 - s.count_tiles_filtered{area = area, collision_mask = "water_tile"}
+      total = total + 1200 * 200
+    end
+    return land / total
   end
-  check("land in the north past the ocean", land_share(-(D + 700)) > 0.5, string.format("%.0f%%", land_share(-(D + 700)) * 100))
-  check("land in the south past the ocean", land_share(D + 700) > 0.5, string.format("%.0f%%", land_share(D + 700) * 100))
+  local north, south = land_share(-1), land_share(1)
+  -- Over seeds: 59–100% (lakes); no continent gives near 0.
+  check("land in the north past the ocean", north > 0.5, string.format("%.0f%%", north * 100))
+  check("land in the south past the ocean", south > 0.5, string.format("%.0f%%", south * 100))
 
   local function cond(item)
     local t = {}

@@ -1,225 +1,76 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.11.5
+Version: 0.1.4
 Date: 2026-09-25
-  Graphics:
-    - Scholar's desk redrawn from the side like other buildings; its oil lamp is lit only while researching.
----------------------------------------------------------------------------------------------------
-Version: 0.11.4
-Date: 2026-09-25
-  Graphics:
-    - Campfire redrawn: cold ashes when idle, glowing logs and its own animated flames when burning.
----------------------------------------------------------------------------------------------------
-Version: 0.11.3
-Date: 2026-09-25
-  Graphics:
-    - New scholar's desk: its own picture and icon, with a shadow.
----------------------------------------------------------------------------------------------------
-Version: 0.11.2
-Date: 2026-09-25
-  Graphics:
-    - The campfire fits the world better: a soft shadow, a patch of scorched earth under it, warmer and
-      softer colours like the rest of the game, a smaller flame.
----------------------------------------------------------------------------------------------------
-Version: 0.11.1
-Date: 2026-09-25
-  Graphics:
-    - New campfire: its own picture and icon. Cold logs and ash when idle; when burning, glowing logs,
-      animated flames, a flickering light and smoke.
----------------------------------------------------------------------------------------------------
-Version: 0.11.0
-Date: 2026-09-24
-  Changes:
-    - A bow and stone arrows from the start, no research needed (5 wood + 2 rope; wood + stone -> 5 arrows).
-      Bone arrows come with Hunting, bronze arrows in epoch 2. The sling is gone.
-    - Wild animals are slower than a running character, see only 16 tiles and give up a chase 60 tiles
-      from their lair. Lairs are half as common and start 200 tiles from the camp; existing maps are thinned out.
-    - Every technology's description says what its research takes and where.
-    - Hard rock (tin, copper, coal...) says why it can't be mined by hand and what mines it.
-    - Descriptions for every item and building, including buoys.
-    - Factoriopedia no longer lists vanilla buildings and items that don't exist in Second Dawn.
-    - The first diary entry covers the bow and the new campfire.
----------------------------------------------------------------------------------------------------
-Version: 0.10.6
-Date: 2026-09-24
-  Bugfixes:
-    - Charcoal and brick had two recipes each (one for the campfire, one for the kiln). Now there is one
-      of each, made by both. Bricks are available from the start.
----------------------------------------------------------------------------------------------------
-Version: 0.10.5
-Date: 2026-09-24
-  Changes:
-    - The campfire works like a furnace: put in wood and it makes charcoal, clay and it makes bricks, meat
-      and it roasts it. No recipe to choose. Campfires placed with an older version disappear on load:
-      craft them again (5 stone, 2 wood).
-    - The first diary entry lists the order of work up to the first research; the intro message points to it.
-  Graphics:
-    - 69 new item icons drawn for the mod (resources, materials, jugs and bottles, sciences, food, hunting,
-      clothing, fuel, shipping items, revival charges) instead of recoloured vanilla ones.
----------------------------------------------------------------------------------------------------
-Version: 0.10.4
-Date: 2026-09-24
-  Locale:
-    - Recipes that make vanilla items (wooden chest, gears, pipes, machines and about 40 more) showed
-      "Unknown key"; they now use the name of what they make.
-    - Names for hot fuel, arrows, sling stones and hard rock in tooltips.
----------------------------------------------------------------------------------------------------
-Version: 0.10.3
-Date: 2026-09-24
-  Graphics:
-    - The map generator shows icons for clay, shells, saltpeter, tin ore, tungsten ore and sulfur deposits.
----------------------------------------------------------------------------------------------------
-Version: 0.10.2
-Date: 2026-09-24
-  Bugfixes:
-    - The game failed to load the mod: raw meat, roast meat and the palisade pointed at icons that don't
-      exist in Factorio 2.0.
----------------------------------------------------------------------------------------------------
-Version: 0.10.1
-Date: 2026-09-24
-  Graphics:
-    - Ships have their own sprites and icons: the steam tug, the barge with crates, the tank barge and the
-      screw steamer, in 64 directions with shadows (rendered by tools/render_ships.py).
----------------------------------------------------------------------------------------------------
-Version: 0.10.0
-Date: 2026-09-24
-  Major Features:
-    - Epoch 5 "Rocket": plastic, electronic circuits, radar; sixth science: instrument board; rocket fuel,
-      low density structures, control units; a rocket silo that builds a rocket from 30 parts.
-    - Revival charge V (with control units) is needed from wave 15 on. Waves now go on until the end.
-    - The finale: players in spacesuits standing by the silo when the rocket starts fly to the Moon. Air lasts
-      5 minutes, each oxygen tank adds 2. The emitter, 250-350 tiles from the landing site, turns everyone
-      within 100 tiles to stone for 8 seconds every 45 seconds. Dismantling it wins the game: no more waves,
-      the crew comes home, and you can play on.
-    - Defeat: a wave that finds the team still stone from the previous one ends the game.
-  Changes:
-    - The spacesuit protects in the cold and in the hot belt.
-    - Launching a rocket no longer wins the game by itself.
-    - Far continents have fewer big lakes near their coasts.
----------------------------------------------------------------------------------------------------
-Version: 0.9.0
-Date: 2026-09-24
-  Major Features:
-    - Epoch 4 "Chemistry and sea": sulfuric acid from southern sulfur; southern oil with pumpjacks, refinery,
-      cracking and fuel oil; rubber from plantations that grow only in the hot belt; tungsten from the north
-      in the electric furnace. Fourth science: reagent. Fifth science: sea chart.
-    - Revival charge IV (ether and tungsten electrodes) is needed from wave 11 on. This version continues to
-      wave 14.
-    - Screw steamer: 27 tiles per second. Fuel oil: +30% top speed, +50% acceleration.
-    - Laboratory glassware I and II: research 20% and 30% faster.
----------------------------------------------------------------------------------------------------
-Version: 0.8.0
-Date: 2026-09-24
-  Major Features:
-    - Ships: waterways are laid like rails, but on water only. A steam tug pulls barges and tank barges;
-      piers are stops, buoys are signals. Schedules, signals and inserters work as with trains. You can
-      ride the tug to the far continents (about 45 s across the ocean).
-    - Pitch from dry distillation of wood (charcoal left over) caulks every hull.
-    - Faster ships: fuel briquettes (+15% top speed, +20% acceleration), ship brakes I and II.
   Info:
-    - Ships look like recoloured trains for now; their own graphics come later.
----------------------------------------------------------------------------------------------------
-Version: 0.7.0
-Date: 2026-09-24
-  Major Features:
-    - Continents: the game starts on a temperate continent about 1600 tiles across. The cold north and the
-      hot south lie beyond some 700 tiles of deep ocean. A shelf of shallow water, 45-80 tiles wide, runs
-      along every coast. Setting "Continents" (on by default; off gives ordinary land with the belts).
-    - Landfill now fills only shallow water (the shelf, lakes). Deep landfill (stone, steel, mortar) fills
-      deep water: a road across the ocean is possible but costly.
-  Changes:
-    - Lakes are shallow water; far inland the big lakes shrink.
-    - Tin ore never generates within 160 tiles of the spawn.
----------------------------------------------------------------------------------------------------
-Version: 0.6.0
-Date: 2026-09-24
-  Major Features:
-    - Climate belts by latitude: north of -1200 is cold (snow, few trees, tungsten ore, bears), south of +1200
-      is hot (dunes, sulfur deposits, all the crude oil, boars). The width is a map setting.
-    - In the cold, furnaces, assemblers, drills, labs and boilers stop unless a burning brazier (epoch 1) or
-      a steam radiator (epoch 3) is near. In the heat they work half of the time unless a water cooler
-      (epoch 3) is near.
-    - Without a fur coat in the cold or a light cloak in the heat, players lose 2 health per second.
+    - First public beta on the mod portal. The whole scenario is playable; balance is still moving.
+  Balancing:
+    - Too much wood after 0.1.3: charcoal takes 3 wood again, the kiln uses 90 kW again, the woodlot grows
+      2 wood into 12 again. Lever arms stay fuel-free.
   Features:
-    - The top line shows the belt you are in and whether you are dressed for it.
-    - Frozen buildings show a snowflake; the building window explains what it needs.
+    - Repair kit (2 wood, rope, stone) from the start. Roast meat in the campfire from the start too.
+    - The mod has its picture: a hand turned to stone.
   Changes:
-    - Bear dens only in the cold belt; boar wallows only outside it.
----------------------------------------------------------------------------------------------------
-Version: 0.5.0
-Date: 2026-09-24
-  Major Features:
-    - Epoch 3 "Steam and current": iron from the bloomery, then the blast furnace (iron and steel); pipes,
-      offshore pump, boiler and steam engine; copper wire, poles and lamps; electric drills, inserters,
-      assemblers and the laboratory; fast belts. Third science: mechanism.
-    - Electric revival chamber: built over the old one, makes charges I to III. Charge III (with copper
-      electrodes) is needed from wave 7 on. This version continues to wave 10.
-    - Domestication: throw a capture net at a lair whose animals are dead, away, or turned to stone by a
-      wave, and it becomes your pig farm, kennel or bear pen. Farms turn feed or meat into meat, hides
-      and bones; they can be moved but not crafted.
-  Changes:
-    - Chutes upgrade into each other and into fast belts.
-    - Iron ore is guaranteed near the spawn.
+    - Plant fiber can be made on the workbench too, not only by hand: rope can be automated.
+    - Predators raid more often (40% of nights, two packs; dangerous: 70%, three packs), go on into the
+      base after the first building, and leave after 4 minutes.
+    - The first diary entry tells how to heal and repair.
+    - Wooden underground chutes and splitters have their own epoch 1 research after Levers and chutes.
+    - Much less text: shorter hints, diary and descriptions.
   Bugfixes:
-    - Refusing a second revival chamber no longer fails for the electric one.
+    - Wooden underground chutes and splitters couldn't be placed onto a chute; all chutes now replace and
+      upgrade each other like vanilla belts (wooden -> roller -> fast).
+    - Raiding packs turned back after the first building.
+    - The fermentation vat came with Garden but had nothing to make until Tanning. It now comes with Tanning.
 ---------------------------------------------------------------------------------------------------
-Version: 0.4.0
-Date: 2026-09-24
-  Major Features:
-    - Wild animals: wolves, boars and bears live in lairs from 150 tiles out (bears past 500). They attack
-      anyone who comes within 25 tiles. Wolves and bears raid buildings at night now and then, starting
-      with the first petrification wave. Boars only defend.
-    - A petrification wave turns all animals to stone for 10 minutes.
-    - Hunting: sling and sling stones, bow and arrows, palisade, crossbow turret that shoots arrows.
-    - Animals drop meat, hides and bones: roast meat heals, hides are tanned into leather (leather jacket,
-      crossbow turret), bones are ground into bone meal that makes a garden bear more.
+Version: 0.1.3
+Date: 2026-09-25
+  Balancing:
+    - Lever arms work on a counterweight and need no fuel.
+    - Charcoal: 2 wood instead of 3. The kiln uses 60 kW instead of 90 kW. The woodlot grows 2 wood into 17
+      instead of 12.
+    - Spirit is distilled straight from fruit (8 fruit + jug); mash is gone. The fermentation vat now only
+      tans leather.
   Features:
-    - Setting "Wild animals": peaceful, calm (no raids), normal, dangerous.
+    - Wooden underground chute (4 tiles) and wooden splitter, with Levers and chutes in epoch 1.
+  Info:
+    - Mash jugs left in old saves disappear.
 ---------------------------------------------------------------------------------------------------
-Version: 0.3.0
-Date: 2026-09-24
-  Major Features:
-    - Epoch 2 "Craft": copper, tin, bronze, sand, ash and potash, glass and bottles. Pick digger, millstone,
-      bloomery, glassworks, bronze drill, bronze arm, roller chutes (15/s) with underground chutes and
-      splitters. Second science: glass flask.
-    - Revival charge II from rectified spirit and strong nitric acid in glass bottles. Waves 4-6 need it.
-    - Tin never occurs at the camp; one deposit is guaranteed 150-250 tiles away.
-  Features:
-    - Coal burns in kilns, alembics and the chamber like charcoal.
-    - Switching the chamber to a stronger charge pours out the weaker one.
-    - The wave line shows the charge tier in the chamber and the tier the next wave needs.
-    - Notes: an observation about tin and three alternative recipes (low-tin bronze, glass with ash,
-      tin reduced with coal). Caches hold epoch 2 supplies once smelting is researched.
-  Changes:
-    - Games that ended after wave 3 continue with wave 4. Existing saves get a tin deposit.
+Version: 0.1.2
+Date: 2026-09-25
+  Balancing:
+    - Plant fiber burns as kindling (1 MJ, half of wood) in anything that burns wood. Trees drop 1 fiber
+      instead of 2.
+  Bugfixes:
+    - You can walk between buildings of the mod placed side by side (kiln, workbench, garden, woodlot,
+      vat, alembic, millstone, bloomery, glassworks, brazier, radiator, cooler, campfire).
+    - Technologies with a number in the name (Logistics II, Ship brakes, Laboratory glassware...) showed
+      "Unknown key".
 ---------------------------------------------------------------------------------------------------
-Version: 0.2.0
-Date: 2026-09-24
-  Major Features:
-    - Ruins: about one per ten generated chunks, two guaranteed near the spawn. Each holds a note and
-      sometimes a chest.
-    - Notes: pick one up to read it; the whole team gets it. Hints, four alternative recipes that can only
-      be found this way (charcoal pit, nitric acid with lime, compost bed, double firing) and caches:
-      a chest with supplies, marked on the map.
-    - Diary (J): every note the team has read, new ones marked.
-  Changes:
-    - Existing saves get the two starting ruins on load.
+Version: 0.1.1
+Date: 2026-09-25
+  Gui:
+    - Everything sorted into tabs like vanilla: logistics, production, intermediate products and combat
+      (weapons, ammo, turrets, clothing and food are there now), plus new Fleet, Research and Awakening tabs.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
-Date: 2026-09-24
-  Major Features:
-    - Epoch 1 "Stone": clay, shells, saltpeter, fruit and fiber; campfire, kiln, workbench, scholar's desk,
-      digger, lever arm, wooden chute, garden plot, fermentation vat, alembic. Research with clay tablets.
-    - Petrification waves: the first comes after 2 hours, then every 4 hours and a bit sooner each time.
-      A wave turns every player into a statue; the factory keeps working.
-    - Revival chamber: one per team, makes a revival charge in 10 minutes into a sealed tank. A charge in
-      the chamber wakes the whole team at once; without one, statues thaw after 5–15 minutes or as soon
-      as the chamber makes a charge.
+Date: 2026-09-25
+  Info:
+    - First release. Made with AI: code, balance, texts and tests by Claude (Anthropic) in Claude Code,
+      pictures by ChatGPT, directed and playtested by a human.
   Features:
-    - The vanilla tech tree, starting kit, crash site and biters are gone. Metal ores are visible but need
-      later tools. Kilns, alembics and the chamber burn charcoal only.
-    - Every epoch 1 resource and fruit trees are guaranteed near the spawn.
-    - Settings: wave difficulty (relaxed / normal / hard / off), new players start as statues.
-    - This version ends after wave 3.
-    - Incompatible with Space Age and Space Exploration (both replace the same tech tree).
-  Locale:
-    - English and Russian.
+    - Five epochs from stone to the Moon: clay tablets, glass flasks, mechanisms, reactive, sea charts and
+      instrument boards as science. The vanilla tech tree, starting items and biters are gone.
+    - Petrification waves: the first after 2 hours, then more and more often. One revival chamber per team
+      makes a sealed charge (I–V) that wakes everyone at once. A green flash and stone on the screen edges
+      while petrified. Defeat if a wave finds the team still stone; victory on the Moon.
+    - A start without chores: a digger, a bow and stone arrows with no research, faster hands, cheap clay
+      tablets, a woodlot that grows wood, a "Next step" hint and a diary.
+    - Wild animals in packs with leaders: territory, a leash, short night raids, and they leave a dead
+      player's body. Respawn with a bow and arrows. Catch lairs with a net and farm them.
+    - Weapons from the bow to sulfur gunpowder, turrets, sharper arrowheads I–III.
+    - Climate belts, continents over a deep ocean, landfill and deep landfill, ships on waterways.
+    - Ruins with notes: hints, alternative recipes, caches.
+    - Factoriopedia shows only what exists in the game; every technology says what its research takes.
+  Graphics:
+    - Own icons, ships, campfire with animated flames, scholar's desk and lairs; the rest is recoloured
+      vanilla for now.

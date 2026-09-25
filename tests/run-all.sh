@@ -12,6 +12,8 @@ tests/run-scenario.sh smoke 1 >/dev/null
 "$bin" --config "$dir/config.ini" --dump-data >/dev/null 2>&1
 python3 tests/check_files.py "$dir/data/script-output/data-raw-dump.json" || status=1
 python3 tests/check_locale_keys.py "$dir/data/script-output/data-raw-dump.json" || status=1
+python3 tests/check_factoriopedia.py "$dir/data/script-output/data-raw-dump.json" || status=1
+python3 tests/check_collision.py "$dir/data/script-output/data-raw-dump.json" || status=1
 while read -r name ticks; do
   result=$(tests/run-scenario.sh "$name" "$ticks" | grep -E "FAIL|failures|Error" | tr '\n' ' ')
   printf "%-10s %s\n" "$name" "$result"
@@ -30,6 +32,9 @@ ships 9100
 chain4 90400
 chain5 111000
 defeat 110
+guide 10
+statue 130
+belts 10
 LIST
 tests/run-heavy.sh desync 480 | grep -E "heavy mode ran|desync" || status=1
 exit $status

@@ -8,6 +8,7 @@ data:extend{
   {type = "recipe-category", name = "sd-campfire"},   -- furnace: one recipe per input
   {type = "recipe-category", name = "sd-fermenting"},
   {type = "recipe-category", name = "sd-growing"},
+  {type = "recipe-category", name = "sd-forestry"},
   {type = "recipe-category", name = "sd-distillation"},
   {type = "recipe-category", name = "sd-awakening"},
 
@@ -15,7 +16,11 @@ data:extend{
   {type = "item-subgroup", name = "sd-raw", group = "second-dawn", order = "a"},
   {type = "item-subgroup", name = "sd-materials", group = "second-dawn", order = "b"},
   {type = "item-subgroup", name = "sd-jugs", group = "second-dawn", order = "c"},
-  {type = "item-subgroup", name = "sd-science", group = "second-dawn", order = "d"},
+  -- Research has its own tab: the packs of every epoch in one row, the desks and labs below.
+  {type = "item-group", name = "sd-research", order = "0a",
+   icons = {{icon = "__second-dawn__/graphics/icons/sd-clay-tablet.png", icon_size = 64}}},
+  {type = "item-subgroup", name = "sd-science", group = "sd-research", order = "a"},
+  {type = "item-subgroup", name = "sd-research-buildings", group = "sd-research", order = "b"},
   {type = "item-subgroup", name = "sd-production", group = "second-dawn", order = "e"},
   {type = "item-subgroup", name = "sd-logistics", group = "second-dawn", order = "f"},
   {type = "item-subgroup", name = "sd-revival", group = "second-dawn", order = "g"},

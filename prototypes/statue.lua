@@ -16,3 +16,12 @@ data:extend{
     },
   },
 }
+
+-- On screen while petrified: stone creeping in from the edges (graphics/gui/petrified-vignette.png, drawn
+-- by a script: a squircle gradient with value noise), and a green flash when the wave hits.
+data:extend{
+  {type = "sprite", name = "sd-petrified-vignette", filename = "__second-dawn__/graphics/gui/petrified-vignette.png",
+   size = 256, flags = {"gui"}},
+  {type = "sprite", name = "sd-petrified-flash", filename = "__second-dawn__/graphics/gui/petrified-flash.png",
+   size = 8, flags = {"gui"}},
+}

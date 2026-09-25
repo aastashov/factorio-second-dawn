@@ -29,7 +29,7 @@ mod_keys = {lang: keys(glob.glob(os.path.join(MOD, "locale", lang, "*.cfg"))) fo
 vanilla = {lang: keys(glob.glob(os.path.join(GAME, "*", "locale", lang, "*.cfg"))) for lang in ("en", "ru")}
 dump = json.load(open(sys.argv[1]))
 
-ITEM_TYPES = {"item", "tool", "capsule", "gun", "ammo", "armor", "item-with-entity-data", "rail-planner"}
+ITEM_TYPES = {"item", "tool", "capsule", "gun", "ammo", "armor", "item-with-entity-data", "rail-planner", "repair-tool"}
 NON_ENTITY = ITEM_TYPES | {"recipe", "technology", "fluid", "tile", "autoplace-control", "item-group", "item-subgroup",
                            "recipe-category", "custom-input", "damage-type", "fuel-category", "ammo-category",
                            "resource-category", "noise-expression", "animation", "sprite", "planet"}
@@ -63,6 +63,10 @@ for type_name, protos in dump.items():
             continue
         if "localised_name" in p:
             want = [p["localised_name"]]
+        elif type_name == "technology" and re.search(r"-\d+$", name):
+            # the game reads "x-2" as level 2 of "x" unless the name is set explicitly
+            problems.append(f"all technology/{name}: numbered name without localised_name (shows as Unknown key)")
+            continue
         elif type_name in ITEM_TYPES:
             want = [["?", ["item-name." + name], ["entity-name." + p.get("place_result", name)]]]
         elif type_name in CATEGORY_SECTION:
