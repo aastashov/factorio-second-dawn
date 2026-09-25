@@ -17,7 +17,11 @@ and, with --ground, a patch of scorched earth to stand on (<name>-ground.png).
         # graphics/entity/sd-clay/sd-clay-stages.png
     python3 tools/import_art.py sd-rope 0 --icon
         # an item icon: art/incoming/icons/sd-rope.png -> graphics/icons/sd-rope.png (64 x 64);
-        # --pips 3 adds three dots along the bottom (tiers); --size 128 for a crafting tab (item group)"""
+        # --pips 3 adds three dots along the bottom (tiers); --size 128 for a crafting tab (item group)
+    python3 tools/import_art.py sd-bow 0 --tech
+        # a technology: art/incoming/tech/sd-bow.png -> graphics/technology/sd-bow.png (256 x 256)
+    python3 tools/import_art.py sd-wolf 1.2 --unit
+        # an animal seen from above, head up -> 16 turned frames (a stand-in until walking animations)"""
 import os
 import statistics
 import subprocess
@@ -216,7 +220,8 @@ def ore_sheet(parts, seed=1):
     pieces around the tile centre with a soft contact shadow; poorer stages keep the smaller pieces."""
     import random
     C, counts = 128, [14, 12, 10, 8, 7, 5, 4, 3]
-    parts = [p for p in parts if max(p[0], p[1]) >= 12] or parts  # no crumbs: they read as noise
+    parts = [p for p in parts if 12 <= max(p[0], p[1]) <= C - 16] or parts  # no crumbs (noise), no lumps
+    # that stuck together into one piece too big for a cell
     sheet = [[(0, 0, 0, 0)] * (C * 8) for _ in range(C * 8)]
 
     def put(cx, cy, w, h, px, dark=None):
@@ -323,6 +328,69 @@ def square(w, h, px):
 name, tiles = sys.argv[1], float(sys.argv[2])
 states = [sys.argv[i + 1] for i, a in enumerate(sys.argv) if a == "--state"]
 incoming = os.path.join(ROOT, "art", "incoming")
+def rotated(n, px, angle):
+    """A square picture turned clockwise by `angle` degrees around its centre (bilinear)."""
+    import math
+    c, s_ = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+    half = (n - 1) / 2
+    out = []
+    for y in range(n):
+        row = []
+        for x in range(n):
+            u, v = c * (x - half) + s_ * (y - half) + half, -s_ * (x - half) + c * (y - half) + half
+            x0, y0 = int(math.floor(u)), int(math.floor(v))
+            if not (0 <= x0 < n - 1 and 0 <= y0 < n - 1):
+                row.append((0, 0, 0, 0))
+                continue
+            fx, fy = u - x0, v - y0
+            q = [px[y0][x0], px[y0][x0 + 1], px[y0 + 1][x0], px[y0 + 1][x0 + 1]]
+            wts = [(1 - fx) * (1 - fy), fx * (1 - fy), (1 - fx) * fy, fx * fy]
+            a = sum(w * p[3] for w, p in zip(wts, q))
+            rgb = [int(sum(w * p[i] * p[3] for w, p in zip(wts, q)) / a) if a else 0 for i in range(3)]
+            row.append((*rgb, int(a)))
+        out.append(row)
+    return out
+
+
+if "--unit" in sys.argv:  # an animal seen from above, head up: art/incoming/<name>.png -> 16 turned frames (a
+    # stand-in without walking frames), <name>-run.png, and the same for its shadow, <name>-run-shadow.png
+    px, box = key(os.path.join(incoming, name + ".png"))
+    w, h, px = crop(px, box)
+    n, _, px = square(w, h, grade(px))
+    side = round(tiles * PX_PER_TILE)
+    _, _, px = resized(n, n, px, side, side)
+    pad = side // 3
+    big = [[(0, 0, 0, 0)] * (side + 2 * pad) for _ in range(side + 2 * pad)]
+    for y in range(side):
+        big[pad + y][pad:pad + side] = px[y]
+    n = side + 2 * pad
+    frames = [rotated(n, big, k * 22.5) for k in range(16)]
+    out_dir = os.path.join(ROOT, "graphics", "entity", name)
+    os.makedirs(out_dir, exist_ok=True)
+    sheet = [[p for f in frames[r * 8:(r + 1) * 8] for p in f[y]] for r in range(2) for y in range(n)]
+    png_io.write(os.path.join(out_dir, name + "-run.png"), n * 8, n * 2, sheet)
+    sp = PX_PER_TILE // 8  # the shadow canvas is sp larger on every side: cut back to the frame
+    shadows = [[r[sp:sp + n] for r in shadow(n, n, [[(0, 0, 0, p[3]) for p in row] for row in f], PX_PER_TILE // 10,
+                                             PX_PER_TILE // 20, sp, strength=0.5)[2][sp:sp + n]] for f in frames]
+    sheet = [[p for f in shadows[r * 8:(r + 1) * 8] for p in f[y]] for r in range(2) for y in range(n)]
+    png_io.write(os.path.join(out_dir, name + "-run-shadow.png"), n * 8, n * 2, sheet)
+    record_sizes({name + "-run": (n, n)})
+    print(f"{name}: 16 directions of {n}x{n}")
+    sys.exit(0)
+if "--tech" in sys.argv:  # a technology picture: art/incoming/tech/<name>.png -> graphics/technology/<name>.png
+    px, box = key(os.path.join(incoming, "tech", name + ".png"))
+    w, h, px = crop(px, box)
+    n, _, px = square(w, h, px)
+    pad = n // 24
+    big = [[(0, 0, 0, 0)] * (n + 2 * pad) for _ in range(n + 2 * pad)]
+    for y in range(n):
+        big[pad + y][pad:pad + n] = px[y]
+    tw, th, tpx = resized(n + 2 * pad, n + 2 * pad, big, 256, 256)
+    os.makedirs(os.path.join(ROOT, "graphics", "technology"), exist_ok=True)
+    png_io.write(os.path.join(ROOT, "graphics", "technology", name + ".png"), tw, th, tpx)
+    record_sizes({name + "-technology": (tw, th)})
+    print(f"{name}: technology {tw}x{th}")
+    sys.exit(0)
 if "--icon" in sys.argv:  # an item icon: art/incoming/icons/<name>.png -> graphics/icons/<name>.png, 64 x 64
     px, box = key(os.path.join(incoming, "icons", name + ".png"))
     w, h, px = crop(px, box)

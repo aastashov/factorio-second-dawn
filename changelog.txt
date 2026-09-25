@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2026-09-25
+  Graphics:
+    - New icons for all 77 items and pictures for all 82 technologies.
+    - All buildings of the first three epochs redrawn: campfire, scholar's hut, kiln, workbench, woodlot,
+      garden, fermentation vat, still, brazier, revival chambers, millstone, bloomery, glassworks, diggers,
+      crossbow turrets, pens, bear den, lab, radiator, cooler, plantation, palisade.
+    - Campfire and brazier burn with the game's own animated flames; the recipe icon no longer hides the fire.
+    - Wolves, boars and bears, the emitter, tin, tungsten and sulfur ores: temporary pictures until proper ones.
+  Locale:
+    - The mod's name and description in Russian in the mod manager.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2026-09-25
   Info:

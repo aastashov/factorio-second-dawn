@@ -1,7 +1,5 @@
 # Imported art: <name> <width in tiles> [import_art.py options]. tools/art.sh keeps this list and
 # re-imports everything from it when run without arguments.
-sd-campfire 1.2 --ground 0.5 --fire 0.5
-sd-scholar-desk 3.2
 sd-wolf-lair 5.2 --flat 12
 sd-boar-lair 5.2 --flat 12
 sd-clay 3 --pieces
@@ -86,3 +84,122 @@ sd-steel-bolts icon
 sd-hand-crossbow icon
 sd-musket icon
 sd-group-awakening icon --size 128
+sd-distillation tech
+sd-fermentation tech
+sd-levers tech
+sd-millstone tech
+sd-mining tech
+sd-pottery tech
+sd-quicklime tech
+sd-smelting tech
+sd-workbench tech
+sd-awakening tech
+sd-bronze-tools tech
+sd-crossbow tech
+sd-electric-chamber tech
+sd-fifth-awakening tech
+sd-fourth-awakening tech
+sd-logistics-2 tech
+sd-rectification tech
+sd-second-awakening tech
+sd-third-awakening tech
+sd-automation-2 tech
+sd-cooling tech
+sd-deep-landfill tech
+sd-domestication tech
+sd-land-reclamation tech
+sd-logistics-3 tech
+sd-pitch tech
+sd-shipbuilding tech
+sd-steam-heating tech
+sd-cracking tech
+sd-electronics tech
+sd-ether tech
+sd-fuel-oil tech
+sd-lab-glassware-1 tech
+sd-lab-glassware-2 tech
+sd-navigation tech
+sd-plastics tech
+sd-screw-steamer tech
+sd-tungsten-electrodes tech
+sd-campfire 1.2 --ground 0.5
+sd-arrowheads-1 tech
+sd-arrowheads-2 tech
+sd-arrowheads-3 tech
+sd-bone-meal tech
+sd-bow tech
+sd-brazier tech
+sd-bronze tech
+sd-glass-flask tech
+sd-glass tech
+sd-hunting tech
+sd-light-clothing tech
+sd-potash tech
+sd-tanning tech
+sd-warm-clothing tech
+sd-blast-furnace tech
+sd-electricity tech
+sd-electromechanics tech
+sd-fluid-handling tech
+sd-gunpowder tech
+sd-ironworking tech
+sd-mechanism tech
+sd-steam-power tech
+sd-swivel-gun tech
+sd-wrought-iron tech
+sd-braking-1 tech
+sd-braking-2 tech
+sd-briquettes tech
+sd-buoys tech
+sd-fluid-barges tech
+sd-oil-extraction tech
+sd-oil-processing tech
+sd-reactive tech
+sd-rubber tech
+sd-sulfur-processing tech
+sd-tungsten tech
+sd-control-units tech
+sd-instrument-board tech
+sd-light-structures tech
+sd-radio tech
+sd-rocket-fuel tech
+sd-rocket-silo tech
+sd-spacesuit tech
+sd-steel-bolts tech
+sd-sulfur-gunpowder tech
+sd-wooden-logistics tech
+sd-kiln 2.2
+sd-brazier 1.1
+sd-alembic 3.2
+sd-revival-chamber 5.2
+sd-workbench 2.2
+sd-woodlot 3.2 --flat 6
+sd-garden 3.2 --flat 6
+sd-fermentation-vat 2.2
+sd-scholar-desk 3.2
+sd-digger 2.2
+sd-millstone 2.2
+sd-bloomery 2.2
+sd-glassworks 2.2
+sd-pick-digger 2.2
+sd-bronze-drill 2.2
+sd-wolf 1.2 --unit
+sd-boar 1.4 --unit
+sd-bear 2 --unit
+sd-emitter 5.2
+sd-tin-ore 3 --pieces
+sd-tungsten-ore 3 --pieces
+sd-sulfur-deposit 3 --pieces
+sd-palisade 1.2
+sd-crossbow 2.2
+sd-bear-den 5.2 --flat 12
+sd-boar-farm 5.2 --flat 6
+sd-wolf-kennel 5.2 --flat 6
+sd-bear-pen 5.2 --flat 6
+sd-revival-chamber-2 5.2
+sd-lab 3.2
+sd-radiator 3.2
+sd-cooler 3.2
+sd-plantation 3.2
+sd-swivel-gun 2.2
+sd-repeating-crossbow 2.2

@@ -3,7 +3,8 @@
 -- Layers: <name>-ground (optional), <name>-shadow, the idle state (<name>-idle or -unlit, else <name>);
 -- while working, <name> itself is drawn on top, then the flames (<name>-fire, 16 frames, or vanilla's),
 -- plus the extras below. Lairs (unit-spawner) have a single picture and <name>-ruin as their corpse; simple
--- entities and walls (a ruin fragment, drawn the same whatever it joins) have a single picture.
+-- entities, walls (a ruin fragment, drawn the same whatever it joins), drills and turrets (not turning yet) have a
+-- single picture.
 local lib = require("prototypes.lib")
 local sizes = require("prototypes.art-sizes")
 
@@ -13,8 +14,15 @@ local EXTRAS = {
   ["sd-campfire"] = {shift = {0, -0.05}, light = {intensity = 0.8, size = 12, color = {1, 0.65, 0.35}},
     flame = {scale = 0.22, shift = {0.02, -0.3}}, fire_shift = {0, -0.35},
     icon = {scale = 0.4, shift = {0, -0.75}}}, -- the recipe icon in alt mode: small, above the fire, not over it
+  ["sd-brazier"] = {shift = {0, -0.1}, light = {intensity = 0.7, size = 10, color = {1, 0.6, 0.3}},
+    flame = {scale = 0.18, shift = {0, -0.35}}, icon = {scale = 0.4, shift = {0, -0.75}}},
+  ["sd-kiln"] = {shift = {0, -0.1}, light = {intensity = 0.6, size = 8, shift = {0, 0.5}, color = {1, 0.55, 0.25}}},
+  ["sd-alembic"] = {shift = {0, -0.1}, light = {intensity = 0.5, size = 8, shift = {-0.3, 0.8}, color = {1, 0.55, 0.25}}},
+  ["sd-revival-chamber"] = {shift = {0, -0.1}, light = {intensity = 0.6, size = 14, color = {0.45, 1, 0.75}}},
   ["sd-ruin-wall"] = {shift = {0, -0.2}},
-  ["sd-scholar-desk"] = {shift = {0, -0.1}, light = {intensity = 0.5, size = 6, shift = {-1.1, -0.9}, color = {1, 0.8, 0.5}}},
+  ["sd-scholar-desk"] = {shift = {0, -0.1}, light = {intensity = 0.6, size = 7, shift = {0, 0.7}, color = {1, 0.8, 0.5}}},
+  ["sd-bloomery"] = {shift = {0, -0.2}, light = {intensity = 0.6, size = 7, shift = {0, 0.6}, color = {1, 0.55, 0.25}}},
+  ["sd-glassworks"] = {shift = {0, -0.1}, light = {intensity = 0.6, size = 7, shift = {0, 0.5}, color = {1, 0.6, 0.3}}},
 }
 
 local function find_entity(name)
@@ -31,6 +39,36 @@ for key, size in pairs(sizes) do
   if resource then
     resource.stages = {sheet = {filename = "__second-dawn__/graphics/entity/" .. name .. "/" .. key .. ".png",
       priority = "extra-high", size = size[1] / 8, frame_count = 8, variation_count = 8, scale = 0.5}}
+  end
+end
+
+-- Technologies: <name>-technology is its 256 px picture in graphics/technology (import_art.py --tech).
+for key in pairs(sizes) do
+  local name = key:match("^(.+)%-technology$")
+  local tech = name and data.raw.technology[name]
+  if tech then
+    tech.icons = {{icon = "__second-dawn__/graphics/technology/" .. name .. ".png", icon_size = 256}}
+    tech.icon = nil
+  end
+end
+
+-- Animals: <name>-run is one picture seen from above turned 16 ways (import_art.py --unit), a stand-in without
+-- walking frames; the bigger or smaller kin share it at another scale.
+local KIN = {["sd-wolf-leader"] = {"sd-wolf", 1.3}, ["sd-tusker"] = {"sd-boar", 1.3}, ["sd-bear-cub"] = {"sd-bear", 0.6}}
+for _, unit in pairs(data.raw.unit) do
+  local from, scale = unit.name, 1
+  if KIN[unit.name] then from, scale = KIN[unit.name][1], KIN[unit.name][2] end
+  local size = sizes[from .. "-run"]
+  if size then
+    local function sheet(file, extra)
+      local l = {filename = "__second-dawn__/graphics/entity/" .. from .. "/" .. file .. ".png", width = size[1],
+        height = size[2], direction_count = 16, frame_count = 1, line_length = 8, scale = 0.5 * scale}
+      for k, v in pairs(extra or {}) do l[k] = v end
+      return l
+    end
+    local still = {layers = {sheet(from .. "-run-shadow", {draw_as_shadow = true}), sheet(from .. "-run")}}
+    unit.run_animation = still
+    if unit.attack_parameters then unit.attack_parameters.animation = still end
   end
 end
 
@@ -80,6 +118,22 @@ for name in pairs(sizes) do
             lib.art_sprite(name, "ruin", at)}}}}
         entity.corpse = name .. "-ruin"
       end
+    elseif entity.type == "mining-drill" then -- the same picture whichever way it faces
+      local still = {layers = base}
+      entity.graphics_set = {animation = {north = still, east = still, south = still, west = still}}
+      entity.wet_mining_graphics_set = nil
+    elseif entity.type == "ammo-turret" then -- one picture that does not turn yet (a stand-in until one that does)
+      local still = {layers = {}}
+      for _, layer in pairs(base) do
+        local l = table.deepcopy(layer)
+        l.direction_count = 1
+        still.layers[#still.layers + 1] = l
+      end
+      for _, key in pairs{"folded_animation", "preparing_animation", "prepared_animation", "attacking_animation",
+                          "folding_animation"} do
+        entity[key] = entity[key] and still or nil
+      end
+      entity.graphics_set = {}
     elseif entity.type == "simple-entity-with-owner" then
       entity.picture = {layers = base}
     elseif entity.type == "wall" then -- a lone piece of wall: the same picture whatever it joins, no filling

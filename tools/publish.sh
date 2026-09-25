@@ -3,6 +3,8 @@
 #
 #   tools/publish.sh             # first time: creates the mod page; later: a new release
 #   tools/publish.sh --gallery thumbnail.png docs/img/a.png ...   # replace the gallery with these pictures
+#   tools/publish.sh --details                                    # category of the mod page
+# Tags can't be set through the API (it answers success and ignores them): tick them on the mod page.
 #
 # The key comes from the environment or from .env in the repository root (FACTORIO_API_KEY=...; see
 # .env.example). .env is in .gitignore and is never packed into the mod.
@@ -36,7 +38,11 @@ gallery() {
     resp=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/images/add")
     if ! up=$(echo "$resp" | json upload_url); then echo "images/add for $img: $resp"; continue; fi
     resp=$(curl -s -F "image=@$img" "$up")
-    if id=$(echo "$resp" | json id); then ids+=("$id"); echo "image $img: $id"; else echo "upload of $img: $resp"; fi
+    if id=$(echo "$resp" | json id); then ids+=("$id"); echo "image $img: $id"
+    elif echo "$resp" | grep -q "already exists"; then
+      # the portal's image id is the file's SHA-1: an image uploaded before is reused as it is
+      id=$(shasum -a 1 "$img" | awk '{print $1}'); ids+=("$id"); echo "image $img: $id (already there)"
+    else echo "upload of $img: $resp"; fi
   done
   if [ ${#ids[@]} -gt 0 ]; then
     echo "images/edit: $(curl -s "${AUTH[@]}" -F "mod=$name" -F "images=$(IFS=,; echo "${ids[*]}")" "$API/mods/images/edit")"
@@ -44,6 +50,11 @@ gallery() {
     echo "no picture uploaded, the gallery is unchanged"
   fi
 }
+
+if [ "${1:-}" = "--details" ]; then
+  echo "edit_details: $(curl -s "${AUTH[@]}" -F "mod=$name" -F "category=overhaul" "$API/mods/edit_details")"
+  exit 0
+fi
 
 if [ "${1:-}" = "--gallery" ]; then
   shift

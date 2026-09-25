@@ -7,8 +7,12 @@
   (на портале выбирается из списка — брать те, что там есть)
 - **Лицензия:** на выбор автора (по умолчанию на портале — «All rights reserved»; для открытого мода
   подойдёт MIT)
-- **Картинки галереи:** `thumbnail.png`, `docs/img/campfire.png`, `docs/img/map-777.png` — пока нет
-  настоящих скриншотов из игры. Заменить: `tools/publish.sh --gallery <картинки…>`
+- **Картинки галереи:** `thumbnail.png`, `docs/img/shots/camp.jpg`, `docs/img/shots/workshop.jpg`,
+  `docs/img/shots/tech-tree.png`, `docs/img/shots/recipes.png`, `docs/img/shots/camp-night.jpg`,
+  `docs/img/shots/wolves.jpg`, `docs/img/map-777.png`. Скриншоты снимает `tools/screenshots.sh` (сцены —
+  `tests/scenarios/shots.lua`); дерево технологий и рецепты игра в скриншот не отдаёт — их рисует
+  `tools/portal_sheets.py <data-raw-dump.json>` по данным мода. Заменить галерею:
+  `tools/publish.sh --gallery <картинки…>`
 
 ---
 

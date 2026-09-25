@@ -69,6 +69,22 @@ if m:
     fire_shift = (float(m.group(1)) * T, float(m.group(2)) * T)
 
 
+flame = None  # vanilla's flames (EXTRAS flame = {scale, shift}) when the building has no drawn ones
+m = re.search(r'\["%s"\] = \{.*?flame = \{scale = ([\d.]+), shift = \{([-\d.]+), ([-\d.]+)\}' % re.escape(name),
+              open(os.path.join(ROOT, "prototypes", "art.lua")).read(), re.S)
+if m and not fire:
+    import subprocess, tempfile
+    sheet = png_io.read(os.path.join(GAME, "entity", "fire-flame", "fire-flame-01.png"))[2]
+    fw, fh, k = 84, 130, 37
+    cell = [r[(k % 10) * fw:(k % 10 + 1) * fw] for r in sheet[(k // 10) * fh:(k // 10 + 1) * fh]]
+    t, t2 = tempfile.mktemp(suffix=".png"), tempfile.mktemp(suffix=".png")
+    png_io.write(t, fw, fh, cell)
+    f = float(m.group(1)) / 0.5
+    subprocess.run(["sips", "-z", str(round(fh * f)), str(round(fw * f)), t, "--out", t2], check=True, capture_output=True)
+    flame = png_io.read(t2)[2]
+    flame_shift = (float(m.group(2)) * T, float(m.group(3)) * T)
+
+
 def fire_frame(k):
     fw, fh = len(fire[0]) // 4, len(fire) // 4
     x0, y0 = (k % 4) * fw, (k // 4) * fh
@@ -111,6 +127,8 @@ for k, (kind, px, *frame) in enumerate(panels):
         paste(ruin if kind == "ruin" else idle or main, cx + shift[0], cy + shift[1])
         if kind == "working" and idle:
             paste(main, cx + shift[0], cy + shift[1])
+        if kind == "working" and flame:
+            paste(flame, cx + flame_shift[0], cy + flame_shift[1])
         if kind == "working" and fire:
             paste(fire_frame(frame[0]), cx + fire_shift[0], cy + fire_shift[1])
     for y in range(H):
