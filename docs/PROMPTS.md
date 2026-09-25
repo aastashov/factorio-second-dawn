@@ -28,7 +28,7 @@
 
 ## Готово
 - **Костёр** (`sd-campfire`, `sd-campfire-idle`), 1.35 клетки — в игре с 0.11.1.
-- **Стол учёного** (`sd-scholar-desk`), 3.2 клетки — 0.11.3; выключенного состояния пока нет.
+- **Стол учёного** (`sd-scholar-desk`, `sd-scholar-desk-idle`), 3.2 клетки — из ChatGPT, 0.11.5.
 
 ## Стол учёного (`sd-scholar-desk`, 3×3 клетки, `tools/art.sh sd-scholar-desk 3.2`)
 

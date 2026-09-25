@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.11.5
+Date: 2026-09-25
+  Graphics:
+    - Scholar's desk redrawn from the side like other buildings; its oil lamp is lit only while researching.
+---------------------------------------------------------------------------------------------------
 Version: 0.11.4
 Date: 2026-09-25
   Graphics:

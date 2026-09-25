@@ -10,7 +10,7 @@ local sizes = require("prototypes.art-sizes")
 local EXTRAS = {
   ["sd-campfire"] = {shift = {0, -0.05}, light = {intensity = 0.8, size = 12, color = {1, 0.65, 0.35}},
     flame = {scale = 0.22, shift = {0.02, -0.3}}, fire_shift = {0, -0.35}},
-  ["sd-scholar-desk"] = {shift = {0, -0.1}, light = {intensity = 0.5, size = 6, color = {1, 0.8, 0.5}}},
+  ["sd-scholar-desk"] = {shift = {0, -0.1}, light = {intensity = 0.5, size = 6, shift = {-1.1, -0.9}, color = {1, 0.8, 0.5}}},
 }
 
 local function find_entity(name)

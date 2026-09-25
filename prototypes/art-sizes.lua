@@ -5,6 +5,7 @@ return {
   ["sd-campfire-ground"] = {92, 75},
   ["sd-campfire-idle"] = {77, 68},
   ["sd-campfire-shadow"] = {109, 100},
-  ["sd-scholar-desk"] = {205, 215},
-  ["sd-scholar-desk-shadow"] = {237, 247},
+  ["sd-scholar-desk"] = {205, 147},
+  ["sd-scholar-desk-idle"] = {205, 147},
+  ["sd-scholar-desk-shadow"] = {237, 179},
 }
