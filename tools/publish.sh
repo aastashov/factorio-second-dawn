@@ -66,7 +66,8 @@ fi
 exists=$(curl -s -o /dev/null -w "%{http_code}" "https://mods.factorio.com/api/mods/$name")
 if [ "$exists" = "200" ]; then
   url=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/releases/init_upload" | json upload_url)
-  curl -s -F "file=@$zip" "$url"; echo
+  answer=$(curl -s -F "file=@$zip" "$url"); echo "$answer"
+  case "$answer" in *'"error"'*) echo "not released: the portal refused $version"; exit 1;; esac
   echo "released $version"
   exit 0
 fi
