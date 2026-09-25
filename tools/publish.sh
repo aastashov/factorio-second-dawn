@@ -7,8 +7,7 @@
 # .env.example). .env is in .gitignore and is never packed into the mod.
 #
 # The key is made at https://factorio.com/create-api-key with the permissions
-# "ModPortal: Publish Mods", "ModPortal: Upload Mods" and "ModPortal: Edit Mods". It is read from the
-# environment only and never written anywhere.
+# "ModPortal: Publish Mods", "ModPortal: Upload Mods" and "ModPortal: Edit Mods". The script only reads it.
 #
 # First publication also sets: the long description (the markdown block of docs/PORTAL.md), the category,
 # the license (MOD_LICENSE, default "default_mit"; see the portal for other identifiers) and the gallery
