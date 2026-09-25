@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Publishes the built zip to mods.factorio.com through the mod portal API.
 #
-#   FACTORIO_API_KEY=... tools/publish.sh             # first time: creates the mod page; later: a new release
+#   tools/publish.sh             # first time: creates the mod page; later: a new release
+#
+# The key comes from the environment or from .env in the repository root (FACTORIO_API_KEY=...; see
+# .env.example). .env is in .gitignore and is never packed into the mod.
 #
 # The key is made at https://factorio.com/create-api-key with the permissions
 # "ModPortal: Publish Mods", "ModPortal: Upload Mods" and "ModPortal: Edit Mods". It is read from the
@@ -12,8 +15,9 @@
 # pictures listed below. Later runs upload only the new release.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+if [ -f .env ]; then set -a; . ./.env; set +a; fi
 
-: "${FACTORIO_API_KEY:?set FACTORIO_API_KEY (https://factorio.com/create-api-key)}"
+: "${FACTORIO_API_KEY:?put FACTORIO_API_KEY into .env (see .env.example) or the environment}"
 API=https://mods.factorio.com/api/v2
 AUTH=(-H "Authorization: Bearer $FACTORIO_API_KEY")
 name=$(python3 -c "import json; print(json.load(open('info.json'))['name'])")

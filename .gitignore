@@ -3,3 +3,4 @@ dist/
 __pycache__/
 art/preview/
 .idea/
+.env
