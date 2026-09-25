@@ -7,9 +7,8 @@
   (на портале выбирается из списка — брать те, что там есть)
 - **Лицензия:** на выбор автора (по умолчанию на портале — «All rights reserved»; для открытого мода
   подойдёт MIT)
-- **Картинки галереи:** `thumbnail.png` (обложка, берётся из zip сама), `docs/img/campfire.png`,
-  `docs/img/petrified.png`, `docs/img/scholar-desk.png`, `docs/img/map-777.png`, `docs/img/ships.png`,
-  `docs/img/icons.png`
+- **Картинки галереи:** `thumbnail.png`, `docs/img/campfire.png`, `docs/img/map-777.png` — пока нет
+  настоящих скриншотов из игры. Заменить: `tools/publish.sh --gallery <картинки…>`
 
 ---
 

@@ -2,6 +2,7 @@
 # Publishes the built zip to mods.factorio.com through the mod portal API.
 #
 #   tools/publish.sh             # first time: creates the mod page; later: a new release
+#   tools/publish.sh --gallery thumbnail.png docs/img/a.png ...   # replace the gallery with these pictures
 #
 # The key comes from the environment or from .env in the repository root (FACTORIO_API_KEY=...; see
 # .env.example). .env is in .gitignore and is never packed into the mod.
@@ -27,6 +28,25 @@ echo "mod $name $version: $zip"
 
 json() { python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('$1') or ''); sys.exit(0 if d.get('$1') else 1)"; }
 
+# Uploads the pictures and makes them the gallery, in this order (pictures not listed leave the gallery).
+gallery() {
+  local ids=() img up id
+  for img in "$@"; do
+    up=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/images/add" | json upload_url)
+    id=$(curl -s -F "image=@$img" "$up" | json id) && ids+=("$id") && echo "image $img"
+  done
+  if [ ${#ids[@]} -gt 0 ]; then
+    curl -s "${AUTH[@]}" -F "mod=$name" -F "images=$(IFS=,; echo "${ids[*]}")" "$API/mods/images/edit"; echo
+  fi
+}
+
+if [ "${1:-}" = "--gallery" ]; then
+  shift
+  gallery "$@"
+  echo "gallery: https://mods.factorio.com/mod/$name"
+  exit 0
+fi
+
 exists=$(curl -s -o /dev/null -w "%{http_code}" "https://mods.factorio.com/api/mods/$name")
 if [ "$exists" = "200" ]; then
   url=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/releases/init_upload" | json upload_url)
@@ -47,14 +67,6 @@ curl -s -F "file=@$zip" -F "description=$description" -F "category=overhaul" \
   -F "license=${MOD_LICENSE:-default_mit}" "$url"; echo
 echo "published $name $version"
 
-# Gallery: upload the pictures, then set their order.
-ids=()
-for img in thumbnail.png docs/img/campfire.png docs/img/petrified.png docs/img/scholar-desk.png docs/img/map-777.png \
-           docs/img/ships.png docs/img/icons.png; do
-  up=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/images/add" | json upload_url)
-  id=$(curl -s -F "image=@$img" "$up" | json id) && ids+=("$id") && echo "image $img"
-done
-if [ ${#ids[@]} -gt 0 ]; then
-  curl -s "${AUTH[@]}" -F "mod=$name" -F "images=$(IFS=,; echo "${ids[*]}")" "$API/mods/images/edit"; echo
-fi
+# Gallery.
+gallery thumbnail.png docs/img/campfire.png docs/img/map-777.png
 echo "done: https://mods.factorio.com/mod/$name"
