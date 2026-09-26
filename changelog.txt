@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.7
+Date: 2026-09-26
+  Graphics:
+    - Clay, shells, saltpeter, tin, tungsten and sulfur ore patches redrawn.
+    - Wolf den, boar wallow and their ruins, the note, the ruined wall and the emitter redrawn.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.6
 Date: 2026-09-25
   Graphics:

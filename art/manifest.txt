@@ -1,12 +1,5 @@
 # Imported art: <name> <width in tiles> [import_art.py options]. tools/art.sh keeps this list and
 # re-imports everything from it when run without arguments.
-sd-wolf-lair 5.2 --flat 12
-sd-boar-lair 5.2 --flat 12
-sd-clay 3 --pieces
-sd-shells 2.2 --pieces
-sd-saltpeter 3 --pieces
-sd-ruin-wall 1.3
-sd-note 0.9 --flat 3
 sd-fiber icon
 sd-rope icon
 sd-charcoal icon
@@ -186,10 +179,6 @@ sd-bronze-drill 2.2
 sd-wolf 1.2 --unit
 sd-boar 1.4 --unit
 sd-bear 2 --unit
-sd-emitter 5.2
-sd-tin-ore 3 --pieces
-sd-tungsten-ore 3 --pieces
-sd-sulfur-deposit 3 --pieces
 sd-palisade 1.2
 sd-crossbow 2.2
 sd-bear-den 5.2 --flat 12
@@ -203,3 +192,14 @@ sd-cooler 3.2
 sd-plantation 3.2
 sd-swivel-gun 2.2
 sd-repeating-crossbow 2.2
+sd-emitter 5.2
+sd-wolf-lair 5.2 --flat 12
+sd-boar-lair 5.2 --flat 12
+sd-note 0.9 --flat 3
+sd-ruin-wall 1.3
+sd-tin-ore 3 --pieces
+sd-tungsten-ore 3 --pieces
+sd-sulfur-deposit 3 --pieces
+sd-clay 3 --pieces
+sd-shells 2.2 --pieces
+sd-saltpeter 3 --pieces
