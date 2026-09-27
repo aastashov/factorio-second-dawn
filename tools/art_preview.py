@@ -8,10 +8,11 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
+import game_path
 import png_io
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-GAME = os.path.expanduser("~/Library/Application Support/Steam/steamapps/common/Factorio/factorio.app/Contents/data/base/graphics")
+GAME = os.path.join(game_path.GAME, "base", "graphics")
 T = 64
 name = sys.argv[1]
 d = os.path.join(ROOT, "graphics", "entity", name)
@@ -73,15 +74,16 @@ flame = None  # vanilla's flames (EXTRAS flame = {scale, shift}) when the buildi
 m = re.search(r'\["%s"\] = \{.*?flame = \{scale = ([\d.]+), shift = \{([-\d.]+), ([-\d.]+)\}' % re.escape(name),
               open(os.path.join(ROOT, "prototypes", "art.lua")).read(), re.S)
 if m and not fire:
-    import subprocess, tempfile
+    from PIL import Image
     sheet = png_io.read(os.path.join(GAME, "entity", "fire-flame", "fire-flame-01.png"))[2]
     fw, fh, k = 84, 130, 37
     cell = [r[(k % 10) * fw:(k % 10 + 1) * fw] for r in sheet[(k // 10) * fh:(k // 10 + 1) * fh]]
-    t, t2 = tempfile.mktemp(suffix=".png"), tempfile.mktemp(suffix=".png")
-    png_io.write(t, fw, fh, cell)
     f = float(m.group(1)) / 0.5
-    subprocess.run(["sips", "-z", str(round(fh * f)), str(round(fw * f)), t, "--out", t2], check=True, capture_output=True)
-    flame = png_io.read(t2)[2]
+    nw, nh = round(fw * f), round(fh * f)
+    img = Image.new("RGBA", (fw, fh))
+    img.putdata([p for row in cell for p in row])
+    data = img.resize((nw, nh), Image.LANCZOS).get_flattened_data()
+    flame = [data[y * nw:(y + 1) * nw] for y in range(nh)]
     flame_shift = (float(m.group(2)) * T, float(m.group(3)) * T)
 
 

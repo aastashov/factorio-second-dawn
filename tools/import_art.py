@@ -24,9 +24,9 @@ and, with --ground, a patch of scorched earth to stand on (<name>-ground.png).
         # an animal seen from above, head up -> 16 turned frames (a stand-in until walking animations)"""
 import os
 import statistics
-import subprocess
 import sys
-import tempfile
+
+from PIL import Image
 
 sys.path.insert(0, os.path.dirname(__file__))
 import png_io
@@ -308,12 +308,12 @@ def record_sizes(sizes):
 
 
 def resized(w, h, px, width, height=None):
-    with tempfile.TemporaryDirectory() as tmp:
-        src, dst = os.path.join(tmp, "a.png"), os.path.join(tmp, "b.png")
-        png_io.write(src, w, h, px)
-        args = ["-z", str(height), str(width)] if height else ["--resampleWidth", str(width)]
-        subprocess.run(["sips", *args, src, "--out", dst], check=True, capture_output=True)
-        return png_io.read(dst)
+    if height is None:  # sips --resampleWidth: scale height to match, keeping the aspect ratio
+        height = int(h * width / w + 0.5)  # round half up, like sips (Python's round() is half-to-even)
+    img = Image.new("RGBA", (w, h))
+    img.putdata([p for row in px for p in row])
+    data = img.resize((width, height), Image.LANCZOS).get_flattened_data()
+    return width, height, [data[y * width:(y + 1) * width] for y in range(height)]
 
 
 def square(w, h, px):

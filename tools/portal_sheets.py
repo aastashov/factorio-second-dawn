@@ -12,9 +12,12 @@ import subprocess
 import sys
 import tempfile
 
+sys.path.insert(0, os.path.dirname(__file__))
+import game_path
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-GAME = os.path.expanduser("~/Library/Application Support/Steam/steamapps/common/Factorio/factorio.app/Contents/data")
-BROWSER = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+GAME = game_path.GAME
+BROWSER = os.environ.get("SD_SHOT_BROWSER", "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser")
 EPOCH_1_PACK = "sd-clay-tablet"
 
 

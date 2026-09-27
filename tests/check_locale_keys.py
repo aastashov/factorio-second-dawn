@@ -8,7 +8,10 @@ import os
 import re
 import sys
 
-GAME = os.path.expanduser("~/Library/Application Support/Steam/steamapps/common/Factorio/factorio.app/Contents/data")
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
+import game_path
+
+GAME = game_path.GAME
 MOD = os.path.join(os.path.dirname(__file__), "..")
 
 
