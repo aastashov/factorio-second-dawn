@@ -1,10 +1,10 @@
 {
   "name": "second-dawn",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "title": "Second Dawn (beta)",
   "author": "aastashov",
   "factorio_version": "2.0",
-  "description": "BETA — From clay and fire to a Moon rocket before petrification waves return. Five epochs, expeditions, ships and climate. Base 2.0; no Space Age.",
+  "description": "BETA — A Factorio overhaul inspired by Dr. Stone: from clay and fire to a Moon rocket before petrification waves return. Made with AI, directed and playtested by a human. Base 2.0; no Space Age.",
   "dependencies": [
     "base >= 2.0.77",
     "! space-age",

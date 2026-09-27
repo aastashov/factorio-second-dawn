@@ -26,6 +26,8 @@
 Humanity is stone. Your factory is the only way back: automate a revival charge before each wave, cross an
 ocean for scarce resources, and reach the Moon to stop the source.
 
+Inspired by *Dr. Stone*. Made with AI, directed and playtested by a human.
+
 ### Why play
 
 - **A full five-epoch overhaul:** clay → bronze → steam → chemistry → rocket.
@@ -47,6 +49,8 @@ may change between releases.
 
 Человечество стало камнем. Завод — единственный путь назад: автоматизируй заряд пробуждения до каждой
 волны, пересекай океан за редкими ресурсами и доберись до Луны, чтобы остановить источник.
+
+По мотивам *Dr. Stone*. Создано с ИИ, под руководством и с игровым тестированием человека.
 
 ### Зачем играть
 
