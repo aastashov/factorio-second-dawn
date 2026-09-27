@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.8
+Date: 2026-09-27
+  Info:
+    - Shorter, clearer bilingual mod and portal descriptions. The portal page updates with each release.
+  Balancing:
+    - Simplified oil processing and the firearm progression; radio is available in epoch 3.
+    - Removed unneeded systems: paper cartridges, fuel briquettes, ship brakes, cooked meat, fertilizer,
+      animal farms and capture nets. Meat now heals 60 directly; animals still provide hides and bones.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.7
 Date: 2026-09-26
   Graphics:
@@ -89,7 +98,7 @@ Date: 2026-09-25
     - A start without chores: a digger, a bow and stone arrows with no research, faster hands, cheap clay
       tablets, a woodlot that grows wood, a "Next step" hint and a diary.
     - Wild animals in packs with leaders: territory, a leash, short night raids, and they leave a dead
-      player's body. Respawn with a bow and arrows. Catch lairs with a net and farm them.
+      player's body. Respawn with a bow and arrows.
     - Weapons from the bow to sulfur gunpowder, turrets, sharper arrowheads I–III.
     - Climate belts, continents over a deep ocean, landfill and deep landfill, ships on waterways.
     - Ruins with notes: hints, alternative recipes, caches.

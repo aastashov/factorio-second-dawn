@@ -3,6 +3,7 @@
 # compared every tick) and reports any mismatch. Uses the instance of tests/run-scenario.sh.
 #
 #   tests/run-heavy.sh desync 40
+#   SD_TEST_DIR=/tmp/a SD_PORT=34298 tests/run-heavy.sh desync 40   # several at once: own folder and port
 set -euo pipefail
 cd "$(dirname "$0")/.."
 name=$1; seconds=${2:-40}
@@ -17,7 +18,7 @@ json.dump(s, open(sys.argv[2], "w"))
 PY
 rm -rf "$dir/data/desync-report"* "$dir/in"; mkfifo "$dir/in"
 "$bin" --config "$dir/config.ini" --start-server "$dir/data/saves/$name.zip" --server-settings "$dir/server-settings.json" \
-  --port 34297 < "$dir/in" > "$dir/server.log" 2>&1 &
+  --port "${SD_PORT:-34297}" < "$dir/in" > "$dir/server.log" 2>&1 &
 server=$!
 exec 3> "$dir/in"            # keep the server's stdin open
 sleep 3; echo "/toggle-heavy-mode" >&3

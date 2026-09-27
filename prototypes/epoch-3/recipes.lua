@@ -27,6 +27,9 @@ data:extend{
   recipe("copper-cable", C, 0.5, {{"copper-plate", 1}}, {{"copper-cable", 2}}),
   recipe("small-pole", C, 0.5, {{"wood", 1}, {"copper-cable", 2}}, {{"small-electric-pole", 2}}),
   recipe("small-lamp", C, 0.5, {{"copper-cable", 3}, {"sd-glass", 1}, {"iron-plate", 1}}, {{"small-lamp", 1}}),
+  -- A radio is useful while the player is still scouting coasts, ruins and lairs.  It deliberately uses
+  -- the electrical parts already available in this epoch, rather than waiting for rocket electronics.
+  recipe("radar", C, 1, {{"iron-plate", 10}, {"iron-gear-wheel", 5}, {"copper-cable", 10}, {"sd-glass", 5}}, {{"radar", 1}}),
   recipe("blast-furnace", C, 3, {{"sd-brick", 20}, {"iron-plate", 10}}, {{"steel-furnace", 1}}),
   recipe("iron-plate", "sd-blast", 3.2, {{"iron-ore", 1}}, {{"iron-plate", 1}}),
   recipe("steel", "sd-blast", 16, {{"iron-plate", 5}}, {{"steel-plate", 1}}),
@@ -42,11 +45,6 @@ data:extend{
   recipe("fast-inserter", C, 0.5, {{"inserter", 1}, {"steel-plate", 1}, {"copper-cable", 2}}, {{"fast-inserter", 1}}),
   recipe("assembler-2", C, 0.5, {{"assembling-machine-1", 1}, {"steel-plate", 2}, {"iron-gear-wheel", 5}, {"copper-cable", 5}}, {{"assembling-machine-2", 1}}),
   recipe("medium-pole", C, 0.5, {{"steel-plate", 2}, {"copper-cable", 2}, {"iron-plate", 2}}, {{"medium-electric-pole", 1}}),
-  recipe("feed", "sd-grinding", 4, {{"sd-fruit", 4}, {"sd-fiber", 4}}, {{"sd-feed", 4}}),
-  recipe("net", C, 2, {{"sd-rope", 10}, {"sd-leather", 2}, {"sd-bronze", 2}}, {{"sd-net", 1}}),
-  recipe("breed-boars", "sd-farm-boar", 60, {{"sd-feed", 10}}, {{"sd-meat", 6}, {"sd-hide", 2}, {"sd-bones", 2}}, {main_product = "sd-meat"}),
-  recipe("breed-wolves", "sd-farm-wolf", 45, {{"sd-meat", 4}}, {{"sd-hide", 3}, {"sd-bones", 1}}, {main_product = "sd-hide"}),
-  recipe("breed-bears", "sd-farm-bear", 120, {{"sd-feed", 20}}, {{"sd-meat", 12}, {"sd-hide", 4}, {"sd-bones", 4}}, {main_product = "sd-meat"}),
   recipe("revival-chamber-2", C, 20, {{"steel-plate", 50}, {"sd-brick", 100}, {"copper-cable", 50}, {"iron-gear-wheel", 30}, {"sd-glass", 50}},
     {{"sd-revival-chamber-2", 1}}),
   recipe("electrode", C, 3, {{"copper-plate", 2}, {"sd-glass", 1}}, {{"sd-electrode", 1}}),
@@ -75,9 +73,9 @@ data:extend{
   tech("blast-furnace", "advanced-material-processing", iron, 120, 30, 2, {"ironworking"}, {"blast-furnace", "iron-plate", "steel"}),
   tech("electromechanics", "electric-mining-drill", iron, 150, 30, 2, {"electricity", "blast-furnace"}, {"electric-drill", "inserter", "assembler-1", "lab"}),
   tech("mechanism", "chemical-science-pack", iron, 150, 30, 2, {"electromechanics"}, {"mechanism"}),
+  tech("radio", "radar", copper, 100, 30, 3, {"mechanism"}, {"radar"}),
   tech("logistics-3", "logistics-2", {1, 0.5, 0.5}, 150, 30, 3, {"mechanism"}, {"fast-belt", "fast-underground", "fast-splitter", "long-inserter", "fast-inserter"}),
   tech("automation-2", "automation-2", iron, 150, 30, 3, {"mechanism"}, {"assembler-2", "medium-pole"}),
-  tech("domestication", "military", {0.6, 0.42, 0.28}, 150, 30, 3, {"mechanism", "tanning"}, {"net", "feed", "breed-boars", "breed-wolves", "breed-bears"}),
   tech("electric-chamber", "research-speed", {0.62, 0.72, 0.88}, 200, 40, 3, {"mechanism"}, {"revival-chamber-2"}),
   tech("third-awakening", "research-speed", {0.75, 0.6, 1}, 250, 45, 3, {"electric-chamber", "rectification"}, {"electrode", "revival-charge-3"}),
 }

@@ -59,12 +59,6 @@ script.on_event(defines.events.on_tick, function(e)
     remote.call("second-dawn", "wave_in", 30)
   elseif t == 3100 then
     L("lair frozen by the wave: " .. tostring(storage.t.lair.valid and storage.t.lair.disabled_by_script))
-    -- a net thrown at the frozen lair
-    local s = game.surfaces.nauvis
-    s.create_entity{name = "sd-net-projectile", position = {300, 348}, target = storage.t.lair.position, speed = 0.3,
-      source = storage.t.char.valid and storage.t.char or nil, force = "player"}
-  elseif t == 3300 then
-    L("kennel after the net: " .. game.surfaces.nauvis.count_entities_filtered{name = "sd-wolf-kennel"})
     -- climate: a kiln in the cold with a brazier, a workbench in the heat
     local s, D = game.surfaces.nauvis, settings.startup["sd-climate-distance"].value
     s.request_to_generate_chunks({0, -(D + 100)}, 1); s.request_to_generate_chunks({0, D + 100}, 1)
@@ -74,7 +68,7 @@ script.on_event(defines.events.on_tick, function(e)
     brazier.get_fuel_inventory().insert{name = "wood", count = 2}
     s.create_entity{name = "sd-workbench", position = {0, D + 100}, force = "player", recipe = "sd-clay-tablet", raise_built = true}
     storage.t.kiln = kiln
-  elseif t == 3500 then
+  elseif t == 3300 then
     L("cold kiln with a burning brazier disabled: " .. tostring(storage.t.kiln.disabled_by_script))
     -- a ship sailing to a pier
     local s, Y = game.surfaces.nauvis, -1100
@@ -90,7 +84,7 @@ script.on_event(defines.events.on_tick, function(e)
     tug.train.schedule = {current = 1, records = {{station = "Pier", wait_conditions = {{type = "time", ticks = 60}}}}}
     tug.train.manual_mode = false
     storage.t.tug = tug
-  elseif t == 3900 then
+  elseif t == 3700 then
     L("ship at the pier: " .. tostring(storage.t.tug.train.station and storage.t.tug.train.station.backer_name))
     -- the finale: a rocket, a suited character, the Moon, the emitter
     local s = game.surfaces.nauvis

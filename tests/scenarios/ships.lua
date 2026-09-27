@@ -1,6 +1,6 @@
 -- Ships: waterway only on water; a double-headed ship (tug, barge, tank barge, tug) sails between two
 -- piers 380 tiles apart by schedule; shore inserters load it at the east pier and unload at the west;
--- the tank barge keeps its fluid; top speed with coal and with briquettes; a buoy stands on water.
+-- the tank barge keeps its fluid; top speed with coal; a buoy stands on water.
 local function L(s) log("SD-TEST " .. s) end
 local failures = 0
 local function check(name, ok, detail)
@@ -78,14 +78,6 @@ script.on_event(defines.events.on_tick, function(e)
       if at == "East" and not T.loader then T.loader = shore(true) end
       if at == "West" and T.loader and not T.unloader then
         T.unloader = shore(false)
-        -- second trip on briquettes
-        for _, tug in pairs{T.front, T.back} do
-          tug.get_fuel_inventory().clear()
-          tug.get_fuel_inventory().insert{name = "sd-briquettes", count = 50}
-          tug.burner.currently_burning = "sd-briquettes"
-          tug.burner.remaining_burning_fuel = 5e6
-        end
-        T.fuel = "briquettes"
       end
     end
   end
@@ -102,9 +94,8 @@ script.on_event(defines.events.on_tick, function(e)
     local unloaded = T.unloader and T.unloader.get_item_count("iron-plate") or 0
     check("loaded at East, unloaded at West", unloaded > 0, "unloaded " .. unloaded .. ", still aboard " .. loaded)
     check("tank barge keeps its water", T.tank.get_fluid_count("water") == 20000, tostring(T.tank.get_fluid_count("water")))
-    local coal, bri = T.max.coal or 0, T.max.briquettes or 0
+    local coal = T.max.coal or 0
     check("top speed 0.3 tiles/tick on coal", math.abs(coal - 0.3) < 0.01, string.format("%.3f", coal))
-    check("briquettes: 15% faster", bri > coal * 1.1, string.format("%.3f", bri))
     L("failures: " .. failures)
   end
 end)

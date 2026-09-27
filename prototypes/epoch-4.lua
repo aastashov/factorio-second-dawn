@@ -97,6 +97,10 @@ data:extend{
   recipe("sulfuric-acid", CH, 1, {{"sulfur", 5}, {"iron-plate", 1}, {"water", 100, F}}, {{"sulfuric-acid", 50, F}}),
   recipe("pumpjack", C, 3, {{"steel-plate", 5}, {"iron-gear-wheel", 10}, {"pipe", 10}}, {{"pumpjack", 1}}),
   recipe("oil-refinery", C, 5, {{"steel-plate", 15}, {"iron-gear-wheel", 10}, {"pipe", 10}, {"sd-brick", 10}}, {{"oil-refinery", 1}}),
+  -- Like vanilla: basic processing gives only gas, so nothing backs up before cracking exists; the three
+  -- products and cracking come together later ("Advanced oil processing", tech sd-cracking).
+  recipe("basic-oil-processing", "sd-oil-processing", 5, {{"crude-oil", 100, F}}, {{"petroleum-gas", 45, F}},
+    {icon = icons .. "fluid/petroleum-gas.png", icon_size = 64, subgroup = "sd-materials"}),
   recipe("oil-processing", "sd-oil-processing", 5, {{"crude-oil", 100, F}, {"water", 50, F}},
     {{"heavy-oil", 30, F}, {"light-oil", 45, F}, {"petroleum-gas", 55, F}}, {icon = icons .. "fluid/crude-oil.png", icon_size = 64, subgroup = "sd-materials"}),
   recipe("gas-sulfur", CH, 1, {{"petroleum-gas", 30, F}, {"water", 30, F}}, {{"sulfur", 2}}),
@@ -135,13 +139,13 @@ local yellow, blue, oil = {1, 0.85, 0.3}, {0.5, 0.75, 1}, {0.45, 0.4, 0.35}
 data:extend{
   tech("sulfur-processing", "sulfur-processing", yellow, 200, 30, 3, {"mechanism", "fluid-handling"}, {"chemical-plant", "sulfuric-acid"}),
   tech("oil-extraction", "oil-gathering", oil, 200, 30, 3, {"electromechanics", "fluid-barges"}, {"pumpjack"}),
-  tech("oil-processing", "oil-processing", oil, 250, 30, 3, {"oil-extraction"}, {"oil-refinery", "oil-processing", "gas-sulfur"}),
+  tech("oil-processing", "oil-processing", oil, 250, 30, 3, {"oil-extraction"}, {"oil-refinery", "basic-oil-processing", "gas-sulfur"}),
   tech("rubber", "plastics", {0.3, 0.3, 0.3}, 200, 30, 3, {"sulfur-processing"}, {"plantation", "latex", "rubber"}),
   tech("reactive", "production-science-pack", yellow, 250, 30, 3, {"rubber"}, {"reactive"}),
   tech("tungsten", "advanced-material-processing-2", tungsten_tint, 200, 30, 3, {"mechanism"}, {"electric-furnace", "tungsten"}),
   tech("navigation", "utility-science-pack", blue, 250, 30, 4, {"tungsten", "reactive"}, {"navigation"}),
-  tech("cracking", "advanced-oil-processing", oil, 250, 30, 4, {"oil-processing", "reactive"}, {"heavy-cracking", "light-cracking"}),
-  tech("fuel-oil", "rocket-fuel", oil, 200, 30, 4, {"oil-processing", "reactive"}, {"fuel-oil"}),
+  tech("cracking", "advanced-oil-processing", oil, 250, 30, 4, {"oil-processing", "reactive"}, {"oil-processing", "heavy-cracking", "light-cracking"}),
+  tech("fuel-oil", "rocket-fuel", oil, 200, 30, 4, {"cracking"}, {"fuel-oil"}), -- light oil: advanced processing
   tech("screw-steamer", "railway", {0.45, 0.5, 0.6}, 300, 45, 5, {"shipbuilding", "rubber", "navigation"}, {"screw-steamer"}),
   tech("ether", "chemical-science-pack", {0.9, 0.95, 1}, 250, 30, 4, {"reactive", "rectification"}, {"ether"}),
   tech("tungsten-electrodes", "electronics", tungsten_tint, 250, 30, 5, {"navigation", "third-awakening"}, {"tungsten-electrode"}),

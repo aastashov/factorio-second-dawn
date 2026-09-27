@@ -9,7 +9,6 @@ local AFFECTED = {"assembling-machine", "furnace", "mining-drill", "lab", "boile
 local EXEMPT = {
   ["sd-brazier"] = true, ["sd-radiator"] = true, ["sd-cooler"] = true,
   ["sd-revival-chamber"] = true, ["sd-revival-chamber-2"] = true,
-  ["sd-boar-farm"] = true, ["sd-wolf-kennel"] = true, ["sd-bear-pen"] = true,
   ["sd-plantation"] = true, -- made for the heat
 }
 local SOURCES = {

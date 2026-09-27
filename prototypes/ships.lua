@@ -85,9 +85,6 @@ data:extend{
   planner, tug, tug_item, barge, barge_item, tanker, tanker_item, pier, pier_item, buoy, buoy_item, chain, chain_item,
   {type = "item", name = "sd-pitch", subgroup = "sd-materials", order = "i", stack_size = 100,
    icons = lib.icon(icons .. "coal.png", {0.35, 0.25, 0.15})},
-  {type = "item", name = "sd-briquettes", subgroup = "sd-materials", order = "j", stack_size = 50,
-   icons = lib.icon(icons .. "solid-fuel.png", {0.6, 0.5, 0.4}),
-   fuel_category = "sd-charcoal", fuel_value = "5MJ", fuel_top_speed_multiplier = 1.15, fuel_acceleration_multiplier = 1.2},
 }
 
 local function recipe(name, category, time, ingredients, results, extra)
@@ -111,7 +108,6 @@ data:extend{
   recipe("pier", C, 2, {{"wood", 20}, {"steel-plate", 5}, {"copper-cable", 5}}, {{"sd-pier", 1}}),
   recipe("buoy", C, 1, {{"wood", 5}, {"copper-cable", 2}, {"sd-glass", 1}}, {{"sd-buoy", 1}}),
   recipe("chain-buoy", C, 1, {{"wood", 5}, {"copper-cable", 2}, {"sd-glass", 1}}, {{"sd-chain-buoy", 1}}),
-  recipe("briquettes", C, 2, {{"coal", 5}, {"sd-pitch", 1}}, {{"sd-briquettes", 4}}),
 }
 
 local tech_icons = "__base__/graphics/technology/"
@@ -132,7 +128,4 @@ data:extend{
   tech("shipbuilding", "railway", WATER_TINT, 200, 40, 3, {"mechanism", "steam-power", "pitch"}, {"waterway", "tug", "barge", "pier"}),
   tech("buoys", "automated-rail-transportation", WATER_TINT, 100, 30, 3, {"shipbuilding"}, {"buoy", "chain-buoy"}),
   tech("fluid-barges", "fluid-wagon", WATER_TINT, 150, 30, 3, {"shipbuilding", "fluid-handling"}, {"fluid-barge"}),
-  tech("briquettes", "rocket-fuel", {0.6, 0.5, 0.4}, 100, 30, 3, {"shipbuilding"}, {"briquettes"}),
-  tech("braking-1", "braking-force", WATER_TINT, 100, 30, 3, {"shipbuilding"}, {{type = "train-braking-force-bonus", modifier = 0.15}}),
-  tech("braking-2", "braking-force", WATER_TINT, 200, 30, 3, {"braking-1"}, {{type = "train-braking-force-bonus", modifier = 0.2}}),
 }

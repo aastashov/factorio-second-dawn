@@ -6,7 +6,6 @@ local gui = require("scripts.gui")
 local notes = require("scripts.notes")
 local diary = require("scripts.diary")
 local wildlife = require("scripts.wildlife")
-local capture = require("scripts.capture")
 local climate = require("scripts.climate")
 local moon = require("scripts.moon")
 local guide = require("scripts.guide")
@@ -176,7 +175,6 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(e)
   if e.setting == "sd-wildlife" then wildlife.apply_mode() end
 end)
 
-script.on_event(defines.events.on_script_trigger_effect, capture.on_trigger)
 script.on_event(defines.events.on_rocket_launch_ordered, function(e) moon.on_launch_ordered(e.rocket_silo) end)
 script.on_event(defines.events.on_rocket_launched, function(e) moon.on_launched(e.rocket_silo) end)
 script.on_event(defines.events.on_object_destroyed, function(e) moon.on_destroyed(e, waves.wake_everyone) end)
@@ -256,10 +254,6 @@ remote.add_interface("second-dawn", {
   climate = function(unit_number)
     local entry = storage.climate.entities[unit_number]
     return entry and {belt = entry.belt, covered = entry.covered}
-  end,
-  capture = function(position, force)
-    local farm, reason = capture.at(game.surfaces.nauvis, position, game.forces[force])
-    return farm and farm.name or reason
   end,
   raid = function(force, count) return #wildlife.raid(game.forces[force], count or 1) end,
   provoke = function(position)

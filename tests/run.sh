@@ -7,3 +7,4 @@ for f in *.lua prototypes/*.lua prototypes/*/*.lua scripts/*.lua tests/scenarios
 echo "lua syntax ok"
 python3 tests/check_locales.py >/dev/null && echo "locales ok"
 python3 tools/balance.py | head -1
+python3 tools/balance.py --markdown > docs/BALANCE.md   # the numbers the design doc refers to

@@ -21,10 +21,7 @@ sd-rectified-bottle icon
 sd-spirit-jug icon
 sd-arrows icon
 sd-bone-arrows icon
-sd-bone-meal icon
 sd-bones icon
-sd-cooked-meat icon
-sd-feed icon
 sd-fruit icon
 sd-fur-coat icon
 sd-hide icon
@@ -33,11 +30,9 @@ sd-leather-jacket icon
 sd-leather icon
 sd-light-cloak icon
 sd-meat icon
-sd-net icon
 sd-pitch icon
 sd-rubber icon
 sd-ash icon
-sd-briquettes icon
 sd-bronze icon
 sd-clay icon
 sd-mortar icon
@@ -99,7 +94,6 @@ sd-third-awakening tech
 sd-automation-2 tech
 sd-cooling tech
 sd-deep-landfill tech
-sd-domestication tech
 sd-land-reclamation tech
 sd-logistics-3 tech
 sd-pitch tech
@@ -119,7 +113,6 @@ sd-campfire 1.2 --ground 0.5
 sd-arrowheads-1 tech
 sd-arrowheads-2 tech
 sd-arrowheads-3 tech
-sd-bone-meal tech
 sd-bow tech
 sd-brazier tech
 sd-bronze tech
@@ -140,9 +133,6 @@ sd-mechanism tech
 sd-steam-power tech
 sd-swivel-gun tech
 sd-wrought-iron tech
-sd-braking-1 tech
-sd-braking-2 tech
-sd-briquettes tech
 sd-buoys tech
 sd-fluid-barges tech
 sd-oil-extraction tech
@@ -182,9 +172,6 @@ sd-bear 2 --unit
 sd-palisade 1.2
 sd-crossbow 2.2
 sd-bear-den 5.2 --flat 12
-sd-boar-farm 5.2 --flat 6
-sd-wolf-kennel 5.2 --flat 6
-sd-bear-pen 5.2 --flat 6
 sd-revival-chamber-2 5.2
 sd-lab 3.2
 sd-radiator 3.2

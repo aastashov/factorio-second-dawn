@@ -116,7 +116,6 @@ Edit this image: the same desk, same objects, same camera and lighting, but the 
 - **2.10** `sd-jug`: `An empty round clay jug with a narrow neck and a small handle.`
 - **2.11** `sd-bone-arrows`: `Three wooden arrows with carved white bone tips, diagonal.`
 - **2.12** `sd-meat`: `A raw red chunk of meat on a bone.`
-- **2.13** `sd-cooked-meat`: `A roasted brown chunk of meat on a bone.`
 - **2.14** `sd-hide`: `A rough brown animal hide with fur.`
 - **2.15** `sd-bones`: `A few white animal bones.`
 - **2.16** `sd-quicklime`: `A small heap of white lime powder.`
@@ -161,7 +160,6 @@ Edit this image: the same desk, same objects, same camera and lighting, but the 
 - **3.15** `sd-glass-flask`: `A round-bottom glass laboratory flask with a blue liquid.`
 - **3.16** `sd-arrows`: `Three wooden arrows with bronze tips and feathers, diagonal.`
 - **3.17** `sd-pitch`: `A lump of glossy black pitch on a wooden stick.`
-- **3.18** `sd-bone-meal`: `A small cloth sack of white bone powder.`
 - **3.19** `sd-rectified-bottle`: `A glass bottle with a crystal-clear liquid, cork stopper.`
 - **3.20** `sd-conc-acid-bottle`: `A glass bottle with an orange liquid, wax seal.`
 

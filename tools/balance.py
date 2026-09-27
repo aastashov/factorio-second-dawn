@@ -26,6 +26,28 @@ CATEGORY_MACHINE = {
     "plantation": "plantation",
     "rocket-building": "rocket-silo",
 }
+# Energy of each machine: (prototype, kW, fuel). Fuel "wood" = anything burnable (counted as wood, 2 MJ),
+# "charcoal" = charcoal or coal only (4 MJ), "electric" = MW from the grid, None = needs nothing.
+# tests/check_balance_model.py holds these and MACHINES/MINERS against the real prototypes.
+POWER = {
+    "campfire": ("sd-campfire", 50, "wood"), "kiln": ("sd-kiln", 90, "charcoal"),
+    "workbench": ("sd-workbench", 0, None), "alembic": ("sd-alembic", 100, "charcoal"),
+    "fermentation-vat": ("sd-fermentation-vat", 0, None), "garden": ("sd-garden", 0, None),
+    "woodlot": ("sd-woodlot", 0, None), "chamber": ("sd-revival-chamber", 200, "charcoal"),
+    "millstone": ("sd-millstone", 0, None), "bloomery": ("sd-bloomery", 120, "charcoal"),
+    "glassworks": ("sd-glassworks", 150, "charcoal"), "blast-furnace": ("steel-furnace", 90, "charcoal"),
+    "electric-chamber": ("sd-revival-chamber-2", 2000, "electric"), "assembler-2": ("assembling-machine-2", 150, "electric"),
+    "chemical-plant": ("chemical-plant", 210, "electric"), "refinery": ("oil-refinery", 420, "electric"),
+    "electric-furnace": ("electric-furnace", 180, "electric"), "plantation": ("sd-plantation", 0, None),
+    "rocket-silo": ("rocket-silo", 250, "electric"),
+    # miners and labs
+    "digger": ("sd-digger", 150, "wood"), "pick-digger": ("sd-pick-digger", 150, "wood"),
+    "bronze-drill": ("sd-bronze-drill", 150, "wood"), "electric-drill": ("electric-mining-drill", 90, "electric"),
+    "desk": ("sd-scholar-desk", 60, "wood"), "lab": ("sd-lab", 60, "electric"),
+}
+FUEL_MJ = {"wood": 2, "charcoal": 4}
+FLUIDS = {"water", "steam", "crude-oil", "heavy-oil", "light-oil", "petroleum", "sulfuric-acid"}
+
 # mined items: mining time; miners: digger 0.25 (soft only), pick digger 0.2, bronze drill 0.4 (soft + hard)
 RAW = {"wood", "stone", "clay", "shells", "saltpeter", "fruit", "copper-ore", "tin-ore", "coal", "iron-ore",
        "meat", "hide", "bones",
@@ -47,28 +69,26 @@ RECIPES = {
     "grow-fruit":    (1, "growing", 60, {"fruit": 2}, {"fruit": 6}, "fermentation"),
     "spirit":        (1, "distillation", 20, {"fruit": 8, "jug": 1}, {"spirit-jug": 1}, "distillation"),
     "nitric-acid":   (1, "distillation", 10, {"jug": 1, "saltpeter": 4, "charcoal": 1}, {"acid-jug": 1}, "distillation"),
-    # charcoal 30 = chamber fuel (200 kW x 600 s), modelled as an ingredient
-    "charge-1":      (1, "awakening", 600, {"acid-jug": 10, "spirit-jug": 10, "charcoal": 30}, {"charge-1": 1, "jug": 20}, "awakening"),
+    "charge-1":      (1, "awakening", 600, {"acid-jug": 10, "spirit-jug": 10}, {"charge-1": 1, "jug": 20}, "awakening"),
     # hunting (release 0.4)
     "bow":           (1, "crafting", 3, {"wood": 5, "rope": 2}, {"bow": 1}, None),
     "stone-arrows":  (1, "crafting", 1, {"wood": 1, "stone": 1}, {"stone-arrows": 5}, None),
     "bone-arrows":   (1, "crafting", 1, {"wood": 1, "bones": 1}, {"bone-arrows": 5}, "hunting"),
     "palisade":      (1, "crafting", 1, {"wood": 6, "rope": 1}, {"palisade": 2}, "hunting"),
-    "cooked-meat":   (1, "campfire", 5, {"meat": 1}, {"cooked-meat": 1}, "hunting"),
     "leather":       (1, "fermenting", 20, {"hide": 2, "quicklime": 1}, {"leather": 2}, "tanning"),
     "leather-jacket": (1, "crafting", 5, {"leather": 10, "rope": 5}, {"leather-jacket": 1}, "tanning"),
     "arrows":        (2, "crafting", 2, {"wood": 1, "bronze": 1, "fiber": 2}, {"arrows": 10}, "bow"),
     "hand-crossbow": (2, "crafting", 5, {"bronze": 5, "wood": 5, "rope": 3}, {"hand-crossbow": 1}, "bow"),
     "gunpowder":     (2, "grinding", 4, {"saltpeter": 3, "charcoal": 1}, {"gunpowder": 2}, "gunpowder"),
-    "musket":        (2, "crafting", 5, {"bronze": 10, "wood": 5, "rope": 2}, {"musket": 1}, "gunpowder"),
-    "musket-balls":  (2, "crafting", 2, {"gunpowder": 1, "bronze": 1}, {"musket-balls": 5}, "gunpowder"),
-    "swivel-gun":    (2, "crafting", 8, {"bronze": 20, "wood": 10, "musket": 1}, {"swivel-gun": 1}, "swivel-gun"),
+    "pistol":        (2, "crafting", 5, {"bronze": 5, "wood": 2}, {"pistol": 1}, "gunpowder"),
+    "submachine-gun": (3, "crafting", 10, {"gear": 10, "steel": 5, "wood": 5}, {"submachine-gun": 1}, "firearms"),
+    "firearm-magazine": (2, "crafting", 1, {"bronze": 1, "gunpowder": 1}, {"firearm-magazine": 1}, "gunpowder"),
+    "gun-turret":    (3, "crafting", 8, {"gear": 10, "steel": 10, "copper": 10}, {"gun-turret": 1}, "firearms"),
+    "piercing-rounds": (4, "crafting", 3, {"firearm-magazine": 1, "steel": 1, "copper": 2}, {"piercing-rounds": 1}, "sulfur-gunpowder"),
     "steel-bolts":   (3, "crafting", 2, {"steel": 1, "wood": 1}, {"steel-bolts": 10}, "steel-bolts"),
     "repeating-crossbow": (3, "crafting", 10, {"crossbow": 1, "steel": 10, "gear": 10}, {"repeating-crossbow": 1}, "steel-bolts"),
     "sulfur-gunpowder": (4, "grinding", 4, {"saltpeter": 2, "charcoal": 1, "sulfur": 1}, {"gunpowder": 4}, "sulfur-gunpowder"),
     "crossbow":      (2, "crafting", 5, {"bronze": 10, "wood": 10, "rope": 5, "leather": 2}, {"crossbow": 1}, "crossbow"),
-    "bone-meal":     (2, "grinding", 2, {"bones": 1}, {"bone-meal": 3}, "bone-meal"),
-    "fertilized-fruit": (2, "growing", 60, {"fruit": 2, "bone-meal": 2}, {"fruit": 10}, "bone-meal"),
     # climate (release 0.6)
     "brazier":       (1, "crafting", 1, {"brick": 5, "stone": 5}, {"brazier": 1}, "brazier"),
     "fur-coat":      (1, "crafting", 5, {"leather": 20, "hide": 10, "rope": 5}, {"fur-coat": 1}, "warm-clothing"),
@@ -95,6 +115,7 @@ RECIPES = {
     "steam-engine":  (3, "crafting", 2, {"gear": 8, "pipe": 5, "iron": 10}, {"steam-engine": 1}, "steam-power"),
     "copper-cable":  (3, "crafting", 0.5, {"copper": 1}, {"cable": 2}, "electricity"),
     "small-pole":    (3, "crafting", 0.5, {"wood": 1, "cable": 2}, {"small-pole": 2}, "electricity"),
+    "radar":         (3, "crafting", 1, {"iron": 10, "gear": 5, "cable": 10, "glass": 5}, {"radar": 1}, "radio"),
     "blast-furnace": (3, "crafting", 3, {"brick": 20, "iron": 10}, {"blast-furnace": 1}, "blast-furnace"),
     "iron-plate":    (3, "blast", 3.2, {"iron-ore": 1}, {"iron": 1}, "blast-furnace"),
     "steel":         (3, "blast", 16, {"iron": 5}, {"steel": 1}, "blast-furnace"),
@@ -114,16 +135,15 @@ RECIPES = {
     "pier":          (3, "crafting", 2, {"wood": 20, "steel": 5, "cable": 5}, {"pier": 1}, "shipbuilding"),
     "buoy":          (3, "crafting", 1, {"wood": 5, "cable": 2, "glass": 1}, {"buoy": 1}, "buoys"),
     "fluid-barge":   (3, "crafting", 5, {"steel": 30, "pipe": 20, "pitch": 20}, {"fluid-barge": 1}, "fluid-barges"),
-    "briquettes":    (3, "crafting", 2, {"coal": 5, "pitch": 1}, {"briquettes": 4}, "briquettes"),
-    "feed":          (3, "grinding", 4, {"fruit": 4, "fiber": 4}, {"feed": 4}, "domestication"),
-    "net":           (3, "crafting", 2, {"rope": 10, "leather": 2, "bronze": 2}, {"net": 1}, "domestication"),
     "electrode":     (3, "crafting", 3, {"copper": 2, "glass": 1}, {"electrode": 1}, "third-awakening"),
     # 2 MW x 1200 s is electric, not modelled
     "charge-3":      (3, "awakening-electric", 1200, {"rectified-bottle": 15, "conc-acid-bottle": 15, "electrode": 5},
                       {"charge-3": 1, "bottle": 30}, "third-awakening"),
     # epoch 4 (release 0.9); fluids in units
     "sulfuric-acid": (4, "chemistry", 1, {"sulfur": 5, "iron": 1, "water": 100}, {"sulfuric-acid": 50}, "sulfur-processing"),
-    "oil-processing": (4, "oil-processing", 5, {"crude-oil": 100, "water": 50}, {"heavy-oil": 30, "light-oil": 45, "petroleum": 55}, "oil-processing"),
+    "basic-oil":     (4, "oil-processing", 5, {"crude-oil": 100}, {"petroleum": 45}, "oil-processing"),
+    "gas-sulfur":    (4, "chemistry", 1, {"petroleum": 30, "water": 30}, {"sulfur": 2}, "oil-processing"),
+    "oil-processing": (4, "oil-processing", 5, {"crude-oil": 100, "water": 50}, {"heavy-oil": 30, "light-oil": 45, "petroleum": 55}, "cracking"),
     "latex":         (4, "plantation", 60, {"water": 100}, {"latex": 6}, "rubber"),
     "rubber":        (4, "chemistry", 5, {"latex": 4, "sulfur": 1}, {"rubber": 2}, "rubber"),
     "reactive":      (4, "chemistry", 10, {"bottle": 1, "sulfuric-acid": 20, "rubber": 1}, {"reactive": 2}, "reactive"),
@@ -148,17 +168,17 @@ RECIPES = {
     "oxygen-tank":   (5, "crafting", 5, {"steel": 2, "rubber": 1}, {"oxygen-tank": 1}, "spacesuit"),
     "charge-5":      (5, "awakening-electric", 1800, {"rectified-bottle": 25, "conc-acid-bottle": 25, "ether-bottle": 15,
                       "control-unit": 5}, {"charge-5": 1, "bottle": 65}, "fifth-awakening"),
-    "charge-2":      (2, "awakening", 900, {"rectified-bottle": 10, "conc-acid-bottle": 10, "coal": 45},
+    "charge-2":      (2, "awakening", 900, {"rectified-bottle": 10, "conc-acid-bottle": 10},
                       {"charge-2": 1, "bottle": 20}, "second-awakening"),
 }
 # item -> recipe that makes it (byproducts are credited separately)
 PRODUCER = {out: name for name, r in RECIPES.items() for out in r[4]
             if not (out == "jug" and name != "jug") and not (out == "bottle" and name != "bottle")
-            and not (out == "fruit" and name in ("grow-fruit", "fertilized-fruit"))
+            and not (out == "fruit" and name == "grow-fruit")
             and not (out == "light-oil" and name == "heavy-cracking") and not (out == "petroleum" and name == "light-cracking")
             and not (out in ("heavy-oil", "petroleum") and name == "oil-processing" and False)}
 # byproducts are not producers: charcoal comes from charcoal burning, not pitch; sulfur is mined
-PRODUCER.update({"charcoal": "charcoal", "jug": "jug", "bottle": "bottle"})
+PRODUCER.update({"charcoal": "charcoal", "jug": "jug", "bottle": "bottle", "petroleum": "basic-oil"})
 PRODUCER.pop("sulfur", None)
 RAW |= {"fiber"}  # also from trees
 
@@ -193,14 +213,13 @@ TECHS = {
     "second-awakening": (2, 150, 30, F, ["rectification"]),
     "bow":              (2, 60, 20, T, ["bronze"]),
     "crossbow":         (2, 75, 25, F, ["bow", "glass-flask", "tanning"]),
-    "bone-meal":        (2, 40, 15, T, ["millstone"]),
     "gunpowder":        (2, 100, 20, F, ["millstone", "bronze", "glass-flask"]),
-    "swivel-gun":       (2, 100, 25, F, ["gunpowder", "crossbow"]),
+    "firearms":         (3, 150, 30, M, ["gunpowder", "blast-furnace", "mechanism"]),
     "arrowheads-1":     (1, 50, 15, T, ["hunting"]),
     "arrowheads-2":     (2, 100, 20, F, ["arrowheads-1", "bow", "glass-flask"]),
     "steel-bolts":      (3, 150, 30, M, ["blast-furnace", "mechanism", "crossbow"]),
     "arrowheads-3":     (3, 150, 30, M, ["arrowheads-2", "steel-bolts"]),
-    "sulfur-gunpowder": (4, 150, 30, M, ["sulfur-processing", "gunpowder"]),
+    "sulfur-gunpowder": (4, 150, 30, M, ["sulfur-processing", "firearms"]),
     "wrought-iron":     (3, 75, 25, F, ["bronze-tools"]),
     "ironworking":      (3, 75, 25, F, ["wrought-iron"]),
     "fluid-handling":   (3, 100, 25, F, ["ironworking"]),
@@ -209,9 +228,9 @@ TECHS = {
     "blast-furnace":    (3, 120, 30, F, ["ironworking"]),
     "electromechanics": (3, 150, 30, F, ["electricity", "blast-furnace"]),
     "mechanism":        (3, 150, 30, F, ["electromechanics"]),
+    "radio":            (3, 100, 30, M, ["mechanism"]),
     "logistics-3":      (3, 150, 30, M, ["mechanism"]),
     "automation-2":     (3, 150, 30, M, ["mechanism"]),
-    "domestication":    (3, 150, 30, M, ["mechanism", "tanning"]),
     "electric-chamber": (3, 200, 40, M, ["mechanism"]),
     "third-awakening":  (3, 250, 45, M, ["electric-chamber", "rectification"]),
     "steam-heating":    (3, 100, 30, F, ["steam-power"]),
@@ -222,7 +241,6 @@ TECHS = {
     "shipbuilding":     (3, 200, 40, M, ["mechanism", "steam-power", "pitch"]),
     "buoys":            (3, 100, 30, M, ["shipbuilding"]),
     "fluid-barges":     (3, 150, 30, M, ["shipbuilding", "fluid-handling"]),
-    "briquettes":       (3, 100, 30, M, ["shipbuilding"]),
     "sulfur-processing": (4, 200, 30, M, ["mechanism", "fluid-handling"]),
     "oil-extraction":   (4, 200, 30, M, ["electromechanics", "fluid-barges"]),
     "oil-processing":   (4, 250, 30, M, ["oil-extraction"]),
@@ -231,14 +249,13 @@ TECHS = {
     "tungsten":         (4, 200, 30, M, ["mechanism"]),
     "navigation":       (4, 250, 30, R, ["tungsten", "reactive"]),
     "cracking":         (4, 250, 30, R, ["oil-processing", "reactive"]),
-    "fuel-oil":         (4, 200, 30, R, ["oil-processing", "reactive"]),
+    "fuel-oil":         (4, 200, 30, R, ["cracking"]),
     "screw-steamer":    (4, 300, 45, N, ["shipbuilding", "rubber", "navigation"]),
     "ether":            (4, 250, 30, R, ["reactive", "rectification"]),
     "tungsten-electrodes": (4, 250, 30, N, ["navigation", "third-awakening"]),
     "fourth-awakening": (4, 400, 60, N, ["ether", "tungsten-electrodes"]),
     "plastics":         (5, 200, 30, N, ["oil-processing", "navigation"]),
     "electronics":      (5, 200, 30, N, ["plastics"]),
-    "radio":            (5, 150, 30, N, ["electronics"]),
     "instrument-board": (5, 250, 30, N, ["electronics", "tungsten"]),
     "rocket-fuel":      (5, 250, 30, B, ["instrument-board", "fuel-oil"]),
     "light-structures": (5, 250, 30, B, ["instrument-board"]),
@@ -292,6 +309,17 @@ def check_tree(max_epoch):
         for i in ins:
             if i not in producible:
                 errs.append(f"{r}: {i} not producible at {tech}")
+    # A recipe with several fluid products needs a consumer for each of them from the moment it unlocks:
+    # a fluid nobody takes backs up and stops the machine (heavy oil before cracking).
+    for r, (ep, _, _, _, outs, tech) in RECIPES.items():
+        if ep > max_epoch or len(outs) < 2:
+            continue
+        avail = {None} | ({tech} | closure(tech) if tech else set())
+        for f in outs:
+            if f not in FLUIDS:
+                continue
+            if not any(f in ins2 for r2, (_, _, _, ins2, _, t2) in RECIPES.items() if t2 in avail and r2 != r):
+                errs.append(f"{r}: fluid {f} has no consumer at {tech}")
     for t, (ep, _, _, packs, pre) in TECHS.items():
         if ep > max_epoch:
             continue
@@ -330,12 +358,26 @@ def credit(acc, container, returners):
             acc[k] -= v
 
 
-def table(item, per_min):
+def energy(machines):
+    """{machine: count} -> fuel per minute and electricity: {"wood": n/min, "charcoal": n/min, "electric": MW}."""
+    out = {}
+    for m, n in machines.items():
+        _, kw, fuel = POWER.get(m, (None, 0, None))
+        if not fuel or not kw:
+            continue
+        if fuel == "electric":
+            out["electric"] = out.get("electric", 0) + n * kw / 1000
+        else:
+            out[fuel] = out.get(fuel, 0) + n * kw * 60 / (FUEL_MJ[fuel] * 1000)
+    return out
+
+
+def table(item, per_min, epoch=None):
     acc = {}
     rates(item, per_min, acc)
     credit(acc, "jug", ["spirit", "charge-1", "rectified", "conc-acid"])
     credit(acc, "bottle", ["charge-2", "charge-3", "charge-4", "charge-5"])
-    rows = []
+    rows, machines = [], {}
     for (kind, name), v in acc.items():
         if v < 1e-6:
             continue
@@ -343,6 +385,7 @@ def table(item, per_min):
             cat, time = RECIPES[name][1], RECIPES[name][2]
             m = CATEGORY_MACHINE[cat]
             n = v * time / 60 / MACHINES[m]
+            machines[m] = machines.get(m, 0) + n
             rows.append((name, f"{v:.2f} крафт/мин", m, f"{n:.2f}", math.ceil(n - 1e-9)))
         else:
             miners = ""
@@ -350,6 +393,16 @@ def table(item, per_min):
                 miners = ", ".join(f"{m} {v * MINING_TIME[name] / 60 / s:.2f}" for m, s in MINERS.items()
                                    if not (m == "digger" and name in ("copper-ore", "tin-ore", "coal")))
             rows.append((name, f"{v:.2f}/мин", "сырьё", miners, ""))
+            # the first miner that can take it (the digger only soft rock) is the one fuelled
+            for mname, speed in MINERS.items():
+                if name in MINING_TIME and not (mname == "digger" and name in ("copper-ore", "tin-ore", "coal")):
+                    if epoch is None or epoch >= {"digger": 1, "pick-digger": 2, "bronze-drill": 2, "electric-drill": 3}[mname]:
+                        machines[mname] = machines.get(mname, 0) + v * MINING_TIME[name] / 60 / speed
+                        break
+    e = energy(machines)
+    if e:
+        parts = [f"{k} {v:.1f}/мин" if k != "electric" else f"электричество {v:.2f} МВт" for k, v in sorted(e.items())]
+        rows.append(("энергия машин", ", ".join(parts), "", "", ""))
     return rows
 
 
@@ -364,6 +417,45 @@ def research(epoch):
     return units, lab_s
 
 
+def markdown():
+    """docs/BALANCE.md: research per epoch and the machine tables of every target, from this model."""
+    names = {"tablet": "табличек", "flask": "колб", "mechanism": "механизмов", "reactive": "реактива",
+             "navigation": "морских карт", "board": "плат"}
+    last = max(r[0] for r in RECIPES.values())
+    out = ["# Баланс в числах", "",
+           "Пишется `tools/balance.py --markdown` при каждом `tests/run.sh` — руками не править. Модель сверяется "
+           "с прототипами тестом `tests/check_balance_model.py`. Побочные продукты (газ глубокой переработки и т. п.) "
+           "считаются отходом, машины — дробными.", "",
+           "## Исследования по эпохам", "",
+           "| Эпоха | Наука | Лаб-секунд | На 1 столе | На 3 |", "|---|---|---|---|---|"]
+    for ep in range(1, last + 1):
+        units, lab_s = research(ep)
+        packs = ", ".join(f"{n} {names.get(p, p)}" for p, n in units.items())
+        out.append(f"| {ep} | {packs} | {lab_s} | {lab_s / 60:.0f} мин | {lab_s / 180:.0f} мин |")
+    for ep in range(1, last + 1):
+        for item, pm, label in TARGETS.get(ep, []):
+            out += ["", f"## Эпоха {ep}: {label}", "", "| Что | Поток | Машина | Машин | Целых |", "|---|---|---|---|---|"]
+            for r in table(item, pm, ep):
+                out.append("| " + " | ".join(str(x) for x in r) + " |")
+    errs = check_tree(last)
+    out += ["", "## Дерево технологий", "", "Тупиков нет." if not errs else "Ошибки: " + "; ".join(errs), ""]
+    fmt = lambda d: ", ".join(f"{k} {v:g}" for k, v in d.items())
+    for ep in range(1, last + 1):
+        out += ["", f"## Эпоха {ep}: технологии", "", "| Технология | Стоимость | Наука | Требует |", "|---|---|---|---|"]
+        for t, (e, count, sec, packs, pre) in TECHS.items():
+            if e == ep:
+                out.append(f"| {t} | {count} × {sec} с | {', '.join(packs)} | {', '.join(pre) or '—'} |")
+        out += ["", f"## Эпоха {ep}: рецепты", "", "| Рецепт | Где | Время | Вход | Выход | Открывает |", "|---|---|---|---|---|---|"]
+        for r, (e, cat, time, ins, outs, tech) in RECIPES.items():
+            if e == ep:
+                out.append(f"| {r} | {CATEGORY_MACHINE.get(cat, cat)} | {time:g} с | {fmt(ins)} | {fmt(outs)} | {tech or 'старт'} |")
+    return "\n".join(out)
+
+
+if __name__ == "__main__" and "--markdown" in sys.argv:
+    print(markdown())
+    sys.exit(0)
+
 if __name__ == "__main__":
     max_epoch = int(sys.argv[1]) if len(sys.argv) > 1 else max(r[0] for r in RECIPES.values())
     errs = check_tree(max_epoch)
@@ -373,6 +465,6 @@ if __name__ == "__main__":
         print(f"epoch {ep}: packs {units}, {lab_s} lab-s = {lab_s / 60:.0f} min on 1 desk, {lab_s / 180:.0f} on 3")
     for item, pm, label in TARGETS.get(max_epoch, []):
         print(f"\n## {label}")
-        for r in table(item, pm):
+        for r in table(item, pm, max_epoch):
             print("  ", r)
     sys.exit(1 if errs else 0)

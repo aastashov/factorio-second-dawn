@@ -68,7 +68,6 @@ local C, CH, F = "sd-crafting", "sd-chemistry", "fluid"
 data:extend{
   recipe("plastic", CH, 1, {{"petroleum-gas", 20, F}, {"coal", 1}}, {{"plastic-bar", 2}}),
   recipe("circuit", C, 0.5, {{"plastic-bar", 1}, {"copper-cable", 3}, {"iron-plate", 1}}, {{"electronic-circuit", 1}}),
-  recipe("radar", C, 1, {{"iron-plate", 10}, {"iron-gear-wheel", 5}, {"electronic-circuit", 5}}, {{"radar", 1}}),
   recipe("board", C, 10, {{"electronic-circuit", 3}, {"plastic-bar", 2}, {"sd-tungsten", 1}}, {{"sd-board", 2}}),
   recipe("rocket-fuel", CH, 10, {{"light-oil", 10, F}, {"sd-fuel-oil", 1}}, {{"rocket-fuel", 1}}),
   recipe("low-density", C, 10, {{"steel-plate", 2}, {"copper-plate", 5}, {"plastic-bar", 2}}, {{"low-density-structure", 1}}),
@@ -99,7 +98,6 @@ end
 data:extend{
   tech("plastics", "plastics", {0.9, 0.9, 0.9}, 200, 30, 5, {"oil-processing", "navigation"}, {"plastic"}),
   tech("electronics", "electronics", board_tint, 200, 30, 5, {"plastics"}, {"circuit"}),
-  tech("radio", "radar", board_tint, 150, 30, 5, {"electronics"}, {"radar"}),
   tech("instrument-board", "space-science-pack", board_tint, 250, 30, 5, {"electronics", "tungsten"}, {"board"}),
   tech("rocket-fuel", "rocket-fuel", {1, 0.5, 0.3}, 250, 30, 6, {"instrument-board", "fuel-oil"}, {"rocket-fuel"}),
   tech("light-structures", "low-density-structure", {0.8, 0.8, 0.9}, 250, 30, 6, {"instrument-board"}, {"low-density"}),

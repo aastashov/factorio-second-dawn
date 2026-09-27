@@ -10,8 +10,7 @@ end
 
 -- Things the world gives without machines: trees and rocks. Resources come from whatever can mine them:
 -- the character from the start, drills once they can be built.
--- Farms come only from captured lairs.
-local RAW = {"wood", "sd-fruit", "sd-fiber", "stone", "coal", "sd-meat", "sd-hide", "sd-bones", "sd-boar-farm", "sd-wolf-kennel", "sd-bear-pen"}
+local RAW = {"wood", "sd-fruit", "sd-fiber", "stone", "coal", "sd-meat", "sd-hide", "sd-bones"}
 
 local function tree_check()
   local have, enabled, researched = {}, {}, {}

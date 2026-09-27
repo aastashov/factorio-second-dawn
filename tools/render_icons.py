@@ -456,14 +456,6 @@ def _(c):
     c.line([(44, 44), (58, 56)], 5, hexc("f0e8d8"))
     c.blob(58, 56, 4, 4, hexc("f0e8d8"), spec=0)
 
-@icon("sd-cooked-meat")
-def _(c):
-    c.blob(28, 30, 20, 16, hexc("8a4a24"), spec=0.5, rot=0.5)
-    c.line([(40, 42), (56, 58)], 5, hexc("f0e8d8"))
-    c.blob(56, 58, 4, 4, hexc("f0e8d8"), spec=0)
-    for x, y in ((20, 24), (30, 34), (24, 38)):
-        c.line([(x - 4, y), (x + 4, y - 3)], 1.5, hexc("4a2410"))
-
 @icon("sd-hide")
 def _(c):
     c.poly([(10, 14), (22, 20), (42, 20), (54, 14), (50, 30), (56, 50), (42, 46), (32, 58), (22, 46), (8, 50), (14, 30)],
@@ -483,19 +475,6 @@ def _(c):
     c.poly([(6, 22), (46, 14), (58, 42), (18, 50)], hexc("8a5230"), shade=0.35)
     c.poly([(18, 50), (58, 42), (56, 50), (18, 58)], hexc("6a3a20"), shade=0.2)
     c.line([(12, 26), (44, 20)], 1.2, hexc("c89060"), alpha=0.6)
-
-@icon("sd-bone-meal")
-def _(c):
-    c.poly([(12, 58), (52, 58), (56, 30), (44, 18), (20, 18), (8, 30)], hexc("c8b890"), shade=0.35)   # sack
-    c.blob(32, 18, 12, 5, hexc("f4f0e8"), spec=0)
-    c.line([(20, 22), (44, 22)], 2, hexc("7a6040"))
-
-@icon("sd-feed")
-def _(c):
-    c.poly([(12, 58), (52, 58), (56, 30), (44, 18), (20, 18), (8, 30)], hexc("b89a5a"), shade=0.35)
-    for x, y in ((26, 16), (32, 12), (38, 16), (30, 18), (36, 18)):
-        c.blob(x, y, 3, 2, hexc("e0c060"), spec=0.2)
-    c.line([(20, 22), (44, 22)], 2, hexc("6a5030"))
 
 @icon("sd-bow")
 def _(c):
@@ -554,25 +533,11 @@ def _(c):
     c.arc(32, 44, 26, -2.4, -0.74, 4, hexc("8a8a8a"))
     c.line([(32 + 26 * math.cos(-2.4), 44 + 26 * math.sin(-2.4)), (32, 34), (32 + 26 * math.cos(-0.74), 44 + 26 * math.sin(-0.74))], 1.2, hexc("e8e0c8"))
 
-@icon("sd-net")
-def _(c):
-    c.blob(32, 34, 24, 22, hexc("b89060"), spec=0.1, alpha=0.25)
-    for i in range(-3, 4):
-        c.arc(32 + i * 7, 34, 24, -1.3, 1.3, 1.3, hexc("b89060"), steps=12)
-        c.line([(10, 34 + i * 6.5), (54, 34 + i * 6.5)], 1.3, hexc("b89060"))
-    c.blob(32, 10, 4, 4, hexc("8a6a3a"), spec=0)
-
 @icon("sd-pitch")
 def _(c):
     c.poly([(12, 58), (52, 58), (56, 26), (8, 26)], hexc("6a4a2a"), shade=0.3)        # pot
     c.blob(32, 26, 24, 7, hexc("141210"), spec=0.9)
     c.line([(42, 22), (44, 32), (42, 40)], 3, hexc("141210"))
-
-@icon("sd-briquettes")
-def _(c):
-    for x, y in ((18, 44), (40, 44), (29, 28)):
-        c.blob(x, y, 12, 9, hexc("3a302a"), spec=0.3)
-        c.line([(x - 6, y), (x + 6, y)], 1.2, hexc("6a5040"))
 
 @icon("sd-latex")
 def _(c):

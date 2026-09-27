@@ -14,6 +14,7 @@ python3 tests/check_files.py "$dir/data/script-output/data-raw-dump.json" || sta
 python3 tests/check_locale_keys.py "$dir/data/script-output/data-raw-dump.json" || status=1
 python3 tests/check_factoriopedia.py "$dir/data/script-output/data-raw-dump.json" || status=1
 python3 tests/check_collision.py "$dir/data/script-output/data-raw-dump.json" || status=1
+python3 tests/check_balance_model.py "$dir/data/script-output/data-raw-dump.json" || status=1
 while read -r name ticks; do
   result=$(tests/run-scenario.sh "$name" "$ticks" | grep -E "FAIL|failures|Error" | tr '\n' ' ')
   printf "%-10s %s\n" "$name" "$result"
@@ -25,7 +26,6 @@ chain2 55800
 chain3 72400
 notes 10
 wildlife 47200
-capture 5700
 climate 20300
 sea 5
 ships 9100

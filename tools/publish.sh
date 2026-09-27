@@ -30,6 +30,23 @@ echo "mod $name $version: $zip"
 
 json() { python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('$1') or ''); sys.exit(0 if d.get('$1') else 1)"; }
 
+# The initial publication includes the long description, but later releases must update it explicitly.
+# Keep the portal page in sync with the bilingual Markdown in docs/PORTAL.md.
+description=$(python3 - <<'EOF'
+import re
+s = open("docs/PORTAL.md", encoding="utf-8").read()
+print(re.search(r"```markdown\n(.*?)\n```", s, re.S).group(1))
+EOF
+)
+summary=$(python3 -c "import json; print(json.load(open('info.json'))['description'])")
+update_details() {
+  local answer
+  answer=$(curl -s "${AUTH[@]}" -F "mod=$name" -F "summary=$summary" -F "description=$description" \
+    -F "category=overhaul" "$API/mods/edit_details")
+  case "$answer" in *'"success":true'*|*'"success": true'*) echo "portal description updated";;
+    *) echo "portal details update failed: $answer"; exit 1;; esac
+}
+
 # Uploads the pictures and makes them the gallery, in this order (pictures not listed leave the gallery).
 # Every step prints the portal's answer when it isn't what was expected.
 gallery() {
@@ -65,6 +82,7 @@ fi
 
 exists=$(curl -s -o /dev/null -w "%{http_code}" "https://mods.factorio.com/api/mods/$name")
 if [ "$exists" = "200" ]; then
+  update_details
   url=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/releases/init_upload" | json upload_url)
   answer=$(curl -s -F "file=@$zip" "$url"); echo "$answer"
   case "$answer" in *'"error"'*) echo "not released: the portal refused $version"; exit 1;; esac
@@ -73,12 +91,6 @@ if [ "$exists" = "200" ]; then
 fi
 
 # First publication: the page with its description, category and license.
-description=$(python3 - <<'EOF'
-import re
-s = open("docs/PORTAL.md", encoding="utf-8").read()
-print(re.search(r"```markdown\n(.*?)\n```", s, re.S).group(1))
-EOF
-)
 url=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/init_publish" | json upload_url)
 curl -s -F "file=@$zip" -F "description=$description" -F "category=overhaul" \
   -F "license=${MOD_LICENSE:-default_mit}" "$url"; echo

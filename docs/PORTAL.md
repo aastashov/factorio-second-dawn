@@ -21,70 +21,43 @@
 ```markdown
 # Second Dawn — BETA
 
-> **Beta, in active testing.** The whole scenario is playable from the first campfire to the Moon, but balance
-> is still moving and saves may need a fresh start between versions. Bug reports and impressions are very
-> welcome in the Discussion tab.
+**Rebuild civilisation from clay and fire to a rocket to the Moon — before the next petrification wave.**
 
-**Factorio meets Dr. Stone.** One day every human on the planet turned to stone. You crack out of it thousands
-of years later, alone in an overgrown world, and rebuild science from nothing: clay, fire and rope first, then
-bronze, glass, steam, electricity, chemistry, and finally a rocket. And the petrification comes back — in
-waves, more and more often.
+Humanity is stone. Your factory is the only way back: automate a revival charge before each wave, cross an
+ocean for scarce resources, and reach the Moon to stop the source.
 
-**A fair warning:** the first epochs feel a bit like a farm — clay, wood, gardens, fruit, jugs, a campfire.
-That is the stone age. From bronze and steam on it turns into the factory you know.
+### Why play
 
-### What is different
-- **Five epochs, six sciences.** Clay tablets → glass flasks → mechanisms → reactive → sea charts →
-  instrument boards. The vanilla tech tree, starting items and biters are gone.
-- **Petrification waves.** The first one comes after 2 hours, then every next interval is shorter. A wave
-  turns every player to stone; the factory keeps running. One **revival chamber** per team makes a sealed
-  charge that wakes everyone at once — automate it, or wait it out as a statue. If a wave finds you still
-  stone, the game is lost.
-- **A start without chores.** A bow, a digger and a campfire that picks its own recipe from the first
-  minute; a woodlot grows wood; a "Next step" hint leads to the first charge.
-- **Wild animals** instead of biters: wolf packs with leaders, boars, bears in the cold. Predators raid at
-  night. Catch a lair with a net and it becomes a farm.
-- **Climate and continents.** A temperate starting continent; the cold north (tungsten) and the hot south
-  (sulfur, oil, rubber) lie across a deep ocean. Buildings freeze or overheat without braziers, radiators or
-  coolers; dress for the weather.
-- **Ships** on waterways, built like trains: tugs, barges, piers, buoys.
-- **The Moon.** Fly there in spacesuits, with limited air, and dismantle the source of the petrification.
-- Ruins with notes: hints, alternative recipes, caches.
+- **A full five-epoch overhaul:** clay → bronze → steam → chemistry → rocket.
+- **Waves are the clock:** one shared revival chamber keeps the team alive while the factory runs on.
+- **A world worth crossing:** animals raid at night; the cold north holds tungsten, the hot south oil and
+  rubber. Dress for the climate and build ships to reach both.
+- **Factory-first logistics:** waterways, tugs, barges, piers and buoys work like a rail network.
+- **A real ending:** launch suited players to the Moon with limited oxygen and dismantle the emitter.
 
-### Multiplayer
-Supported and tested headless (heavy mode, no desyncs): shared research and notes, one chamber per team,
-new players can start as statues.
-
-### Requirements
-Factorio 2.0.77+, base game. **Not compatible with Space Age** (and not with Space Exploration).
-Start a new map.
-
-### Made with AI
-Code, balance, texts, tests and part of the graphics were made by AI — Claude (Anthropic) in Claude Code and
-ChatGPT for pictures — directed and playtested by a human. The graphics are partly still recoloured vanilla
-and are being replaced step by step.
+Multiplayer supported: shared research, notes and revival chamber. Factorio 2.0.77+, base game only; **not
+compatible with Space Age or Space Exploration.** Start a new map. This is a public beta; balance and saves
+may change between releases.
 
 ---
 
 # Second Dawn — БЕТА
 
-> **Бета, идёт тестирование.** Весь сценарий проходится от первого костра до Луны, но баланс ещё меняется,
-> и между версиями может понадобиться новая карта. Ошибки и впечатления — во вкладке Discussion.
+**Подними цивилизацию от глины и огня до ракеты на Луну — прежде чем придёт новая волна окаменения.**
 
-**Factorio встречает Dr. Stone.** Однажды всё человечество окаменело. Через тысячи лет ты выбираешься из
-камня один, в заросшем мире, и заново поднимаешь науку: глина, огонь и верёвка, потом бронза, стекло, пар,
-электричество, химия и ракета. А окаменение возвращается — волнами, всё чаще.
+Человечество стало камнем. Завод — единственный путь назад: автоматизируй заряд пробуждения до каждой
+волны, пересекай океан за редкими ресурсами и доберись до Луны, чтобы остановить источник.
 
-**Честно:** первые эпохи немного похожи на ферму — глина, дерево, огород, плоды, кувшины, костёр. Это
-каменный век. С бронзы и пара начинается привычный завод.
+### Зачем играть
 
-- **Пять эпох, шесть наук**; ванильного дерева технологий, стартового набора и кусак нет.
-- **Волны окаменения**: первая через 2 часа, дальше чаще. Камера пробуждения делает заряд, который будит
-  всю команду сразу. Если волна застанет команду камнем — поражение.
-- **Старт без рутины**: лук, копатель и костёр с первой минуты, лесная делянка, подсказка «Следующий шаг».
-- **Звери** вместо кусак: стаи волков с вожаками, кабаны, медведи; ночные набеги; логово можно поймать
-  сетью и сделать фермой.
-- **Климат и материки**: холодный север и жаркий юг за океаном, **корабли** на фарватерах, **Луна**.
-- **Мультиплеер** поддерживается. Нужна Factorio 2.0.77+, **без Space Age**, новая карта.
-- **Сделано с помощью ИИ** (Claude, ChatGPT), под руководством и с игровым тестированием человека.
+- **Полная переделка на пять эпох:** глина → бронза → пар → химия → ракета.
+- **Волны задают темп:** одна общая камера пробуждения держит команду в строю, пока завод работает.
+- **Мир, который надо исследовать:** ночные набеги зверей, холодный север с вольфрамом, жаркий юг с нефтью
+  и каучуком. Одежда, корабли и экспедиции нужны по делу.
+- **Заводская логистика на воде:** фарватеры, буксиры, баржи, причалы и буи работают как железная дорога.
+- **Настоящий финал:** лети на Луну в скафандре с ограниченным воздухом и разбери излучатель.
+
+Мультиплеер поддерживается: общие исследования, записки и камера пробуждения. Нужна Factorio 2.0.77+,
+только базовая игра; **Space Age и Space Exploration несовместимы.** Нужна новая карта. Это публичная
+бета: баланс и сохранения могут меняться между версиями.
 ```

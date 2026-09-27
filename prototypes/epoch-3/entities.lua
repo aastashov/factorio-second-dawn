@@ -1,5 +1,4 @@
--- Epoch 3: vanilla steam and electric machines take their place in the mod; the electric revival
--- chamber; farms built from captured lairs (docs/DESIGN.md §16).
+-- Epoch 3: vanilla steam and electric machines take their place in the mod; the electric revival chamber.
 local lib = require("prototypes.lib")
 
 -- Vanilla machines.
@@ -51,34 +50,4 @@ chamber.fast_replaceable_group = "sd-revival-chamber"
 data.raw["assembling-machine"]["sd-revival-chamber"].fast_replaceable_group = "sd-revival-chamber"
 data.raw["assembling-machine"]["sd-revival-chamber"].next_upgrade = "sd-revival-chamber-2"
 
--- Farms: the lair's own graphics, now an assembling machine of the player that eats and produces.
-local function farm(name, spawner, tint, category, recipe)
-  local s = data.raw["unit-spawner"][spawner]
-  return {
-    type = "assembling-machine",
-    name = "sd-" .. name,
-    icons = data.raw.item["sd-" .. name].icons,
-    flags = {"placeable-neutral", "placeable-player", "player-creation"},
-    minable = {mining_time = 1, result = "sd-" .. name},
-    max_health = 500,
-    corpse = s.corpse,
-    collision_box = {{-2.2, -2.2}, {2.2, 2.2}},
-    selection_box = {{-2.5, -2.5}, {2.5, 2.5}},
-    graphics_set = {animation = table.deepcopy(s.graphics_set.animations[1])},
-    crafting_categories = {category},
-    fixed_recipe = recipe,
-    crafting_speed = 1,
-    energy_source = {type = "void"},
-    energy_usage = "1kW",
-    working_sound = s.working_sound,
-  }
-end
-local farms = {
-  farm("boar-farm", "spitter-spawner", {0.60, 0.42, 0.28}, "sd-farm-boar", "sd-breed-boars"),
-  farm("wolf-kennel", "biter-spawner", {0.60, 0.58, 0.55}, "sd-farm-wolf", "sd-breed-wolves"),
-  farm("bear-pen", "biter-spawner", {0.42, 0.30, 0.22}, "sd-farm-bear", "sd-breed-bears"),
-}
-for i, f in pairs(farms) do
-  lib.recolor(f.graphics_set, ({{0.60, 0.42, 0.28}, {0.60, 0.58, 0.55}, {0.42, 0.30, 0.22}})[i])
-end
-data:extend{chamber, farms[1], farms[2], farms[3]}
+data:extend{chamber}

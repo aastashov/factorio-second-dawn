@@ -67,18 +67,19 @@ local function turret(name, order, tint, category, range, cooldown, health)
   return t, item
 end
 
-local swivel, swivel_item = turret("swivel-gun", "q", powder, "sd-bullet", 22, 45, 400)
-local repeater, repeater_item = turret("repeating-crossbow", "r", steel, "sd-arrow", 20, 12, 500)
+local repeater, repeater_item = turret("repeating-crossbow", "r", steel, "sd-arrow", 20, 20, 500)
 
+-- Firearms follow vanilla: the pistol and bronze magazines (epoch 2), the submachine gun and gun turret
+-- (epoch 3), piercing rounds (epoch 4, sulfur powder). Arrows stay the cheap,
+-- weaker ammo; bullets hit harder: pistol ~40 damage/s, submachine gun and gun turret ~80, piercing ~120.
+set_damage(data.raw.ammo["firearm-magazine"].ammo_type, 8)
+set_damage(data.raw.ammo["piercing-rounds-magazine"].ammo_type, 12)
 data:extend{
-  {type = "ammo-category", name = "sd-bullet"},
   gun("hand-crossbow", "ja", "pistol.png", bronze, "sd-arrow", 20, 50, 1.5),
   ammo("steel-bolts", "jb", "firearm-magazine.png", steel, "sd-arrow", 25, 10),
   {type = "item", name = "sd-gunpowder", subgroup = "sd-hunting", order = "n", stack_size = 100,
    icons = lib.icon(icons .. "explosives.png", powder)},
-  gun("musket", "o", "shotgun.png", bronze, "sd-bullet", 22, 90, 1),
-  ammo("musket-balls", "p", "shotgun-shell.png", powder, "sd-bullet", 40, 5),
-  swivel, swivel_item, repeater, repeater_item,
+  repeater, repeater_item,
 }
 
 local function recipe(name, category, time, ingredients, results)
@@ -97,9 +98,12 @@ data:extend{
   -- gunpowder (fewer balls per powder); the sulfur recipe of epoch 4 gives twice as much.
   recipe("gunpowder", "sd-grinding", 4, {{"sd-saltpeter", 3}, {"sd-charcoal", 1}}, {{"sd-gunpowder", 2}}),
   recipe("sulfur-gunpowder", "sd-grinding", 4, {{"sd-saltpeter", 2}, {"sd-charcoal", 1}, {"sulfur", 1}}, {{"sd-gunpowder", 4}}),
-  recipe("musket", "sd-crafting", 5, {{"sd-bronze", 10}, {"wood", 5}, {"sd-rope", 2}}, {{"sd-musket", 1}}),
-  recipe("musket-balls", "sd-crafting", 2, {{"sd-gunpowder", 1}, {"sd-bronze", 1}}, {{"sd-musket-balls", 5}}),
-  recipe("swivel-gun", "sd-crafting", 8, {{"sd-bronze", 20}, {"wood", 10}, {"sd-musket", 1}}, {{"sd-swivel-gun", 1}}),
+  recipe("pistol", "sd-crafting", 5, {{"sd-bronze", 5}, {"wood", 2}}, {{"pistol", 1}}),
+  recipe("firearm-magazine", "sd-crafting", 1, {{"sd-bronze", 1}, {"sd-gunpowder", 1}}, {{"firearm-magazine", 1}}),
+  recipe("submachine-gun", "sd-crafting", 10, {{"iron-gear-wheel", 10}, {"steel-plate", 5}, {"wood", 5}}, {{"submachine-gun", 1}}),
+  recipe("gun-turret", "sd-crafting", 8, {{"iron-gear-wheel", 10}, {"steel-plate", 10}, {"copper-plate", 10}}, {{"gun-turret", 1}}),
+  recipe("piercing-rounds", "sd-crafting", 3, {{"firearm-magazine", 1}, {"steel-plate", 1}, {"copper-plate", 2}},
+    {{"piercing-rounds-magazine", 1}}),
   recipe("steel-bolts", "sd-crafting", 2, {{"steel-plate", 1}, {"wood", 1}}, {{"sd-steel-bolts", 10}}),
   recipe("repeating-crossbow", "sd-crafting", 10, {{"sd-crossbow", 1}, {"steel-plate", 10}, {"iron-gear-wheel", 10}},
     {{"sd-repeating-crossbow", 1}}),
@@ -129,11 +133,13 @@ end
 table.insert(data.raw.technology["sd-bow"].effects, {type = "unlock-recipe", recipe = "sd-hand-crossbow"})
 
 data:extend{
-  tech("gunpowder", "military", powder, 100, 20, 2, {"millstone", "bronze", "glass-flask"}, {"gunpowder", "musket", "musket-balls"}),
-  tech("swivel-gun", "gun-turret", powder, 100, 25, 2, {"gunpowder", "crossbow"}, {"swivel-gun"}),
+  tech("gunpowder", "military", powder, 100, 20, 2, {"millstone", "bronze", "glass-flask"}, {"gunpowder", "pistol", "firearm-magazine"}),
+  tech("firearms", "military", steel, 150, 30, 3, {"gunpowder", "blast-furnace", "mechanism"},
+    {"submachine-gun", "gun-turret"}),
   tech("steel-bolts", "weapon-shooting-speed-1", steel, 150, 30, 3, {"blast-furnace", "mechanism", "crossbow"},
     {"steel-bolts", "repeating-crossbow"}),
-  tech("sulfur-gunpowder", "explosives", {1, 0.9, 0.4}, 150, 30, 3, {"sulfur-processing", "gunpowder"}, {"sulfur-gunpowder"}),
+  tech("sulfur-gunpowder", "explosives", {1, 0.9, 0.4}, 150, 30, 3, {"sulfur-processing", "firearms"},
+    {"sulfur-gunpowder", "piercing-rounds"}),
   arrowheads(1, tech("arrowheads-1", "physical-projectile-damage-1", {0.8, 0.8, 0.75}, 50, 15, 1, {"hunting"}, {sharper})),
   arrowheads(2, tech("arrowheads-2", "physical-projectile-damage-1", bronze, 100, 20, 2, {"arrowheads-1", "bow", "glass-flask"}, {sharper})),
   arrowheads(3, tech("arrowheads-3", "physical-projectile-damage-1", steel, 150, 30, 3, {"arrowheads-2", "steel-bolts"}, {sharper})),

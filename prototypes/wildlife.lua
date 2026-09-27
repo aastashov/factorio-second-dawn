@@ -100,12 +100,10 @@ local function food(name, order, tint, heal)
   return f
 end
 data:extend{
-  food("meat", "a", {0.95, 0.45, 0.45}, 20),
-  food("cooked-meat", "b", {0.75, 0.45, 0.25}, 60),
-  item("hide", "c", lib.icon(icons .. "wood.png", {0.75, 0.6, 0.45})),
-  item("bones", "d", lib.icon(icons .. "stone.png", {1, 0.97, 0.9})),
-  item("leather", "e", lib.icon(icons .. "wood.png", {0.6, 0.38, 0.22}), {stack_size = 100}),
-  item("bone-meal", "f", lib.icon(icons .. "sulfur.png", {1, 1, 0.95}), {stack_size = 100}),
+  food("meat", "a", {0.95, 0.45, 0.45}, 60),
+  item("hide", "b", lib.icon(icons .. "wood.png", {0.75, 0.6, 0.45})),
+  item("bones", "c", lib.icon(icons .. "stone.png", {1, 0.97, 0.9})),
+  item("leather", "d", lib.icon(icons .. "wood.png", {0.6, 0.38, 0.22}), {stack_size = 100}),
 }
 
 -- Weapons, ammo, armor.
@@ -215,16 +213,12 @@ data:extend{
   recipe("stone-arrows", "sd-crafting", 1, {{"wood", 1}, {"stone", 1}}, {{"sd-stone-arrows", 5}}, {enabled = true}),
   recipe("bone-arrows", "sd-crafting", 1, {{"wood", 1}, {"sd-bones", 1}}, {{"sd-bone-arrows", 5}}),
   recipe("palisade", "sd-crafting", 1, {{"wood", 6}, {"sd-rope", 1}}, {{"sd-palisade", 2}}),
-  -- Healing from the start: meat roasts in the campfire like everything else it makes.
-  recipe("cooked-meat", "sd-campfire", 5, {{"sd-meat", 1}}, {{"sd-cooked-meat", 1}}, {enabled = true}),
   -- Repairs from the start too: raids come with the first wave.
   recipe("repair-kit", "sd-crafting", 1, {{"wood", 2}, {"sd-rope", 1}, {"stone", 1}}, {{"sd-repair-kit", 1}}, {enabled = true}),
   recipe("leather", "sd-fermenting", 20, {{"sd-hide", 2}, {"sd-quicklime", 1}}, {{"sd-leather", 2}}),
   recipe("leather-jacket", "sd-crafting", 5, {{"sd-leather", 10}, {"sd-rope", 5}}, {{"sd-leather-jacket", 1}}),
   recipe("arrows", "sd-crafting", 2, {{"wood", 1}, {"sd-bronze", 1}, {"sd-fiber", 2}}, {{"sd-arrows", 10}}),
   recipe("crossbow", "sd-crafting", 5, {{"sd-bronze", 10}, {"wood", 10}, {"sd-rope", 5}, {"sd-leather", 2}}, {{"sd-crossbow", 1}}),
-  recipe("bone-meal", "sd-grinding", 2, {{"sd-bones", 1}}, {{"sd-bone-meal", 3}}),
-  recipe("fertilized-fruit", "sd-growing", 60, {{"sd-fruit", 2}, {"sd-bone-meal", 2}}, {{"sd-fruit", 10}}, {main_product = "sd-fruit"}),
 }
 
 local tech_icons = "__base__/graphics/technology/"
@@ -243,5 +237,4 @@ data:extend{
   tech("tanning", "armor-making", {0.65, 0.45, 0.3}, 25, 15, false, {"quicklime", "fermentation"}, {"fermentation-vat", "leather", "leather-jacket"}),
   tech("bow", "weapon-shooting-speed-1", c.bronze, 60, 20, false, {"bronze"}, {"arrows"}), -- bronze arrows
   tech("crossbow", "gun-turret", c.bronze, 75, 25, true, {"bow", "glass-flask", "tanning"}, {"crossbow"}),
-  tech("bone-meal", "sulfur-processing", {1, 1, 0.95}, 40, 15, false, {"millstone"}, {"bone-meal", "fertilized-fruit"}),
 }

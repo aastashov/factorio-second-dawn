@@ -51,6 +51,8 @@ local steps = {
     put(T.reactive, {{"sd-bottle", 5}, {"sd-rubber", 5}}, {{"sulfuric-acid", 200}})
     T.refinery = make("oil-refinery", X - 8, Y - 28, "sd-oil-processing")
     put(T.refinery, nil, {{"crude-oil", 1000}, {"water", 500}})
+    T.basic = make("oil-refinery", X + 16, Y - 28, "sd-basic-oil-processing")
+    put(T.basic, nil, {{"crude-oil", 1000}})
     T.crack = make("chemical-plant", X + 2, Y - 30, "sd-heavy-cracking")
     put(T.crack, nil, {{"heavy-oil", 200}, {"water", 200}})
     T.fuel = make("chemical-plant", X + 8, Y - 30, "sd-fuel-oil")
@@ -84,6 +86,12 @@ local steps = {
     check("reagent from bottle, acid and rubber", out(T.reactive, "sd-reactive") >= 2, out(T.reactive, "sd-reactive") .. "")
     local h, l, g = T.refinery.get_fluid_count("heavy-oil"), T.refinery.get_fluid_count("light-oil"), T.refinery.get_fluid_count("petroleum-gas")
     check("refinery gives heavy, light oil and gas", h > 0 and l > 0 and g > 0, string.format("%d / %d / %d", h, l, g))
+    local bh, bg = T.basic.get_fluid_count("heavy-oil"), T.basic.get_fluid_count("petroleum-gas")
+    check("basic oil processing: only gas", bg > 0 and bh == 0, string.format("gas %d, heavy %d", bg, bh))
+    local tech = game.forces.player.technologies
+    check("the three-product recipe comes with advanced processing, not before",
+      not tech["sd-oil-processing"].prototype.effects[2] or tech["sd-oil-processing"].prototype.effects[2].recipe ~= "sd-oil-processing",
+      serpent.line(tech["sd-oil-processing"].prototype.effects))
     check("heavy oil cracks into light", T.crack.get_fluid_count("light-oil") > 0, tostring(T.crack.get_fluid_count("light-oil")))
     -- the input box takes only part of the inserted oil: 2 crafts are enough to prove the recipe
     check("fuel oil from light oil", out(T.fuel, "sd-fuel-oil") >= 2, out(T.fuel, "sd-fuel-oil") .. "")

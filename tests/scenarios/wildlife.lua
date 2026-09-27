@@ -80,9 +80,9 @@ local steps = {
     local t = s.create_entity{name = "sd-crossbow", position = at(-50, -50), force = "player"}
     t.insert{name = "sd-stone-arrows", count = 50}
     storage.t.turret = t
-    -- The swivel gun with musket balls, the gunpowder weapon of epoch 2, against three more.
-    local g = s.create_entity{name = "sd-swivel-gun", position = at(-50, 30), force = "player"}
-    g.insert{name = "sd-musket-balls", count = 20}
+    -- The gun turret with magazines on gunpowder (epoch 3) against three more.
+    local g = s.create_entity{name = "gun-turret", position = at(-50, 30), force = "player"}
+    g.insert{name = "firearm-magazine", count = 20}
     storage.t.gun = g
     storage.t.gun_wolves = {}
     for i = 1, 3 do
@@ -114,7 +114,7 @@ local steps = {
       if not w.valid then gun_killed = gun_killed + 1
       elseif util.distance(w.position, storage.t.gun.position) < 25 then gun_alive = gun_alive + 1 end
     end
-    check("swivel gun kills wolves", gun_alive == 0 and gun_killed >= 2, gun_killed .. " killed, " .. gun_alive .. " alive in reach")
+    check("gun turret kills wolves", gun_alive == 0 and gun_killed >= 2, gun_killed .. " killed, " .. gun_alive .. " alive in reach")
     local force = game.forces.player
     local before = force.get_ammo_damage_modifier("sd-arrow")
     force.technologies["sd-arrowheads-1"].researched = true
