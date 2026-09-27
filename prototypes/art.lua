@@ -52,17 +52,21 @@ for key in pairs(sizes) do
   end
 end
 
--- Animals: <name>-run is one picture seen from above turned 16 ways (import_art.py --unit), a stand-in without
--- walking frames; the bigger or smaller kin share it at another scale.
+-- Animals: <name>-run is a sheet seen from above turned 16 ways (import_art.py --unit, one frame; or a
+-- real gait rendered in Blender from a donor animation, FRAMES frames per direction, one direction per
+-- row); the bigger or smaller kin share it at another scale.
 local KIN = {["sd-wolf-leader"] = {"sd-wolf", 1.3}, ["sd-tusker"] = {"sd-boar", 1.3}, ["sd-bear-cub"] = {"sd-bear", 0.6}}
+local FRAMES = {["sd-wolf"] = 8} -- animals with a real multi-frame gait sheet; others fall back to 1 (--unit)
 for _, unit in pairs(data.raw.unit) do
   local from, scale = unit.name, 1
   if KIN[unit.name] then from, scale = KIN[unit.name][1], KIN[unit.name][2] end
   local size = sizes[from .. "-run"]
   if size then
+    local frame_count = FRAMES[from] or 1
     local function sheet(file, extra)
       local l = {filename = "__second-dawn__/graphics/entity/" .. from .. "/" .. file .. ".png", width = size[1],
-        height = size[2], direction_count = 16, frame_count = 1, line_length = 8, scale = 0.5 * scale}
+        height = size[2], direction_count = 16, frame_count = frame_count,
+        line_length = frame_count > 1 and frame_count or 8, animation_speed = 1, scale = 0.5 * scale}
       for k, v in pairs(extra or {}) do l[k] = v end
       return l
     end
