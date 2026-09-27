@@ -3,15 +3,20 @@ Version: 0.1.9
 Date: 2026-09-27
   Info:
     - The mod and portal descriptions again mention Dr. Stone inspiration and AI-assisted development.
+    - Описания мода и портала снова говорят о вдохновении Dr. Stone и разработке с помощью ИИ.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.8
 Date: 2026-09-27
   Info:
     - Shorter, clearer bilingual mod and portal descriptions. The portal page updates with each release.
+    - Более короткие и ясные описания на двух языках; страница портала обновляется при каждом релизе.
   Balancing:
     - Simplified oil processing and the firearm progression; radio is available in epoch 3.
+    - Упрощены нефть и путь огнестрела; радар перенесён в эпоху 3.
     - Removed unneeded systems: paper cartridges, fuel briquettes, ship brakes, cooked meat, fertilizer,
       animal farms and capture nets. Meat now heals 60 directly; animals still provide hides and bones.
+    - Убраны бумажные патроны, брикеты, тормоза кораблей, готовка мяса, удобрения, фермы и ловчие сети.
+      Мясо сразу лечит 60, животные по-прежнему дают шкуры и кости.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.7
 Date: 2026-09-26

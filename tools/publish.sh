@@ -2,6 +2,7 @@
 # Publishes the built zip to mods.factorio.com through the mod portal API.
 #
 #   tools/publish.sh             # first time: creates the mod page; later: a new release
+#   tools/publish.sh --page       # update description and summary only; does not build or release a mod
 #   tools/publish.sh --gallery thumbnail.png docs/img/a.png ...   # replace the gallery with these pictures
 #   tools/publish.sh --details                                    # category of the mod page
 # Tags can't be set through the API (it answers success and ignores them): tick them on the mod page.
@@ -25,8 +26,6 @@ AUTH=(-H "Authorization: Bearer $FACTORIO_API_KEY")
 name=$(python3 -c "import json; print(json.load(open('info.json'))['name'])")
 version=$(python3 -c "import json; print(json.load(open('info.json'))['version'])")
 zip="dist/2.0/${name}_${version}.zip"
-[ -f "$zip" ] || bash build.sh
-echo "mod $name $version: $zip"
 
 json() { python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('$1') or ''); sys.exit(0 if d.get('$1') else 1)"; }
 
@@ -73,6 +72,12 @@ if [ "${1:-}" = "--details" ]; then
   exit 0
 fi
 
+if [ "${1:-}" = "--page" ]; then
+  update_details
+  echo "page: https://mods.factorio.com/mod/$name"
+  exit 0
+fi
+
 if [ "${1:-}" = "--gallery" ]; then
   shift
   gallery "$@"
@@ -80,6 +85,8 @@ if [ "${1:-}" = "--gallery" ]; then
   exit 0
 fi
 
+[ -f "$zip" ] || bash build.sh
+echo "mod $name $version: $zip"
 exists=$(curl -s -o /dev/null -w "%{http_code}" "https://mods.factorio.com/api/mods/$name")
 if [ "$exists" = "200" ]; then
   update_details
