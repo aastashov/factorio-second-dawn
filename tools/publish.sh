@@ -31,6 +31,7 @@ json() { python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('$1') 
 
 # The initial publication includes the long description, but later releases must update it explicitly.
 # Keep the portal page in sync with the bilingual Markdown in docs/PORTAL.md.
+# Text goes as --form-string: with -F, curl cuts a value at the first ";".
 description=$(python3 - <<'EOF'
 import re
 s = open("docs/PORTAL.md", encoding="utf-8").read()
@@ -38,10 +39,11 @@ print(re.search(r"```markdown\n(.*?)\n```", s, re.S).group(1))
 EOF
 )
 summary=$(python3 -c "import json; print(json.load(open('info.json'))['description'])")
+source=$(python3 -c "import json; print(json.load(open('info.json'))['homepage'])")
 update_details() {
   local answer
-  answer=$(curl -s "${AUTH[@]}" -F "mod=$name" -F "summary=$summary" -F "description=$description" \
-    -F "category=overhaul" "$API/mods/edit_details")
+  answer=$(curl -s "${AUTH[@]}" -F "mod=$name" --form-string "summary=$summary" --form-string "description=$description" \
+    -F "category=overhaul" --form-string "source_url=$source" "$API/mods/edit_details")
   case "$answer" in *'"success":true'*|*'"success": true'*) echo "portal description updated";;
     *) echo "portal details update failed: $answer"; exit 1;; esac
 }
@@ -68,7 +70,7 @@ gallery() {
 }
 
 if [ "${1:-}" = "--details" ]; then
-  echo "edit_details: $(curl -s "${AUTH[@]}" -F "mod=$name" -F "category=overhaul" "$API/mods/edit_details")"
+  echo "edit_details: $(curl -s "${AUTH[@]}" -F "mod=$name" -F "category=overhaul" --form-string "source_url=$source" "$API/mods/edit_details")"
   exit 0
 fi
 
@@ -99,7 +101,7 @@ fi
 
 # First publication: the page with its description, category and license.
 url=$(curl -s "${AUTH[@]}" -F "mod=$name" "$API/mods/init_publish" | json upload_url)
-curl -s -F "file=@$zip" -F "description=$description" -F "category=overhaul" \
+curl -s -F "file=@$zip" --form-string "description=$description" -F "category=overhaul" \
   -F "license=${MOD_LICENSE:-default_mit}" "$url"; echo
 echo "published $name $version"
 

@@ -25,7 +25,7 @@ def placeholders(s):
 
 
 def tags(s):
-    return re.findall(r"\[(?:img|color)=[^\]]*\]", s)
+    return sorted(re.findall(r"\[(?:img|color|item|entity|fluid|technology|virtual-signal)=[^\]]*\]", s))
 
 
 en = parse("locale/en/second-dawn.cfg")

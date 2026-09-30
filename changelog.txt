@@ -1,4 +1,19 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.10
+Date: 2026-09-30
+  Locale:
+    - Polish translation, contributed by a player. Thank you!
+    - Polskie tłumaczenie od gracza. Dziękujemy!
+    - Machine translations: German, French, Spanish, Portuguese (Brazil), Chinese (Simplified), Japanese,
+      Ukrainian. Corrections are welcome; other languages on request.
+    - Машинные переводы на немецкий, французский, испанский, португальский, китайский, японский, украинский.
+  Info:
+    - Source code link (GitHub) on the mod page; known rough edges (balance, animations, art) listed.
+    - Ссылка на исходники (GitHub); в описании перечислены известные проблемы: баланс, анимации, графика.
+  Bugfixes:
+    - The campfire description no longer mentions roasting meat (removed in 0.1.8).
+    - The bullet ammo category is no longer called "Musket balls" (the musket was removed in 0.1.8).
+---------------------------------------------------------------------------------------------------
 Version: 0.1.9
 Date: 2026-09-27
   Info:

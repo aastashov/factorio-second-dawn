@@ -39,7 +39,18 @@ Inspired by *Dr. Stone*. Made with AI, directed and playtested by a human.
 
 - Balance and multiplayer playtests on the full route to the Moon.
 - More in-game scenes for the later epochs: steam, ocean crossings, climate and the Moon.
-- Community translations after the English and Russian text settles.
+
+### Languages
+
+English, Russian, Polish (by [S3BA](https://mods.factorio.com/user/S3BA) — thank you!), German, French, Spanish, Portuguese (Brazil), Chinese
+(Simplified), Japanese, Ukrainian. The German through Ukrainian texts are machine translations: corrections
+are very welcome. Need another language? Ask in the discussion tab — I'll gladly add it.
+
+### Known rough edges — help welcome
+
+Balance still needs work, animations are rough, and the art as a whole is far from final. I'd be grateful
+for any feedback in the discussion tab, or for a pull request on
+[GitHub](https://github.com/aastashov/factorio-second-dawn).
 
 Multiplayer supported: shared research, notes and revival chamber. Factorio 2.0.77+, base game only; **not
 compatible with Space Age or Space Exploration.** Start a new map. This is a public beta; balance and saves
@@ -69,7 +80,18 @@ may change between releases.
 
 - Баланс и мультиплеерные плейтесты на полном пути до Луны.
 - Больше игровых сцен поздних эпох: пар, морские переходы, климат и Луна.
-- Переводы сообщества, когда закрепятся английский и русский тексты.
+
+### Языки
+
+Английский, русский, польский (перевод [S3BA](https://mods.factorio.com/user/S3BA) — спасибо!), немецкий, французский, испанский, португальский
+(Бразилия), китайский (упрощённый), японский, украинский. Переводы с немецкого по украинский — машинные,
+исправления очень приветствуются. Нужен другой язык? Напишите в обсуждениях — с радостью добавлю.
+
+### Известные шероховатости — помощь приветствуется
+
+Баланс ещё требует доводки, анимации сырые, да и вся графика в целом далека от финальной. Буду признателен
+за любую обратную связь в обсуждениях или за pull request на
+[GitHub](https://github.com/aastashov/factorio-second-dawn).
 
 Мультиплеер поддерживается: общие исследования, записки и камера пробуждения. Нужна Factorio 2.0.77+,
 только базовая игра; **Space Age и Space Exploration несовместимы.** Нужна новая карта. Это публичная

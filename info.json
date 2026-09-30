@@ -1,10 +1,11 @@
 {
   "name": "second-dawn",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "title": "Second Dawn (beta)",
   "author": "aastashov",
+  "homepage": "https://github.com/aastashov/factorio-second-dawn",
   "factorio_version": "2.0",
-  "description": "BETA — A Factorio overhaul inspired by Dr. Stone: from clay and fire to a Moon rocket before petrification waves return. Made with AI, directed and playtested by a human. Base 2.0; no Space Age.",
+  "description": "BETA — A Factorio overhaul inspired by Dr. Stone: from clay and fire to a Moon rocket before petrification waves return. Made with AI, directed and playtested by a human. Base 2.0; no Space Age. Languages: English, Russian, Polish, German, French, Spanish, Portuguese (BR), Chinese, Japanese, Ukrainian — more on request. Known issues: balance, animations and art in general — feedback or GitHub pull requests are very welcome.",
   "dependencies": [
     "base >= 2.0.77",
     "! space-age",
