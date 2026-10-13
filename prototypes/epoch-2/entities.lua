@@ -13,7 +13,8 @@ local function copy(type, base, name)
   e.circuit_connector = nil
   e.circuit_wire_max_distance = nil
   e.factoriopedia_simulation = nil
-  e.icon_draw_specification = nil
+  -- inserters and splitters keep the vanilla scale of their filter icons (without it the icon is full size)
+  if type ~= "inserter" and type ~= "splitter" then e.icon_draw_specification = nil end
   e.placeable_by = nil
   return e
 end

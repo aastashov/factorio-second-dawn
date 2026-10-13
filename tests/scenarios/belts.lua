@@ -1,5 +1,5 @@
 -- Chutes behave like vanilla belts: a splitter or an underground goes straight onto a chute of any tier
--- (fast replace), and each tier upgrades into the next.
+-- (fast replace), and each tier upgrades into the next. Arms and splitters draw filter icons at the vanilla size.
 local function L(s) log("SD-TEST " .. s) end
 local failures = 0
 local function check(name, ok, detail)
@@ -41,6 +41,11 @@ script.on_event(defines.events.on_tick, function(e)
                        {"sd-wooden-splitter-chute", "sd-splitter-chute"}, {"sd-splitter-chute", "fast-splitter"}} do
     local up = prototypes.entity[pair[1]].next_upgrade
     check(pair[1] .. " upgrades to " .. pair[2], up and up.name == pair[2], up and up.name or "nothing")
+  end
+  for _, pair in pairs{{"sd-lever-arm", "burner-inserter"}, {"sd-bronze-arm", "inserter"},
+                       {"sd-wooden-splitter-chute", "splitter"}, {"sd-splitter-chute", "splitter"}} do
+    local ours, vanilla = prototypes.entity[pair[1]].icon_draw_specification, prototypes.entity[pair[2]].icon_draw_specification
+    check(pair[1] .. " filter icon scale", ours.scale == vanilla.scale, ours.scale .. " vs " .. pair[2] .. " " .. vanilla.scale)
   end
   L("failures: " .. failures)
 end)
