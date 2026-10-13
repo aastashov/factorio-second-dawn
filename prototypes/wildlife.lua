@@ -35,6 +35,7 @@ local function animal(name, base, tint, health, damage, speed, drops)
   u.absorptions_to_join_attack = {}
   u.loot = loot(drops)
   u.factoriopedia_simulation = nil
+  u.corpse = nil -- the vanilla biter corpse shows through otherwise; no corpse art of our own yet
   set_damage(u.attack_parameters.ammo_type, damage)
   lib.recolor_fields(u, {"run_animation", "attack_parameters"}, tint)
   return u

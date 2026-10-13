@@ -57,6 +57,10 @@ end
 -- row); the bigger or smaller kin share it at another scale.
 local KIN = {["sd-wolf-leader"] = {"sd-wolf", 1.3}, ["sd-tusker"] = {"sd-boar", 1.3}, ["sd-bear-cub"] = {"sd-bear", 0.6}}
 local FRAMES = {["sd-wolf"] = 8} -- animals with a real multi-frame gait sheet; others fall back to 1 (--unit)
+-- Real-animal donors (wolf) are rendered framed tight to their own bounding box, which reads far
+-- smaller in-game than vanilla's deliberately oversized biter art (player: "волк мелкий" next to a
+-- small-biter) - boost those specifically rather than changing the generic 0.5 px/tile convention.
+local BOOST = {["sd-wolf"] = 1.7}
 for _, unit in pairs(data.raw.unit) do
   local from, scale = unit.name, 1
   if KIN[unit.name] then from, scale = KIN[unit.name][1], KIN[unit.name][2] end
@@ -66,13 +70,18 @@ for _, unit in pairs(data.raw.unit) do
     local function sheet(file, extra)
       local l = {filename = "__second-dawn__/graphics/entity/" .. from .. "/" .. file .. ".png", width = size[1],
         height = size[2], direction_count = 16, frame_count = frame_count,
-        line_length = frame_count > 1 and frame_count or 8, animation_speed = 1, scale = 0.5 * scale}
+        line_length = frame_count > 1 and frame_count or 8, animation_speed = 1,
+        scale = 0.5 * scale * (BOOST[from] or 1)}
       for k, v in pairs(extra or {}) do l[k] = v end
       return l
     end
     local still = {layers = {sheet(from .. "-run-shadow", {draw_as_shadow = true}), sheet(from .. "-run")}}
     unit.run_animation = still
-    if unit.attack_parameters then unit.attack_parameters.animation = still end
+    if unit.attack_parameters then
+      -- a real attack sheet if one was rendered (sized like -run; same frame_count), else just the run sheet
+      unit.attack_parameters.animation = sizes[from .. "-attack"]
+        and {layers = {sheet(from .. "-attack-shadow", {draw_as_shadow = true}), sheet(from .. "-attack")}} or still
+    end
   end
 end
 

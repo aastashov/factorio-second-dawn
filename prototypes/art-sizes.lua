@@ -148,6 +148,7 @@ return {
   ["sd-wolf-lair"] = {333, 275},
   ["sd-wolf-lair-ruin"] = {333, 275},
   ["sd-wolf-lair-shadow"] = {365, 307},
+  ["sd-wolf-attack"] = {127, 127},
   ["sd-wolf-run"] = {127, 127},
   ["sd-wooden-logistics-technology"] = {256, 256},
   ["sd-woodlot"] = {205, 218},
