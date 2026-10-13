@@ -43,7 +43,7 @@ Inspired by *Dr. Stone*. Made with AI, directed and playtested by a human.
 ### Languages
 
 English, Russian, Polish (by [S3BA](https://mods.factorio.com/user/S3BA) — thank you!), German, French, Spanish, Portuguese (Brazil), Chinese
-(Simplified), Japanese, Ukrainian. The German through Ukrainian texts are machine translations: corrections
+(Simplified), Japanese, Ukrainian, Esperanto. The German through Esperanto texts are machine translations: corrections
 are very welcome. Need another language? Ask in the discussion tab — I'll gladly add it.
 
 ### Known rough edges — help welcome
@@ -84,7 +84,7 @@ may change between releases.
 ### Языки
 
 Английский, русский, польский (перевод [S3BA](https://mods.factorio.com/user/S3BA) — спасибо!), немецкий, французский, испанский, португальский
-(Бразилия), китайский (упрощённый), японский, украинский. Переводы с немецкого по украинский — машинные,
+(Бразилия), китайский (упрощённый), японский, украинский, эсперанто. Переводы с немецкого по эсперанто — машинные,
 исправления очень приветствуются. Нужен другой язык? Напишите в обсуждениях — с радостью добавлю.
 
 ### Известные шероховатости — помощь приветствуется
